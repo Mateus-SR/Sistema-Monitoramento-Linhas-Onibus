@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+
+.box {
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+
+    margin-top: 40vh;
+
+    /*background-color: red;*/
+}
+
+.box-title {
+    font-family: 'Times New Roman', Times, serif;
+
+    font-size: 4vw;
+    animation-name: pulse;
+    animation-duration: 4s;    
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease-out;
+
+
+}
+
+.box-content {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+    color: #777;
+}
+
+@keyframes pulse {
+  from {color: red;}
+  to {color: rgb(0, 0, 0);}
+}
+
