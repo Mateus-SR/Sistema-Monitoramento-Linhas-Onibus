@@ -13,7 +13,6 @@ body {
 }
 
 a {
-    color: inherit;
     text-decoration: none
 }
 
@@ -34,6 +33,8 @@ a {
     align-items: center;
     justify-content: space-between;
     padding: 10px 0;
+
+    font-size: clamp(.60rem, .90rem, 2.90rem) !important;
 }
 
 .brand {
