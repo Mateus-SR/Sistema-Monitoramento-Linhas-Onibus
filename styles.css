@@ -5,6 +5,8 @@
     --bg: #ffffff;
 }
 
+
+
 body {
     /*fonte, fundo*/
     font-family: "Inter", system-ui, Arial, sans-serif;
@@ -116,4 +118,8 @@ h1 {
     color: #000000;
     font-size: 1.05rem;
     max-width: 60ch
+}
+/*
+.hideBtn {
+    
 }

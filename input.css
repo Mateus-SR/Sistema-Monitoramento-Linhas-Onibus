@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+@theme {
+    --color-sptrans: oklch(0.6284 0.257 28.22);
+}
