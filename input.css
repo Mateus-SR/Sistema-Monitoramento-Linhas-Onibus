@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  --bg-onibus: url("../img/Onibus.jpg");
+}
+
 @theme {
     --color-sptrans: oklch(0.6284 0.257 28.22);
 }
