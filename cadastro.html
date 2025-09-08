@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Cadastro</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,26 +69,24 @@
   </select>
 </div>
 
-<!--botão de ja tenho conta-->
+<!--botão de ja tenho conta e de cadastro-->
 
-    <div>
-      <button 
-        class="w-full bg-red-600 text-white py-1 px-2 rounded-md hover:bg-red-700 transition text-lg font-semibold"
-      >
-        Ja tenho uma conta
-      </button>
-    </div>
-  </div>
+   <div class="flex flex-col items-center space-y-6">
+  
+  <a href="login.html"
+    class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition text-lg font-semibold mx-auto"
+  
+    >Já tenho uma conta
+  </a>
 
-    <!-- botão cadastro :P -->
-    <div>
-      <button 
-        class="w-full bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 transition text-lg font-semibold"
-      >
-        Cadastrar
-      </button>
-    </div>
-  </div>
+  <button 
+    class="w-full max-w-md bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 transition text-lg font-semibold"
+  >
+    Cadastrar
+  </button>
+</div>
+
+    
 
 </body>
 </html>
