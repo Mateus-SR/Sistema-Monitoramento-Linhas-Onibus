@@ -65,60 +65,87 @@
 
     <!-- A área das linhas em exibição -->
     <section id="linhas" class="section container mt-20 px-4">
-        <div class="bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
-            <h2 class="text-2xl font-bold mb-6 text-center">Linhas</h2>
-            <table class="min-w-full border-collapse mx-auto">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="text-center py-3 px-6">Código</th>
-                        <th class="text-center py-3 px-6">Nome</th>
-                        <th class="text-center py-3 px-6">Sentido</th>
-                        <th class="text-center py-3 px-6">Intervalo</th>
-                        <th class="text-center py-3 px-6">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="text-center py-3 px-6">273D-10</td>
-                        <td class="text-center py-3 px-6">Arthur Alvin</td>
-                        <td class="text-center py-3 px-6">Arthur Alvin</td>
-                        <td class="text-center py-3 px-6">10 min</td>
-                        <td class="text-center py-3 px-6">
-                            <span
-                                class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
-                                <span class="relative flex w-2 h-2 mr-2">
-                                    <span
-                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
-                                </span>Normal</span></td>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="text-center py-3 px-6 ">xxxxx</td>
-                        <td class="text-center py-3 px-6">xxxxx</td>
-                        <td class="text-center py-3 px-6">xxxxx</td>
-                        <td class="text-center py-3 px-6">12 min</td>
-                        <td class="text-center py-3 px-6"><span
-                                class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
-                                <span class="relative flex w-2 h-2 mr-2">
-                                    <span
-                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
-                                </span>Atraso</span></td>
-                    <tr class="hover:bg-gray-50">
-                        <td class="text-center py-3 px-6">xxxxx</td>
-                        <td class="text-center py-3 px-6">xxxxx</td>
-                        <td class="text-center py-3 px-6">xxxxx</td>
-                        <td class="text-center py-3 px-6">15 min</td>
-                        <td class="text-center py-3 px-6"><span
-                                class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 font-semibold text-sm">
-                                <span class="relative flex w-2 h-2 mr-2">
-                                    <span
-                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
-                                </span>Fora de operação</span></td>
-                </tbody>
-            </table>
-        </div>
-    </section>
+  <div class="bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
+    <h2 class="text-2xl font-bold mb-6 text-center">Linhas</h2>
+    <table class="min-w-full border-collapse mx-auto">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="text-center py-3 px-6">Código</th>
+          <th class="text-center py-3 px-6">Nome</th>
+          <th class="text-center py-3 px-6">Sentido</th>
+          <th class="text-center py-3 px-6">Intervalo</th>
+          <th class="text-center py-3 px-6">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b hover:bg-gray-50">
+          <td class="text-center py-3 px-6">273D-10</td>
+          <td class="text-center py-3 px-6">Arthur Alvin</td>
+          <td class="text-center py-3 px-6">Arthur Alvin</td>
+          <td class="text-center py-3 px-6">10 min</td>
+          <td class="text-center py-3 px-6">
+  <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+    </span>Normal</span></td>
+    <tr class="border-b hover:bg-gray-50">
+          <td class="text-center py-3 px-6 ">xxxxx</td>
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">12 min</td>
+          <td class="text-center py-3 px-6"><span class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+    </span>Atrasado</span></td>
+    <tr class="border-b hover:bg-gray-50">
+          <td class="text-center py-3 px-6">273D-10</td>
+          <td class="text-center py-3 px-6">Arthur Alvin</td>
+          <td class="text-center py-3 px-6">Arthur Alvin</td>
+          <td class="text-center py-3 px-6">10 min</td>
+          <td class="text-center py-3 px-6">
+  <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+    </span>Normal</span></td>
+    <tr class="border-b hover:bg-gray-50">
+          <td class="text-center py-3 px-6">273D-10</td>
+          <td class="text-center py-3 px-6">Arthur Alvin</td>
+          <td class="text-center py-3 px-6">Arthur Alvin</td>
+          <td class="text-center py-3 px-6">10 min</td>
+          <td class="text-center py-3 px-6">
+  <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+    </span>Normal</span></td>
+        <tr class="border-b hover:bg-gray-50">
+          <td class="text-center py-3 px-6 ">xxxxx</td>
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">12 min</td>
+          <td class="text-center py-3 px-6"><span class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+    </span>Atrasado</span></td>
+        <tr class="hover:bg-gray-50">
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">xxxxx</td>
+          <td class="text-center py-3 px-6">15 min</td>
+         <td class="text-center py-3 px-6">
+  <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+    </span>Normal</span></td>
+      </tbody>
+    </table>
+  </div>
+</section>
 
     <section>
         <div class="fixed w-full bottom-0 bg-blue-600 z-50 py-1.5 px-10">
