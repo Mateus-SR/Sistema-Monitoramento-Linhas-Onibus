@@ -655,9 +655,6 @@
     }
   }
 }
-:root {
-  --bg-onibus: url("../img/Onibus.jpg");
-}
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;
