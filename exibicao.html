@@ -19,30 +19,39 @@
     <!-- topbar -->
     <div id="hideElement1" class="transition-transform duration-700 ease-in-out z-50">
         <header class="topbar" role="banner">
-            <div class="container topbar-inner">
-                <a class="brand" href="index.html" aria-label="Página inicial VigiBus">
-                    <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
-                </a>
-                <nav aria-label="Navegação principal">
-                    <a class="nav-link" aria-current="page" href="index.html">Início</a>
-                    <a class="nav-link" href="#mapa">Mapa</a>
-                    <a class="nav-link" href="exibicao.html">Linhas</a>
-                    <a class="nav-link" href="#alertas">Alertas</a>
-                    <a class="nav-link" href="#sobre">Sobre</a>
-                </nav>
-                <div class="actions">
-                    <a href="login.html"
-                    class="btn btn-outline">Entrar
-                    </a>
+    <div class="container topbar-inner mx-auto">
+      <a class="brand" href="#" aria-label="Página inicial VigiBus">
+        <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
+      </a>
 
+      <nav aria-label="Navegação principal">
+      
+        <div class="mobile-menu">
+          <div class="line1"></div>
+          <div class="line2"></div>
+          <div class="line3"></div>
+        </div>
 
-                    <a href="cadastro.html"
-                           class="btn btn-primary">Criar conta
-                    </a> 
-                </div>
-            </div>
+      
+        <ul class="nav-list">
+          <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
+          <li><a class="nav-link" href="#mapa">Mapa</a></li>
+          <li><a class="nav-link" href="exibicao.html">Linhas</a></li>
+          <li><a class="nav-link" href="#alertas">Alertas</a></li>
+          <li><a class="nav-link" href="#sobre">Sobre</a></li>
+        </ul>
+      </nav>
 
-        </header>
+      <div class="actions">
+        <a href="login.html" class="btn btn-outline">Entrar</a>
+        <a href="cadastro.html" class="btn btn-primary">Criar conta</a> 
+      </div>
+    </div>
+  </header>
+
+  <main></main>
+
+  <script src="mobile-navbar.js"></script>
 
         <!-- Botões overlay, que ficam embaixo do header-->
         <section class="w-full flex absolute items-start justify-between z-40">
