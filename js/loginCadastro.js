@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const instituicaoField = document?.getElementById('instituicao');
     const semInstituicaoBotao = document?.getElementById('semInstituicao');
 
+    const esqueciSenha = document?.getElementById('esqueciSenha');
+
     // Configurando para os botôes funcionarem
     botaoCadastrar?.addEventListener('click', (e) => {
 
@@ -29,6 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     semInstituicaoBotao?.addEventListener('click', () => {
         instituicaoField.toggleAttribute('disabled');
         instituicaoField.value = 0;
+    });
+    esqueciSenha?.addEventListener('click', () => {
+        alert('Oops! Essa é uma mensagem temporária.\nÉ uma pena que você tenha esquecido sua senha...\n\nMas não se preocupe!\nEnviaremos em seu email um link para que você possa alterar sua senha!')
     });
 
 
