@@ -25,7 +25,6 @@
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
-    --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-700: oklch(37.3% 0.034 259.733);
     --color-black: #000;
     --color-white: #fff;
@@ -221,8 +220,8 @@
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
-  .top-10 {
-    top: calc(var(--spacing) * 10);
+  .top-12 {
+    top: calc(var(--spacing) * 12);
   }
   .right-12 {
     right: calc(var(--spacing) * 12);
@@ -232,6 +231,9 @@
   }
   .bottom-32 {
     bottom: calc(var(--spacing) * 32);
+  }
+  .left-6 {
+    left: calc(var(--spacing) * 6);
   }
   .z-0 {
     z-index: 0;
@@ -266,14 +268,17 @@
   .mx-auto {
     margin-inline: auto;
   }
-  .mt-20 {
-    margin-top: calc(var(--spacing) * 20);
+  .mt-3 {
+    margin-top: calc(var(--spacing) * 3);
   }
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
   }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
+  }
+  .mb-5 {
+    margin-bottom: calc(var(--spacing) * 5);
   }
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
@@ -317,9 +322,6 @@
   .w-40 {
     width: calc(var(--spacing) * 40);
   }
-  .w-auto {
-    width: auto;
-  }
   .w-full {
     width: 100%;
   }
@@ -353,12 +355,6 @@
   }
   .flex-col {
     flex-direction: column;
-  }
-  .flex-row {
-    flex-direction: row;
-  }
-  .flex-wrap {
-    flex-wrap: wrap;
   }
   .items-center {
     align-items: center;
@@ -653,6 +649,20 @@
       }
     }
   }
+  .hover\:text-sptrans {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-sptrans);
+      }
+    }
+  }
+  .hover\:decoration-2 {
+    &:hover {
+      @media (hover: hover) {
+        text-decoration-thickness: 2px;
+      }
+    }
+  }
   .focus\:ring-2 {
     &:focus {
       --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
@@ -675,21 +685,6 @@
       outline-style: none;
     }
   }
-  .sm\:flex {
-    @media (width >= 40rem) {
-      display: flex;
-    }
-  }
-  .sm\:flex-col {
-    @media (width >= 40rem) {
-      flex-direction: column;
-    }
-  }
-  .sm\:justify-center {
-    @media (width >= 40rem) {
-      justify-content: center;
-    }
-  }
   .md\:right-12 {
     @media (width >= 48rem) {
       right: calc(var(--spacing) * 12);
@@ -698,11 +693,6 @@
   .md\:bottom-32 {
     @media (width >= 48rem) {
       bottom: calc(var(--spacing) * 32);
-    }
-  }
-  .md\:flex-row {
-    @media (width >= 48rem) {
-      flex-direction: row;
     }
   }
   .md\:px-8 {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,101 +10,78 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-    
+
 <body class="relative min-h-screen flex items-center justify-center font-inter">
 
-    <!-- Mateus eu n arrumei a responsividade, não sei como ta no celular, 
+  <!-- Mateus eu n arrumei a responsividade, não sei como ta no celular, 
      basicamente a responsividade está fazendo com que a caixa de login tome o espaço da tela inteiro nas laterais,
      em baixo e em cima n ta funfando não-->
 
   <!-- imagem do fundo -->
- <div 
-  class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
-  style="background-image: url('img/Onibus.jpg');">
-</div>
+  <div class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
+    style="background-image: url('img/Onibus.jpg');">
+  </div>
 
   <!-- manter opacidade -->
-   <div class="absolute inset-0 bg-black/40"></div>
+  <div class="absolute inset-0 bg-black/40"></div>
   <!-- caixa flutuante do login -->
 
-   <div class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-4xl shadow-2xl shadow-black/60 z-20">
+  <div
+    class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-4xl shadow-2xl shadow-black/60 z-20">
     <h2 class="text-3xl font-bold text-center mb-8 text-black">Login</h2>
 
-   <div class="absolute top-12 left-6">
-  <a href="index.html" 
-     class="text-1x1 text-center mb-5 text-black py-2 px-4 rounded-md transition text-sm font-inter">
-    Voltar
-  </a>
-</div>
+    <div class="absolute top-12 left-6">
+      <a href="index.html"
+        class="text-1x1 text-center mb-5 text-black py-2 px-4 rounded-md transition text-sm font-inter">
+        Voltar
+      </a>
+    </div>
 
 
     <form id="loginForm">
 
-    <!-- lugar do email -->
+      <!-- lugar do email -->
 
-     
-    <div class="mb-6">
-      <forms>
-      <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
-      <input 
-        type="text" 
-        id="email" 
-        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg"
-      >
-    </div>
 
-    <!-- lugar da senha -->
-    <div class="mb-6">
-      <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-      <input 
-        type="password" 
-        id="password" 
-        class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg"
-      >
-    </div>
+      <div class="mb-6">
+        <forms>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+          <input type="email" id="email" placeholder="exemplo: erick@neo.com" required
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+      </div>
 
-    <!-- botão login :P -->
+      <!-- lugar da senha -->
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+        <input type="password" id="password" placeholder="senhaSegura123"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+      </div>
+
+      <!-- botão login :P -->
       <div class="flex flex-col items-center space-y-6">
 
         <a href="cadastro.html"
-         class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition text-lg font-semibold mx-auto"
-  
-    >Não tenho uma conta
-          </a>
-
-
-       <a href="#" 
-          onclick="validarLogin(event)"
-          class="flex flex-col items-center space-y-6 w-full max-w-md bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 transition text-lg font-semibold">
-          Login
+          class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition text-lg font-semibold mx-auto">Não
+          tenho uma conta
         </a>
-      
 
-       
+
+        <input type="submit" value="Entrar" id="botaoLogar" href="#" class="flex flex-col items-center space-y-6 w-full max-w-md bg-red-600 text-white
+          py-3 px-4 rounded-md hover:bg-red-700 transition text-lg font-semibold cursor-pointer">
+
+
+
       </div>
       </forms>
-  
-      
 
-    </div>
+
+
+  </div>
   </div>
 
-    <!-- Java pra impedir que n passe sem preencher os lugar, usei um pouco de ia então pode dar problema-->
+  <!-- Java pra impedir que n passe sem preencher os lugar, usei um pouco de ia então pode dar problema-->
 
-   <script>
-    function validarLogin(event) {
-      event.preventDefault(); 
-      const email = document.getElementById("email").value.trim();
-      const senha = document.getElementById("password").value.trim();
-
-      if (email === "" || senha === "") {
-        alert("Por favor, preencha todos os campos!");
-      } else {
-        
-        window.location.href = "exibicao.html";
-      }
-    }
-  </script>
+  <script src="./js/loginCadastro.js"></script>
 
 
 </body>
