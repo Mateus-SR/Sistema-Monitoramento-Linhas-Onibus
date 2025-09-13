@@ -4,9 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const HideElement = document.getElementById("hideElement1");
     const Clock = document.getElementById("horas");
 
+    const HideBtnText = document.getElementById('HideBtnText');
+    let isHidden = false;
+
     HideBtn.addEventListener('click', () => {
         HideElement.classList.toggle('-translate-y-full');
 
+        isHidden = HideElement.classList.contains('-translate-y-full');
+
+        if (isHidden) {
+            HideBtnText.classList.remove('fa-chevron-up');
+            HideBtnText.classList.add('fa-chevron-down');
+        } else {
+            HideBtnText.classList.remove('fa-chevron-down');
+            HideBtnText.classList.add('fa-chevron-up');
+        }
     });
 
     setInterval(() => {
@@ -31,6 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (variavel < 10) {
             variavel = "0" + variavel
         };
-            return variavel;
+        return variavel;
     }
 });
