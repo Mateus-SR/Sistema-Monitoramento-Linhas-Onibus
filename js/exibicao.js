@@ -60,8 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (zoomAtual === 0) {
             minus.classList.toggle('hover:text-sptrans');
+            minus.classList.toggle('cursor-not-allowed');
         } else if (zoomAtual === zoomNivel.length - 1) {
             plus.classList.toggle('hover:text-sptrans');
+            plus.classList.toggle('cursor-not-allowed');
         } else {
             minus.classList.add('hover:text-sptrans');
             plus.classList.add('hover:text-sptrans');
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const zoomNivel = [50, 67, 75, 90, 100, 110, 125, 133, 150];
-    let zoomAtual = 4;              // ^ esse aqui
+    let zoomAtual = 4; // ^ esse aqui
 
     plus.addEventListener('click', () => {
             if (zoomAtual < zoomNivel.length - 1) {
