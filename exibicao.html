@@ -57,18 +57,25 @@
     <main></main>
 
     <!-- Botões overlay, que ficam embaixo do header-->
-    <section class="w-full flex absolute items-start justify-between z-40">
+    <section class="w-full flex absolute items-start flex-row z-40">
 
-      <div id="hideBtn1" class="max-w-full hideBtn relative
+      <div id="hideBtn1" class="hideBtn relative
             bg-sptrans text-white font-extrabold
             w-96 h-24 font-roboto-mono text-center cursor-pointer
             flex items-center justify-center
-            invisible lg:visible shadow-2xl rounded-b-3xl
+            invisible lg:visible shadow-xl rounded-br-3xl
             ">
         <i id="HideBtnText" class="fas fa-chevron-up text-3xl pr-2.5 text-white/50"></i>
         <p id="horas" class="text-6xl">
           --:--:--
         </p>
+      </div>
+
+      <div id="minusPlus" class="invisible lg:visible flex flex-row ml-5 text-center cursor-pointer text-gray-900">
+        <div id="minus" class="shadow-xl px-7 py-3 bg-gray-100 rounded-bl-2xl border-2 border-gray-400
+        hover:text-sptrans hover:bg-gray-400 transition-all duration-300 ease-out"><i class="fas fa-minus"></i></div>
+        <div id="plus" class="shadow-xl px-7 py-3 bg-gray-100 rounded-br-2xl border-2 border-gray-400
+        hover:text-sptrans hover:bg-gray-400 transition-all duration-300 ease-out"><i class="fas fa-plus"></i></div>
       </div>
     </section>
   </div>
@@ -183,13 +190,13 @@
     </div>
   </section>
 
-  <section class="fixed w-full bottom-0 bg-sptrans z-50 py-1.5 px-10 text-white font-extralight font-roboto-mono
+  <section class="fixed w-full bottom-0 bg-sptrans z-50 py-1.5 px-10 text-white font-medium font-roboto-mono
                   flex items-start justify-between text-xs md:text-sm lg:text-base">
     <div class="">
       <p>Desenvolvido por Geppetto Company Ltda.</p>
     </div>
     <div class="">
-      <p>Estado da API: 200</p>
+      <p>Status da API: ---</p>
     </div>
   </section>
 
