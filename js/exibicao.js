@@ -59,14 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
         htmlElement.style.fontSize = `${zoomValor}%`;
 
         if (zoomAtual === 0) {
-            minus.classList.toggle('hover:text-sptrans');
-            minus.classList.toggle('cursor-not-allowed');
+            minus.classList.remove('hover:text-sptrans');
+            // minus.classList.add('cursor-not-allowed');
         } else if (zoomAtual === zoomNivel.length - 1) {
-            plus.classList.toggle('hover:text-sptrans');
-            plus.classList.toggle('cursor-not-allowed');
+            plus.classList.remove('hover:text-sptrans');
+            // plus.classList.add('cursor-not-allowed');
         } else {
             minus.classList.add('hover:text-sptrans');
             plus.classList.add('hover:text-sptrans');
+            // plus.classList.remove('cursor-not-allowed');
         }
     };
 

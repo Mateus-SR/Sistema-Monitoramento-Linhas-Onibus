@@ -469,11 +469,26 @@
   .rounded-br-3xl {
     border-bottom-right-radius: var(--radius-3xl);
   }
+  .rounded-br-\[14px\] {
+    border-bottom-right-radius: 14px;
+  }
+  .rounded-br-\[32px\] {
+    border-bottom-right-radius: 32px;
+  }
   .rounded-bl {
     border-bottom-left-radius: 0.25rem;
   }
   .rounded-bl-2xl {
     border-bottom-left-radius: var(--radius-2xl);
+  }
+  .rounded-bl-\[14px\] {
+    border-bottom-left-radius: 14px;
+  }
+  .rounded-bl-\[32\] {
+    border-bottom-left-radius: 32;
+  }
+  .rounded-bl-\[32px\] {
+    border-bottom-left-radius: 32px;
   }
   .border {
     border-style: var(--tw-border-style);
