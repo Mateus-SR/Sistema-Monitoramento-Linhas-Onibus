@@ -55,36 +55,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function mudarZoom() {
+        // Declara "zoomValor" como sendo o mesmo valor de "zoomNivel" na posição de "zoomAtual"
         const zoomValor = zoomNivel[zoomAtual];
+
+        // Altera tag <html> adicionando font-size com o mesmo valor na variavel "zoomValor" como parametro porcentagem
         htmlElement.style.fontSize = `${zoomValor}%`;
 
         if (zoomAtual === 0) {
+            // Caso o zoomAtual seja posição 0 (no caso, 50% de zoom)...
+            // remove animação hover do botão -
             minus.classList.remove('hover:text-sptrans');
             // minus.classList.add('cursor-not-allowed');
+
         } else if (zoomAtual === zoomNivel.length - 1) {
+            // Caso o zoomAtual seja igual ao tamanho do array zoomNivel (9 espaços) menos 1 (8 espaços)...
+            // remove animação hover do botão +
+            // (Esse calculo é feito porque a posição de um array começa em 0, ou seja, um array de 9 espaços tem
+            // de 0 até 8 posições: [0, 1, 2, 3, 4, 5, 6, 7, 8])
             plus.classList.remove('hover:text-sptrans');
             // plus.classList.add('cursor-not-allowed');
         } else {
+            // Caso não seja nenhum dos casos acima, adiciona a animação hover nos botões
             minus.classList.add('hover:text-sptrans');
             plus.classList.add('hover:text-sptrans');
             // plus.classList.remove('cursor-not-allowed');
         }
     };
 
+    // Variavel configurando todas as possibilidades de zoom
+                    // [0]-[1]-[2]-[3]-[4]--[5]--[6]--[7]--[8]
     const zoomNivel = [50, 67, 75, 90, 100, 110, 125, 133, 150];
-    let zoomAtual = 4; // ^ esse aqui
+    let zoomAtual = 4; //              ^ esse aqui (5º espaço, posição numero 4)
+    //  ^ Declarando o valor inicial, mas depois será usado para declarar o valor atual
 
+    // Atualiza (adiciona) zoom assim que o botão + é clicado
     plus.addEventListener('click', () => {
-            if (zoomAtual < zoomNivel.length - 1) {
-                zoomAtual++;
-                mudarZoom();
-            };
-        }),
+    // Se zoomAtual é menor que o máximo de posições do array [ler explicação no mudarZoom()], então pode aumentar zoom
+        if (zoomAtual < zoomNivel.length - 1) {
+            zoomAtual++;
+            mudarZoom();
+        };
+    }),
 
-        minus.addEventListener('click', () => {
-            if (zoomAtual > 0) {
-                zoomAtual--;
-                mudarZoom();
-            };
-        })
+    // Atualiza (subtrai) zoom assim que o botão - é clicado
+    minus.addEventListener('click', () => {
+        // Se zoomAtual é maior que 0 (minimo), então pode tirar zoom
+        if (zoomAtual > 0) {
+            zoomAtual--;
+            mudarZoom();
+        };
+    })
 });
