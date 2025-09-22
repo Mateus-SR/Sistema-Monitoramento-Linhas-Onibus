@@ -2,9 +2,25 @@
   "scripts": {
     "dev": "npx @tailwindcss/cli -i ./input.css -o ./src/output.css --watch"
   },
-
   "dependencies": {
     "@tailwindcss/cli": "^4.1.13",
+    "express": "^5.1.0",
     "tailwindcss": "^4.1.13"
-  }
+  },
+  "name": "sistema-monitoramento-linhas-onibus",
+  "version": "1.0.0",
+  "description": "[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus/issues"
+  },
+  "homepage": "https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus#readme"
 }
