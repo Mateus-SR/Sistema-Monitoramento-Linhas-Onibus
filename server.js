@@ -1,14 +1,11 @@
+// Use "type: commonjs" in package.json to use CommonJS modules
 const express = require('express');
-const path = require('path');
 const app = express();
-const PORT = 3000;
-
-app.get('/home', (req, res) => {
-  res.status(200).json('Welcome, your app is working well');
+ 
+// Define your routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from Express on Vercel!' });
 });
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
-
+ 
+// Export the Express app
 module.exports = app;
