@@ -74,24 +74,30 @@ app.get('/parada-radar', async (req, res) => {
       return res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'});
     }
 
+    // Como no momento precisamos apenas pesquisar por esses dois pontos de onibus, essa solução de procurar só por eles é suficiente
     const codigoParada1 = "650004840"; // É o ponto em frente ao campinho
     const codigoParada2 = "360004841"; // É o ponto do outro lado da rua
 
+    // Aqui, estamos criando duas pesquisas, mas apenas criando elas e anexando nossa chave (token), porque...
     const pesquisa1 = axios.get(`${apiURL}${paradaPrevisao}${codigoParada1}`, { headers: {'Cookie': apiSessionCookie}
     });
     const pesquisa2 = axios.get(`${apiURL}${paradaPrevisao}${codigoParada2}`, { headers: {'Cookie': apiSessionCookie}
     });
 
+    //... como vamos fazer duas pesquisas, é mais sábio fazer elas ao mesmo tempo.
+    // Pra isso, nós usamos esse "Promise.all", com as pesquisas que criamos ali em cima...
     const resultado = await Promise.all([pesquisa1, pesquisa2]);
+    //... e os resultados vem em uma array, que guardamos seu conteudo separamente.
     const resPesquisa1 = resultado[0].data;
     const resPesquisa2 = resultado[1].data;
 
+    // E por fim, exibimos os resultados em formato json
     res.json({
       pesquisa1: {codigoParada: codigoParada1, resultados: resPesquisa1},
       pesquisa2: {codigoParada: codigoParada2, resultados: resPesquisa2}
     })
 
-
+    // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
     if (error.response && error.response.status === 401) {
       console.log('[401] Pesquisa inválida ou sessão expirada.')
