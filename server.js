@@ -88,14 +88,21 @@ app.get('/parada-radar', async (req, res) => {
     // Pra isso, nós usamos esse "Promise.all", com as pesquisas que criamos ali em cima...
     const resultado = await Promise.all([pesquisa1, pesquisa2]);
     //... e os resultados vem em uma array, que guardamos seu conteudo separamente.
-    const resPesquisa1 = resultado[0].data;
-    const resPesquisa2 = resultado[1].data;
+    const resultadoPesquisa1 = resultado[0].data;
+    const resultadoPesquisa2 = resultado[1].data;
 
     // E por fim, exibimos os resultados em formato json
     res.json({
-      pesquisa1: {codigoParada: codigoParada1, resultados: resPesquisa1},
-      pesquisa2: {codigoParada: codigoParada2, resultados: resPesquisa2}
+      pesquisa1: {codigoParada: codigoParada1, resultados: resultadoPesquisa1},
+      pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
     })
+
+/*     const resumoPesquisa1 = {
+      ponto: resultadoPesquisa1.p.cp,
+      linha: resultadoPesquisa1.p.l.map(linhas => linhas.c.map(onibusIndividuais => onibusIndividuais.))
+    };
+
+    res.json(resumoPesquisa1); */
 
     // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
