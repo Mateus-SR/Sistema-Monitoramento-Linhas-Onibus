@@ -5,6 +5,9 @@ const app = express();
 
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
+const paradaPrevisao = '/Previsao/Parada?codigoParada=';
+let apiSessionCookie = null;
+
 
 async function tokenPOST() {
     try {
@@ -15,6 +18,10 @@ async function tokenPOST() {
       // A resposta da SPTrans em caso de sucesso é o booleano 'true' e um cookie.
       // O status da resposta será 200.
       if (response.data === true) {
+        const cookie = response.headers['set-cookie'];
+        apiSessionCookie = cookie;
+
+        console.log(`(Cookie armazenado em apiSessionCookie)`);
         console.log(`Sucesso na autenticação! Status: ${response.status}`);
         // Esse ainda é um caso apenas de teste, e não estamos guardando nenhuma informação importante para rodar as proximas consultas na api
         return { success: true, status: response.status, data: response.data };
@@ -24,6 +31,8 @@ async function tokenPOST() {
       }
   
     } catch (error) {
+      // Em caso de erro, é melhor limpar os cookies de autenticação, para evitar qualquer problema
+      apiSessionCookie = null;
         console.log(`Erro na autenticação!`);
         if (error.response) {
           // Se o erro veio da API (ex: token inválido)
@@ -41,7 +50,7 @@ async function tokenPOST() {
 
 // Definições das rotas (o que fazer quando chamarmos tal coisa)
 app.get('/', (req, res) => {
-  res.json({ message: 'Alo olá! Servidor rodando.' });
+  res.json({ message: 'Servidor rodando em homenagem aos saudosos:\nErick Neo\nGuilherme Calixto\nLuciano Batista' });
 });
 
 app.get('/testar-auth', async (req, res) => {
@@ -51,5 +60,48 @@ app.get('/testar-auth', async (req, res) => {
     res.json(resultado);
   });
  
+app.get('/parada-radar', async (req, res) => {
+  console.log('Iniciando radar nas paradas...');
+  try{
+    // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
+    if (!apiSessionCookie) {
+      console.log('Não estamos autenticados! Mas vamos tentar estar em breve...');
+      await tokenPOST();
+    }
+
+    // E então verificamos de novo, mas só dessa vez, pra não entrar em um loop infinito de verificações
+    if (!apiSessionCookie) {
+      return res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'});
+    }
+
+    const codigoParada1 = "650004840"; // É o ponto em frente ao campinho
+    const codigoParada2 = "360004841"; // É o ponto do outro lado da rua
+
+    const pesquisa1 = axios.get(`${apiURL}${paradaPrevisao}${codigoParada1}`, { headers: {'Cookie': apiSessionCookie}
+    });
+    const pesquisa2 = axios.get(`${apiURL}${paradaPrevisao}${codigoParada2}`, { headers: {'Cookie': apiSessionCookie}
+    });
+
+    const resultado = await Promise.all([pesquisa1, pesquisa2]);
+    const resPesquisa1 = resultado[0].data;
+    const resPesquisa2 = resultado[1].data;
+
+    res.json({
+      pesquisa1: {codigoParada: codigoParada1, resultados: resPesquisa1},
+      pesquisa2: {codigoParada: codigoParada2, resultados: resPesquisa2}
+    })
+
+
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      console.log('[401] Pesquisa inválida ou sessão expirada.')
+      apiSessionCookie = null;
+    }
+    res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'})
+  }
+})
+
+
+
 // Linha que faz o Vercel cuidar de executar tudo
 module.exports = app;
