@@ -114,24 +114,26 @@ app.get('/parada-radar', async (req, res) => {
       }))
     };
 
-/*     const resumoPesquisa2 = {
-      horaRequest: resultadoPesquisa1.hr,
-      ponto: resultadoPesquisa1.p.cp,
+    const resumoPesquisa2 = {
+      horaRequest: resultadoPesquisa2.hr,
+      ponto: resultadoPesquisa2.p.cp,
 
-      linhas: resultadoPesquisa1.p.l.map(linhaIndividual => ({
+      linhas: resultadoPesquisa2.p.l.map(linhaIndividual => ({
 
         codigoLetreiro: linhaIndividual.c,
         sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
         quantidadeVeiculos: linhaIndividual.qv,
 
-        veiculoMaisProximoCodigo: linhaIndividual[0].vs.p,
+        veiculoMaisProximoCodigo: linhaIndividual.vs[0].p,
         veiculoMaisProximoPrevisao: linhaIndividual.vs[0].t,
         veiculoMaisProximoX: linhaIndividual.vs[0].px,
         veiculoMaisProximoY: linhaIndividual.vs[0].py
       }))
-    }; */
+    };
 
-    res.json(resumoPesquisa1);
+    res.json({resumoPesquisa1: resumoPesquisa1,
+      resumoPesquisa2: resumoPesquisa2
+    });
 
     // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
