@@ -98,10 +98,10 @@ app.get('/parada-radar', async (req, res) => {
     }) */
 
     const resumoPesquisa1 = {
-      horaRequest: resultadoPesquisa2.hr,
-      ponto: resultadoPesquisa2.p.cp,
+      horaRequest: resultadoPesquisa1.hr,
+      ponto: resultadoPesquisa1.p.cp,
 
-      linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
+      linhas: resultadoPesquisa1.p.l.map(linhaIndividual => {
         let proximoOnibus = null;
         if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
           proximoOnibus = {
