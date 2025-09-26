@@ -98,37 +98,49 @@ app.get('/parada-radar', async (req, res) => {
     }) */
 
     const resumoPesquisa1 = {
-      horaRequest: resultadoPesquisa1.hr,
-      ponto: resultadoPesquisa1.p.cp,
+      horaRequest: resultadoPesquisa2.hr,
+      ponto: resultadoPesquisa2.p.cp,
 
-      linhas: resultadoPesquisa1.p.l.map(linhaIndividual => ({
+      linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
+        let veiculoExistente = null;
+        if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
+          proximoOnibus = {
+            proximoOnibusCodigo: linhaIndividual.vs[0].p,
+            proximoOnibusPrevisao: linhaIndividual.vs[0].t,
+            proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
+            proximoOnibusPosicaoY: linhaIndividual.vs[0].py
+          };
+      }
 
-        codigoLetreiro: linhaIndividual.c,
-        sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
-        quantidadeVeiculos: linhaIndividual.qv,
-
-        veiculoMaisProximoCodigo: linhaIndividual.vs[0].p,
-        veiculoMaisProximoPrevisao: linhaIndividual.vs[0].t,
-        veiculoMaisProximoX: linhaIndividual.vs[0].px,
-        veiculoMaisProximoY: linhaIndividual.vs[0].py
-      }))
+        return {
+          codigoLetreiro: linhaIndividual.c,
+          sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
+          quantidadeOnibus: linhaIndividual.qv,
+        };
+      })
     };
 
     const resumoPesquisa2 = {
       horaRequest: resultadoPesquisa2.hr,
       ponto: resultadoPesquisa2.p.cp,
 
-      linhas: resultadoPesquisa2.p.l.map(linhaIndividual => ({
+      linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
+        let veiculoExistente = null;
+        if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
+          proximoOnibus = {
+            proximoOnibusCodigo: linhaIndividual.vs[0].p,
+            proximoOnibusPrevisao: linhaIndividual.vs[0].t,
+            proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
+            proximoOnibusPosicaoY: linhaIndividual.vs[0].py
+          };
+      }
 
-        codigoLetreiro: linhaIndividual.c,
-        sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
-        quantidadeVeiculos: linhaIndividual.qv,
-
-        veiculoMaisProximoCodigo: linhaIndividual.vs[0].p,
-        veiculoMaisProximoPrevisao: linhaIndividual.vs[0].t,
-        veiculoMaisProximoX: linhaIndividual.vs[0].px,
-        veiculoMaisProximoY: linhaIndividual.vs[0].py
-      }))
+        return {
+          codigoLetreiro: linhaIndividual.c,
+          sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
+          quantidadeOnibus: linhaIndividual.qv,
+        };
+      })
     };
 
     res.json({resumoPesquisa1: resumoPesquisa1,
