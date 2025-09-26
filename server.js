@@ -97,12 +97,12 @@ app.get('/parada-radar', async (req, res) => {
       pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
     })
 
-/*     const resumoPesquisa1 = {
-      ponto: resultadoPesquisa1.p.cp,
-      linha: resultadoPesquisa1.p.l.map(linhas => linhas.c.map(onibusIndividuais => onibusIndividuais.))
+    const resumoPesquisa1 = {
+      horaRequest: resultadoPesquisa1.hr,
+      ponto: resultadoPesquisa1.p.cp
     };
 
-    res.json(resumoPesquisa1); */
+    res.json(resumoPesquisa1);
 
     // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
