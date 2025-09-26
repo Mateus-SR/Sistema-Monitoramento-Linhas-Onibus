@@ -131,7 +131,8 @@ app.get('/parada-radar', async (req, res) => {
       }))
     };
 
-    res.json(resumoPesquisa1, resumoPesquisa2);
+    res.json({resumoPesquisa1: resumoPesquisa1,
+      resumoPesquisa2: resumoPesquisa2});
 
     // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
