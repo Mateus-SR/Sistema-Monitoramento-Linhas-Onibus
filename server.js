@@ -92,14 +92,14 @@ app.get('/parada-radar', async (req, res) => {
     const resultadoPesquisa2 = resultado[1].data;
 
     // E por fim, exibimos os resultados em formato json
-    res.json({
+/*     res.json({
       pesquisa1: {codigoParada: codigoParada1, resultados: resultadoPesquisa1},
       pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
-    })
+    }) */
 
     const resumoPesquisa1 = {
-      horaRequest: resultadoPesquisa1.resultados.hr,
-      ponto: resultadoPesquisa1.resultados.p.cp
+      horaRequest: resultadoPesquisa1.hr,
+      ponto: resultadoPesquisa1.p.cp
     };
 
     res.json(resumoPesquisa1);
