@@ -143,11 +143,11 @@ app.get('/parada-radar/:parametroBuscaAPI', async (req, res) => {
     };
     
     // E por fim, exibimos os resultados em formato json
-    if (parametroBuscaAPI !== 'full' || parametroBuscaAPI === null) {
+    if (parametroBuscaAPI === 'filtro') {
     res.json({resumoPesquisa1: resumoPesquisa1,
       resumoPesquisa2: resumoPesquisa2
     });
-  } else {
+  } else if (parametroBuscaAPI === 'full'){
     res.json({
       pesquisa1: {codigoParada: codigoParada1, resultados: resultadoPesquisa1},
       pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
