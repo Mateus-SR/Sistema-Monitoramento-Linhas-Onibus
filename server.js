@@ -60,10 +60,8 @@ app.get('/testar-auth', async (req, res) => {
     res.json(resultado);
   });
  
-app.get('/parada-radar/:parametroBuscaAPI', async (req, res) => {
+app.get('/parada-radar', async (req, res) => {
   console.log('Iniciando radar nas paradas...');
-  const parametroBuscaAPI = req.params.parametroBuscaAPI.toLowerCase();
-
   try{
     // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
     if (!apiSessionCookie) {
@@ -93,11 +91,16 @@ app.get('/parada-radar/:parametroBuscaAPI', async (req, res) => {
     const resultadoPesquisa1 = resultado[0].data;
     const resultadoPesquisa2 = resultado[1].data;
 
-    
+    // E por fim, exibimos os resultados em formato json
+/*     res.json({
+      pesquisa1: {codigoParada: codigoParada1, resultados: resultadoPesquisa1},
+      pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
+    }) */
+
     const resumoPesquisa1 = {
       horaRequest: resultadoPesquisa1.hr,
       ponto: resultadoPesquisa1.p.cp,
-      
+
       linhas: resultadoPesquisa1.p.l.map(linhaIndividual => {
         let proximoOnibus = null;
         if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
@@ -107,8 +110,8 @@ app.get('/parada-radar/:parametroBuscaAPI', async (req, res) => {
             proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
             proximoOnibusPosicaoY: linhaIndividual.vs[0].py
           };
-        }
-        
+      }
+
         return {
           codigoLetreiro: linhaIndividual.c,
           sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
@@ -117,13 +120,13 @@ app.get('/parada-radar/:parametroBuscaAPI', async (req, res) => {
         };
       })
     };
-    
+
     const resumoPesquisa2 = {
       horaRequest: resultadoPesquisa2.hr,
       ponto: resultadoPesquisa2.p.cp,
-      
+
       linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
-        let veiculoExistente = null;
+        let proximoOnibus = null;
         if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
           proximoOnibus = {
             proximoOnibusCodigo: linhaIndividual.vs[0].p,
@@ -131,27 +134,20 @@ app.get('/parada-radar/:parametroBuscaAPI', async (req, res) => {
             proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
             proximoOnibusPosicaoY: linhaIndividual.vs[0].py
           };
-        }
-        
+      }
+
         return {
           codigoLetreiro: linhaIndividual.c,
           sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
           quantidadeOnibus: linhaIndividual.qv,
+          proximoOnibus: proximoOnibus
         };
       })
     };
-    
-    // E por fim, exibimos os resultados em formato json
-    if (parametroBuscaAPI === 'filtro') {
+
     res.json({resumoPesquisa1: resumoPesquisa1,
       resumoPesquisa2: resumoPesquisa2
     });
-  } else if (parametroBuscaAPI === 'full'){
-    res.json({
-      pesquisa1: {codigoParada: codigoParada1, resultados: resultadoPesquisa1},
-      pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
-    })
-  }
 
     // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
