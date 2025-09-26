@@ -126,7 +126,7 @@ app.get('/parada-radar', async (req, res) => {
       ponto: resultadoPesquisa2.p.cp,
 
       linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
-        let veiculoExistente = null;
+        let proximoOnibus = null;
         if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
           proximoOnibus = {
             proximoOnibusCodigo: linhaIndividual.vs[0].p,
@@ -140,6 +140,7 @@ app.get('/parada-radar', async (req, res) => {
           codigoLetreiro: linhaIndividual.c,
           sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
           quantidadeOnibus: linhaIndividual.qv,
+          proximoOnibus: proximoOnibus
         };
       })
     };
