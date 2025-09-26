@@ -98,8 +98,8 @@ app.get('/parada-radar', async (req, res) => {
     })
 
     const resumoPesquisa1 = {
-      horaRequest: resultadoPesquisa1.hr,
-      ponto: resultadoPesquisa1.p.cp
+      horaRequest: resultadoPesquisa1.resultados.hr,
+      ponto: resultadoPesquisa1.resultados.p.cp
     };
 
     res.json(resumoPesquisa1);
