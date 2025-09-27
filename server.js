@@ -4,6 +4,7 @@ const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dad
 const app = express();
 
 const tolkien = process.env.tolkien;
+const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
 const paradaPrevisao = '/Previsao/Parada?codigoParada=';
 let apiSessionCookie = null;
@@ -59,18 +60,18 @@ function converteHoraMinuto(horaMinuto) {
 }
 
 // Definições das rotas (o que fazer quando chamarmos tal coisa)
-app.get('/', (req, res) => {
+app.get(`${vercel}/`, (req, res) => {
   res.json({ message: 'Servidor rodando em homenagem aos saudosos:\nErick Neo\nGuilherme Calixto\nLuciano Batista' });
 });
 
-app.get('/testar-auth', async (req, res) => {
+app.get(`${vercel}/testar-auth`, async (req, res) => {
     console.log('Rota de teste /testar-auth foi chamada!');
     const resultado = await tokenPOST(); // Executa a função de verificação (ali de cima)
     // Envia o resultado da autenticação de volta para o navegador
     res.json(resultado);
   });
  
-app.get('/parada-radar', async (req, res) => {
+app.get(`${vercel}/parada-radar`, async (req, res) => {
   console.log('Iniciando radar nas paradas...');
   try{
     // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
