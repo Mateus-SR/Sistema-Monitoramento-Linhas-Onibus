@@ -1,7 +1,10 @@
 // Use "type: commonjs" in package.json to use CommonJS modules (comentario do exemplo do Vercel)
 const express = require('express'); // Para facilitar o uso geral do node.js
 const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dados da api)
+const cors = require('cors');
+
 const app = express();
+app.use(cors());
 
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
