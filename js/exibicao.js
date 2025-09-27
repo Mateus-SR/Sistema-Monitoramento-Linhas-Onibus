@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     radarOnibus();
     setInterval(radarOnibus(), 5000);
+    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
+
     const htmlElement = document.documentElement;
 
     const HideBtn = document.getElementById("hideBtn1");
@@ -118,7 +120,7 @@ Seção da API, node, vercel, e afins
         try {
             console.log(`${timestamp}: rodando bloco try.`);
 
-            const response = await fetch (`/parada-radar`);
+            const response = await fetch (`${vercel}/parada-radar`);
             const dados = await response.json;
 
             const tabelaBody = document.getElementById('tabelaBody');
