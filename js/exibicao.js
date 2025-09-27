@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     radarOnibus();
-    setInterval(radarOnibus(), 5000);
+    setInterval(radarOnibus, 5000);
     const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 
     const htmlElement = document.documentElement;
@@ -121,14 +121,15 @@ Seção da API, node, vercel, e afins
             console.log(`${timestamp}: rodando bloco try.`);
 
             const response = await fetch (`${vercel}/parada-radar`);
-            const dados = await response.json;
+            const dados = await response.json();
 
             const tabelaBody = document.getElementById('tabelaBody');
-            innerHTML.tabelaBody = '';
+            tabelaBody.innerHTML = '';
             
             const horaRequest = dados.horaRequest;
 
             dados.resumoPesquisa1.linhas.forEach(linhas => {
+                if (linhas.proximoOnibus) {
                 const codigoLetreiro = linhas.codigoLetreiro;
                 const sentidoLinha = linhas.sentidoLinha;
                 const quantidadeOnibus = linhas.quantidadeOnibus;
@@ -136,8 +137,11 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPrevisao = linhas.proximoOnibus.proximoOnibusPrevisao;
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
-
-                const novaLinha = document.createElement(`tr class="border-b hover:bg-gray-50`);
+                }
+                tabelaBody.appendChild(novaLinha);
+                
+                const novaLinha = document.createElement('tr'); 
+                novaLinha.className = "border-b hover:bg-gray-50";
 
 
                 novaLinha.innerHTML = `
