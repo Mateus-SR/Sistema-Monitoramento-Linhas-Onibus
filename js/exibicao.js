@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
     radarOnibus();
     setInterval(radarOnibus, 5000);
-    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 
     const htmlElement = document.documentElement;
 
@@ -139,7 +139,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 }
                 tabelaBody.appendChild(novaLinha);
-                
+
                 const novaLinha = document.createElement('tr'); 
                 novaLinha.className = "border-b hover:bg-gray-50";
 
