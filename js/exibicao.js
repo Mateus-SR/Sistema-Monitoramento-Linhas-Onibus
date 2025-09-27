@@ -138,10 +138,10 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 }
-                tabelaBody.appendChild(novaLinha);
-
+                
                 const novaLinha = document.createElement('tr'); 
                 novaLinha.className = "border-b hover:bg-gray-50";
+                tabelaBody.appendChild(novaLinha);
 
 
                 novaLinha.innerHTML = `
