@@ -47,6 +47,16 @@ async function tokenPOST() {
     }
   }
 
+function converteHoraMinuto(horaMinuto) {
+  const hmSeparado = horaMinuto.split(':');
+  hora = parseInt(hmSeparado[0]);
+  hora = hora * 60;
+
+  minuto = parseInt(hmSeparado[1]);
+
+  resultado = hora + minuto;
+  return resultado;
+}
 
 // Definições das rotas (o que fazer quando chamarmos tal coisa)
 app.get('/', (req, res) => {
@@ -131,17 +141,6 @@ app.get('/parada-radar', async (req, res) => {
         };
       })
     };
-
-    function converteHoraMinuto(horaMinuto) {
-      const hmSeparado = horaminuto.split(';');
-      parseInt(hora) = hmSeparado[0];
-      hora = hora * 60;
-
-      parseInt(minuto) = hmSeparado[1];
-
-      resultado = hora + minuto;
-      return resultado;
-    }
 
     const resumoPesquisa2 = {
       horaRequest: resultadoPesquisa2.hr,
