@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    radarOnibus();
+    setInterval(radarOnibus(), 5000);
     const htmlElement = document.documentElement;
 
     const HideBtn = document.getElementById("hideBtn1");
