@@ -137,7 +137,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPrevisao = linhas.proximoOnibus.proximoOnibusPrevisao;
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
-                }
+                
                 
                 const novaLinha = document.createElement('tr'); 
                 novaLinha.className = "border-b hover:bg-gray-50";
@@ -157,7 +157,7 @@ Seção da API, node, vercel, e afins
                   </span>Normal</span></td>`
                   
                 tabelaBody.appendChild(novaLinha);
-
+                }
             });
         }
 
