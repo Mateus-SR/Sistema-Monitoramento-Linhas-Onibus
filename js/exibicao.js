@@ -141,8 +141,6 @@ Seção da API, node, vercel, e afins
                 
                 const novaLinha = document.createElement('tr'); 
                 novaLinha.className = "border-b hover:bg-gray-50";
-                tabelaBody.appendChild(novaLinha);
-
 
                 novaLinha.innerHTML = `
             <td class="text-center py-3 px-6 font-extrabold">${codigoLetreiro}</td>
@@ -157,6 +155,9 @@ Seção da API, node, vercel, e afins
                       class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
                   </span>Normal</span></td>`
+                  
+                tabelaBody.appendChild(novaLinha);
+
             });
         }
 
