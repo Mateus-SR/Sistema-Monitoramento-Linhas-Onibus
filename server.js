@@ -104,12 +104,23 @@ app.get('/parada-radar', async (req, res) => {
       linhas: resultadoPesquisa1.p.l.map(linhaIndividual => {
         let proximoOnibus = null;
         if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
+
+          let checkPrevisao = linhaIndividual.vs[0].t;
+          checkPrevisao = converteHoraMinuto(checkPrevisao);
+
+          let horaRequest = resultadoPesquisa2.hr;
+          horaRequest = converteHoraMinuto(horaRequest);
+
+          const resultadoCheck = checkPrevisao - horaRequest;
+
+          if (resultadoCheck >= 0 && resultadoCheck <= 20) {
           proximoOnibus = {
             proximoOnibusCodigo: linhaIndividual.vs[0].p,
             proximoOnibusPrevisao: linhaIndividual.vs[0].t,
             proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
             proximoOnibusPosicaoY: linhaIndividual.vs[0].py
-          };
+          }
+          }
       }
 
         return {
@@ -121,6 +132,17 @@ app.get('/parada-radar', async (req, res) => {
       })
     };
 
+    function converteHoraMinuto(horaMinuto) {
+      const hmSeparado = horaminuto.split(';');
+      parseInt(hora) = hmSeparado[0];
+      hora = hora * 60;
+
+      parseInt(minuto) = hmSeparado[1];
+
+      resultado = hora + minuto;
+      return resultado;
+    }
+
     const resumoPesquisa2 = {
       horaRequest: resultadoPesquisa2.hr,
       ponto: resultadoPesquisa2.p.cp,
@@ -128,12 +150,23 @@ app.get('/parada-radar', async (req, res) => {
       linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
         let proximoOnibus = null;
         if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
+
+          let checkPrevisao = linhaIndividual.vs[0].t;
+          checkPrevisao = converteHoraMinuto(checkPrevisao);
+
+          let horaRequest = resultadoPesquisa2.hr;
+          horaRequest = converteHoraMinuto(horaRequest);
+
+          const resultadoCheck = checkPrevisao - horaRequest;
+
+          if (resultadoCheck >= 0 && resultadoCheck <= 20) {
           proximoOnibus = {
             proximoOnibusCodigo: linhaIndividual.vs[0].p,
             proximoOnibusPrevisao: linhaIndividual.vs[0].t,
             proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
             proximoOnibusPosicaoY: linhaIndividual.vs[0].py
-          };
+          }
+          }
       }
 
         return {
