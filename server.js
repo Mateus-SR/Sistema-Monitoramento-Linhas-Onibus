@@ -15,7 +15,6 @@ let apiSessionCookie = null;
 async function tokenPOST() {
     try {
       console.log('Enviando POST');
-      // ATENÇÃO: Substitua pela URL de autenticação da sua API
       const response = await axios.post(`${apiURL}/Login/Autenticar?token=${tolkien}`);
   
       // A resposta da SPTrans em caso de sucesso é o booleano 'true' e um cookie.
@@ -26,7 +25,7 @@ async function tokenPOST() {
 
         console.log(`(Cookie armazenado em apiSessionCookie)`);
         console.log(`Sucesso na autenticação! Status: ${response.status}`);
-        // Esse ainda é um caso apenas de teste, e não estamos guardando nenhuma informação importante para rodar as proximas consultas na api
+
         return { success: true, status: response.status, data: response.data };
       } else {
         // Se a resposta não for 'true', algo deu errado mesmo com status 200.
