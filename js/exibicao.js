@@ -165,7 +165,7 @@ Seção da API, node, vercel, e afins
     }
 
     function constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, proximoOnibusPosicaoX, proximoOnibusPosicaoY) {
-
+        
         const novaLinha = document.createElement('tr'); 
         novaLinha.className = "border-b hover:bg-gray-50";
 
@@ -174,19 +174,19 @@ Seção da API, node, vercel, e afins
             <td class="text-center py-3 px-6 ">${sentidoLinha}</td>
             <td class="text-center py-3 px-6 ">${proximoOnibusPrevisao}</td>`
 
-        constroiStatus();
+            constroiStatus(novaLinha);
           
         tabelaBody.appendChild(novaLinha);
     };
 
-    function constroiStatus() {
-        novaLinha.innerHTML += `
-            <td class="text-center py-3 px-6">
-                <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm lg:text-2xl">
-                    <span class="relative flex w-2 h-2 mr-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
-                    </span>Normal
-                </span></td>`
+    function constroiStatus(novaLinha) {
+        return novaLinha.innerHTML += `
+        <td class="text-center py-3 px-6">
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm lg:text-2xl">
+                <span class="relative flex w-2 h-2 mr-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+                </span>Normal
+            </span></td>`
     }
 });
