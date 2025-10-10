@@ -6,12 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const htmlElement = document.documentElement;
 
+    const registroOnibus = new Map();
+
     const HideBtn = document.getElementById("hideBtn1");
     const HideElement = document.getElementById("hideElement1");
     const Clock = document.getElementById("horas");
     const minus = document.getElementById('minus');
     const plus = document.getElementById('plus');
     const minusPlus = document.getElementById('minusPlus');
+
+
 
 
     const HideBtnText = document.getElementById('HideBtnText');
@@ -138,6 +142,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
+                escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
 
                 }
@@ -164,6 +169,19 @@ Seção da API, node, vercel, e afins
         }
     }
 
+    function escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest) {
+        const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
+
+        if (!onibusExistente) {
+            registroOnibus.set(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest)
+        } else {
+
+        }
+
+    }
+
+
+
     function constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest) {
         
         const novaLinha = document.createElement('tr'); 
@@ -180,9 +198,7 @@ Seção da API, node, vercel, e afins
     };
 
     function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao) {
-        if (!horarioPraSempre) {
-            const horarioPrevistoPromessa = converteHoraMinuto(proximoOnibusPrevisao);
-        }
+        let horarioPrevistoPromessa = converteHoraMinuto(registroOnibus.get(proximoOnibusPrevisao));
 
         let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
 
