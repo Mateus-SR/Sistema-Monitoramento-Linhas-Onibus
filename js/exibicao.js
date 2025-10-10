@@ -138,7 +138,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
-                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, proximoOnibusPosicaoX, proximoOnibusPosicaoY);
+                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
 
                 }
             });
@@ -154,7 +154,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
                 
-                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, proximoOnibusPosicaoX, proximoOnibusPosicaoY);
+                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 }
             });
         }
@@ -164,7 +164,7 @@ Seção da API, node, vercel, e afins
         }
     }
 
-    function constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, proximoOnibusPosicaoX, proximoOnibusPosicaoY) {
+    function constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest) {
         
         const novaLinha = document.createElement('tr'); 
         novaLinha.className = "border-b hover:bg-gray-50";
@@ -174,19 +174,54 @@ Seção da API, node, vercel, e afins
             <td class="text-center py-3 px-6 ">${sentidoLinha}</td>
             <td class="text-center py-3 px-6 ">${proximoOnibusPrevisao}</td>`
 
-            constroiStatus(novaLinha);
+            constroiStatus(novaLinha, horaRequest);
           
-        tabelaBody.appendChild(novaLinha);
+        tabelaBody.appendChild(novaLinha, horaRequest, proximoOnibusPrevisao);
     };
 
-    function constroiStatus(novaLinha) {
+    function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao) {
+        if (!horarioPraSempre) {
+            const horarioPrevistoPromessa = converteHoraMinuto(proximoOnibusPrevisao);
+        }
+
+        let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
+
+        let diferencaPrevisoes = horarioPrevistoPromessa - horarioPrevistoAtual;
+
+
+        var statusCor = "green"; // é o default
+        var statusTexto = "Normal"; // é o default
+
+        if (diferencaPrevisoes < -3) {
+            var statusCor = "yellow";
+            var statusTexto = "Atrasado"; 
+        } else if (diferencaPrevisoes > 3) {
+            var statusCor = "blue";
+            var statusTexto = "Adiantado"; 
+        }
+        
+
+
         return novaLinha.innerHTML += `
         <td class="text-center py-3 px-6">
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm lg:text-2xl">
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-${statusCor}-100 text-${statusCor}-700 font-semibold text-sm lg:text-2xl">
                 <span class="relative flex w-2 h-2 mr-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
-                </span>Normal
-            </span></td>`
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-${statusCor}-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-${statusCor}-600"></span>
+                </span
+            ${statusTexto}
+            </span>
+        </td>`
+    }
+
+    function converteHoraMinuto(horaMinuto) {
+    const hmSeparado = horaMinuto.split(':');
+    hora = parseInt(hmSeparado[0]);
+    hora = hora * 60;
+
+    minuto = parseInt(hmSeparado[1]);
+
+    resultado = hora + minuto;
+    return resultado;
     }
 });
