@@ -158,7 +158,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
-                
+                escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 }
             });
