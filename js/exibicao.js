@@ -144,7 +144,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
-                escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
+                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 
                 onibusAtivos.add(proximoOnibusCodigo);
@@ -161,7 +161,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
-                escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
+                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
 
                 onibusAtivos.add(proximoOnibusCodigo);
@@ -181,7 +181,7 @@ Seção da API, node, vercel, e afins
         }
     }
 
-    function escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest) {
+    function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest) {
         const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
 
         if (!onibusExistente) {
