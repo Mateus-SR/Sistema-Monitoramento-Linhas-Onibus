@@ -120,7 +120,9 @@ Seção da API, node, vercel, e afins
  
     async function radarOnibus() { 
         const timestamp = Date.now();
-    
+        
+        const onibusAtivos = new Set();
+
         try {
             console.log(`${timestamp}: rodando bloco try.`);
 
@@ -145,7 +147,7 @@ Seção da API, node, vercel, e afins
                 escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 
-                console.log('Registro dos Onibus: ', registroOnibus);
+                onibusAtivos.add(proximoOnibusCodigo);
                 }
             });
 
@@ -161,8 +163,16 @@ Seção da API, node, vercel, e afins
                 
                 escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
+
+                onibusAtivos.add(proximoOnibusCodigo);
                 }
             });
+
+            registroOnibus.forEach(function(value, key){
+                if (!onibusAtivos.has(key)) {
+                    registroOnibus.delete(key);
+                }
+            })
         }
 
         catch (error) {
@@ -175,9 +185,9 @@ Seção da API, node, vercel, e afins
 
         if (!onibusExistente) {
             registroOnibus.set(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest)
-        } else {
+        };
 
-        }
+        console.log('Registro dos Onibus: ', registroOnibus);
 
     }
 
@@ -218,12 +228,13 @@ Seção da API, node, vercel, e afins
             statusTexto = "Adiantado"; 
         }
         
+        /* DEBUG Apenas para verificar as informações que estamos guardando
         console.log(`Onibus: ${proximoOnibusCodigo}`);
         console.log(`promessaGuardada: ${promessaGuardada}`);
         console.log(`horarioPrevistoPromessa: ${horarioPrevistoPromessa}`);
         console.log(`horarioPrevistoAtual: ${horarioPrevistoAtual}`);
         console.log(`diferencaPrevisoes: ${diferencaPrevisoes}`);
-
+        */ 
 
         return novaLinha.innerHTML += `
         <td class="text-center py-3 px-6">
