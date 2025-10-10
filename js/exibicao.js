@@ -219,7 +219,7 @@ Seção da API, node, vercel, e afins
         var statusCor = "green"; // é o default
         var statusTexto = "Normal"; // é o default
 
-        if (diferencaPrevisoes => 3) {
+        if (diferencaPrevisoes >= 3) {
             statusCor = "yellow";
             statusTexto = "Atrasado"; 
         } else if (diferencaPrevisoes <= -3) {
