@@ -183,9 +183,13 @@ Seção da API, node, vercel, e afins
 
     function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest) {
         const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
-
+        const onibusRegistroInfo = { 
+            Letreiro: codigoLetreiro
+            Previsao: proximoOnibusPrevisao,
+            DataPedido: horaRequest
+        }
         if (!onibusExistente) {
-            registroOnibus.set(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest)
+            registroOnibus.set(proximoOnibusCodigo, onibusRegistroInfo)
         };
 
     }
