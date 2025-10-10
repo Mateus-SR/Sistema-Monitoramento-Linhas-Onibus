@@ -184,10 +184,11 @@ Seção da API, node, vercel, e afins
     function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest) {
         const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
         const onibusRegistroInfo = { 
-            Letreiro: codigoLetreiro
+            Letreiro: codigoLetreiro,
             Previsao: proximoOnibusPrevisao,
             DataPedido: horaRequest
-        }
+        };
+
         if (!onibusExistente) {
             registroOnibus.set(proximoOnibusCodigo, onibusRegistroInfo)
         };
@@ -208,7 +209,7 @@ Seção da API, node, vercel, e afins
 
             constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo);
           
-        tabelaBody.appendChild(novaLinha, horaRequest, proximoOnibusPrevisao);
+        tabelaBody.appendChild(novaLinha);
     };
 
     function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo) {
