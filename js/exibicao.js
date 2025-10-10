@@ -144,7 +144,8 @@ Seção da API, node, vercel, e afins
                 
                 escreveOnibus(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
                 constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
-
+                
+                console.log('Registro dos Onibus: ', registroOnibus);
                 }
             });
 
@@ -203,20 +204,25 @@ Seção da API, node, vercel, e afins
 
         let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
 
-        let diferencaPrevisoes = horarioPrevistoPromessa - horarioPrevistoAtual;
+        let diferencaPrevisoes = horarioPrevistoAtual - horarioPrevistoPromessa;
 
 
         var statusCor = "green"; // é o default
         var statusTexto = "Normal"; // é o default
 
-        if (diferencaPrevisoes < -3) {
+        if (diferencaPrevisoes > 3) {
             statusCor = "yellow";
             statusTexto = "Atrasado"; 
-        } else if (diferencaPrevisoes > 3) {
+        } else if (diferencaPrevisoes < -3) {
             statusCor = "blue";
             statusTexto = "Adiantado"; 
         }
         
+        console.log(`Onibus: ${proximoOnibusCodigo}`);
+        console.log(`promessaGuardada: ${promessaGuardada}`);
+        console.log(`horarioPrevistoPromessa: ${horarioPrevistoPromessa}`);
+        console.log(`horarioPrevistoAtual: ${horarioPrevistoAtual}`);
+        console.log(`diferencaPrevisoes: ${diferencaPrevisoes}`);
 
 
         return novaLinha.innerHTML += `
@@ -233,10 +239,10 @@ Seção da API, node, vercel, e afins
 
     function converteHoraMinuto(horaMinuto) {
     const hmSeparado = horaMinuto.split(':');
-    hora = parseInt(hmSeparado[0]);
+    let hora = parseInt(hmSeparado[0]);
     hora = hora * 60;
 
-    minuto = parseInt(hmSeparado[1]);
+    let minuto = parseInt(hmSeparado[1]);
 
     resultado = hora + minuto;
     return resultado;
