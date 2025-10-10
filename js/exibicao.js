@@ -214,7 +214,7 @@ Seção da API, node, vercel, e afins
 
     function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo) {
         const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
-        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada);
+        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada.Previsao);
 
         let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
 
