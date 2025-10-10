@@ -185,7 +185,7 @@ Seção da API, node, vercel, e afins
         const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
 
         if (!onibusExistente) {
-            registroOnibus.set(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest)
+            registroOnibus.set(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest)
         };
 
     }
