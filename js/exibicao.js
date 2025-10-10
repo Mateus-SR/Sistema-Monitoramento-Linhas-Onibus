@@ -192,13 +192,14 @@ Seção da API, node, vercel, e afins
             <td class="text-center py-3 px-6 ">${sentidoLinha}</td>
             <td class="text-center py-3 px-6 ">${proximoOnibusPrevisao}</td>`
 
-            constroiStatus(novaLinha, horaRequest);
+            constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo);
           
         tabelaBody.appendChild(novaLinha, horaRequest, proximoOnibusPrevisao);
     };
 
-    function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao) {
-        let horarioPrevistoPromessa = converteHoraMinuto(registroOnibus.get(proximoOnibusPrevisao));
+    function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo) {
+        const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
+        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada);
 
         let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
 
