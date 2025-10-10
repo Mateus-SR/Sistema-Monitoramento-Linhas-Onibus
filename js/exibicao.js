@@ -210,11 +210,11 @@ Seção da API, node, vercel, e afins
         var statusTexto = "Normal"; // é o default
 
         if (diferencaPrevisoes < -3) {
-            var statusCor = "yellow";
-            var statusTexto = "Atrasado"; 
+            statusCor = "yellow";
+            statusTexto = "Atrasado"; 
         } else if (diferencaPrevisoes > 3) {
-            var statusCor = "blue";
-            var statusTexto = "Adiantado"; 
+            statusCor = "blue";
+            statusTexto = "Adiantado"; 
         }
         
 
