@@ -168,6 +168,7 @@ Seção da API, node, vercel, e afins
                 }
             });
 
+            console.log('Registro dos Onibus: ', registroOnibus);
             registroOnibus.forEach(function(value, key){
                 if (!onibusAtivos.has(key)) {
                     registroOnibus.delete(key);
@@ -186,8 +187,6 @@ Seção da API, node, vercel, e afins
         if (!onibusExistente) {
             registroOnibus.set(proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest)
         };
-
-        console.log('Registro dos Onibus: ', registroOnibus);
 
     }
 
@@ -220,10 +219,10 @@ Seção da API, node, vercel, e afins
         var statusCor = "green"; // é o default
         var statusTexto = "Normal"; // é o default
 
-        if (diferencaPrevisoes > 3) {
+        if (diferencaPrevisoes => 3) {
             statusCor = "yellow";
             statusTexto = "Atrasado"; 
-        } else if (diferencaPrevisoes < -3) {
+        } else if (diferencaPrevisoes <= -3) {
             statusCor = "blue";
             statusTexto = "Adiantado"; 
         }
