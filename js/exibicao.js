@@ -343,3 +343,18 @@ Seção da API, node, vercel, e afins
         return resultado;
     }
 });
+document.getElementById('barraPesquisa').addEventListener('input', function () {
+  const filtro = this.value.toLowerCase();
+  const linhas = document.querySelectorAll('#tabelaBody tr');
+
+  linhas.forEach(linha => {
+    const codigo = linha.cells[0].textContent.toLowerCase();
+    const nome = linha.cells[1].textContent.toLowerCase();
+
+    if (codigo.includes(filtro) || nome.includes(filtro)) {
+      linha.style.display = '';
+    } else {
+      linha.style.display = 'none';
+    }
+  });
+});
