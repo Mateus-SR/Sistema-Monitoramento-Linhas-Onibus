@@ -202,3 +202,24 @@ h1 {
     transform: rotate(45deg) translate(-5px, -7px);
   }
 }
+#barraPesquisa {
+  transition: all 0.3s ease;
+}
+
+#barraPesquisa:focus {
+  background-color: #f9f9f9;
+}
+#mapa {
+  width: 600px;   /* largura */
+  height: 500px;  /* altura igual à largura */
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.content-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start; /* alinha à esquerda */
+  margin-top: 1.5rem;
+  margin-left: 22rem;
+}

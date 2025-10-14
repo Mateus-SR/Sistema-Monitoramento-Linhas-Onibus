@@ -21,6 +21,7 @@
 </head>
 
 <body>
+  
   <!-- topbar -->
   <div id="hideElement1" class="transition-transform duration-700 ease-in-out z-50">
     <header class="topbar" role="banner">
@@ -40,9 +41,9 @@
 
           <ul class="nav-list">
             <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
-            <li><a class="nav-link" href="#mapa">Mapa</a></li>
+            <li><a class="nav-link" href="index.html">Mapa</a></li>
             <li><a class="nav-link" href="exibicao.html">Linhas</a></li>
-            <li><a class="nav-link" href="#alertas">Alertas</a></li>
+            <li><a class="nav-link" href="personalizacao.html">Suas Linhas</a></li>
             <li><a class="nav-link" href="#sobre">Sobre</a></li>
           </ul>
         </nav>
@@ -82,7 +83,7 @@
 
 
   <!-- A área das linhas em exibição -->
-  <section id="linhas" class="max-w-full px-4 lg:px-10">
+  <section id="linhas" class="max-w-full px-4 lg:px-10 pt-64">
     <div class="bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
 
       <div class="mb-2 flex flex-col text-center justify-evenly tracking-wide">
@@ -93,6 +94,15 @@
         -->
 
       </div>
+      <!-- Campo de pesquisa -->
+<div class="mb-4 flex justify-center">
+  <input 
+    type="text" 
+    id="barraPesquisa" 
+    placeholder="Pesquisar linha"
+    class="w-5 max-w-lg px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans"
+  />
+</div>
 
       <table class="min-w-full border-collapse mx-auto table-auto
       lg:text-3xl">

@@ -50,44 +50,34 @@
     </div>
   </header>
 
-  <main>
-    <!-- Hero -->
-    <section class="hero flex" id="inicio">
-      <div class="container hero-grid">
-        <div>
-          <div class="kicker">Transporte urbano</div>
-          <h1>Monitoramento de <br>ônibus <span style="color:var(--red)">em tempo real</span></h1>
-          <p class="sub">Acompanhe a posição dos veículos, horários previstos e atrasos</p>
-        </div>
-      </div>
-    </section>
 
-    <!-- Mapa -->
-   <section class="content-row justify-start mx-auto" id="mapa-section">
-  <div id="mapa" class="w-96 h-96"></div>
-
-
-</section>
-  </main>
-
-  <!-- Botão flutuante -->
-  <div class="fixed bottom-32 right-12 md:bottom-32 md:right-12">
-    <a href="exibicao.html" 
-       class="bg-red-600 text-white font-bold
-              px-12 py-5 md:px-8 md:py-5 
-              text-2xl md:text-4xl 
-              rounded-2xl shadow-lg 
-              hover:bg-red-800  
-              focus:ring-2 focus:ring-red-400 focus:ring-opacity-75
-              transition-all duration-200 ease-out">
-      Acessar
-    </a>
+  <!-- Campo de pesquisa -->
+  <div class="flex justify-center my-6">
+    <input 
+      type="text" 
+      id="barraPesquisaFavoritos"
+      placeholder="Pesquisar linha"
+      class="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans"
+    />
   </div>
 
-  <!-- Scripts -->
-  <script src="js/mobile-navbar.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="js/mapa.js"></script>
+  <!-- Tabela de linhas -->
+  <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6 overflow-x-auto">
+    <table class="min-w-full table-auto border-collapse">
+      <thead>
+        <tr class="bg-gray-100 font-bold">
+          <th class="py-3 px-6 text-center">Código</th>
+          <th class="py-3 px-6 text-center">Nome</th>
+          <th class="py-3 px-6 text-center">Previsão</th>
+          <th class="py-3 px-6 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaFavoritos">
+        <!-- JS vai inserir aqui -->
+      </tbody>
+    </table>
+  </div>
 
+  <script src="js/personalizacao.js"></script>
 </body>
 </html>
