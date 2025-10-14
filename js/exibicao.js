@@ -343,13 +343,18 @@ Seção da API, node, vercel, e afins
         return resultado;
     }
 });
-const input = document.getElementById('barraPesquisa');
-input.addEventListener('input', function() {
-  const filtro = this.value.toLowerCase();
-  const linhas = document.querySelectorAll('#tabelaBody tr');
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('barraPesquisa');
+  const tabela = document.getElementById('tabelaBody');
+  const linhas = tabela.getElementsByTagName('tr');
 
-  linhas.forEach(linha => {
-    const texto = linha.textContent.toLowerCase();
-    linha.style.display = texto.includes(filtro) ? '' : 'none';
+  input.addEventListener('input', () => {
+    const filtro = input.value.toLowerCase();
+
+    for (let i = 0; i < linhas.length; i++) {
+      const linha = linhas[i];
+      const texto = linha.textContent.toLowerCase();
+      linha.style.display = texto.includes(filtro) ? '' : 'none';
+    }
   });
 });
