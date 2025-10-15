@@ -259,7 +259,7 @@ Seção da API, node, vercel, e afins
                 celulaPrevisao.textContent = value.Previsao;
 
                 const celulaStatus = linhaExistente.querySelector('.status');
-                const novoStatus = constroiStatus(value, value.Previsao);
+                const novoStatus = constroiStatus(value);
 
                 celulaStatus.outerHTML = novoStatus;
                 
@@ -270,7 +270,16 @@ Seção da API, node, vercel, e afins
             const codigo = onibus.id.split('-')[1];
 
             if (!onibusAtivos.has(codigo)) {
-                onibus.remove();
+                if (!onibus.classList.contains('animate-fadeOut')) {
+                    onibus.classList.add('animate-fadeOut');
+
+                    onibus.addEventListener('animationend', () =>{
+                        onibus.remove();
+                        onibus?.classList.remove('animate-fadeOut');
+                }, {once: true});
+                }
+            } else {
+                onibus.classList.remove('animate-fadeOut');
             }
         }
     }
@@ -305,6 +314,12 @@ Seção da API, node, vercel, e afins
         const celulaStatus = constroiStatus(value, proximoOnibusCodigo);
         
         novaLinha.innerHTML = celulaLinhas + celulaStatus
+
+        novaLinha.classList.add('animate-fadeIn');
+
+        novaLinha.addEventListener('animationend', () =>{
+            novaLinha?.classList.remove('animate-fadeIn');
+        }, {once: true});
 
         // Colocamos a linha na tabela
         tabelaBody.appendChild(novaLinha);
