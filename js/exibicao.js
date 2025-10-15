@@ -201,7 +201,7 @@ Seção da API, node, vercel, e afins
                 }
             })
 
-            preparaTabela();
+            preparaTabela(onibusAtivos, horaRequest);
         }
 
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
@@ -244,14 +244,35 @@ Seção da API, node, vercel, e afins
 
     }
 
-    function preparaTabela() {
+    function preparaTabela(onibusAtivos, horaRequest) {
         // Achamos nossa tabela e limpamos ela, preparando para as informações
         const tabelaBody = document.getElementById('tabelaBody');
-        tabelaBody.innerHTML = '';
+        //tabelaBody.innerHTML = '';
 
-        registroOnibus.forEach((value, key) => {
-            constroiTabela(value, key)
+        registroOnibus.forEach((value, proximoOnibusCodigo) => {
+            let linhaExistente = document.getElementById(`onibus-${proximoOnibusCodigo}`);
+
+            if (!linhaExistente) {
+                constroiTabela(value, proximoOnibusCodigo)
+            } else {
+                const celulaPrevisao = linhaExistente.querySelector('.previsao');
+                celulaPrevisao.textContent = value.Previsao;
+
+                const celulaStatus = linhaExistente.querySelector('.status');
+                const novoStatus = constroiStatus(value, value.Previsao);
+
+                celulaStatus.outerHTML = novoStatus;
+                
+            }
         })
+
+        for (const onibus of tabelaBody.children) {
+            const codigo = onibus.id.split('-')[1];
+
+            if (!onibusAtivos.has(codigo)) {
+                onibus.remove();
+            }
+        }
     }
 
 
@@ -273,27 +294,30 @@ Seção da API, node, vercel, e afins
         // criamos nossa linha da tabela (uma por vez, o appendChild adiciona uma nova linha na tabela)
         const novaLinha = document.createElement('tr'); 
         novaLinha.className = "border-b hover:bg-gray-50";
+        novaLinha.id = `onibus-${proximoOnibusCodigo}`
 
-        novaLinha.innerHTML = `
+        const celulaLinhas = `
             <td class="text-center py-3 px-6 font-extrabold">${codigoLetreiro}</td>
             <td class="text-center py-3 px-6 ">${sentidoLinha}</td>
-            <td class="text-center py-3 px-6 ">${proximoOnibusPrevisao}</td>`
+            <td class="text-center py-3 px-6 previsao">${proximoOnibusPrevisao}</td>`
 
-            // Terminando de construir a linha, vamos construir o status
-            constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo);
+        // Terminando de construir a linha, vamos construir o status
+        const celulaStatus = constroiStatus(value, proximoOnibusCodigo);
         
+        novaLinha.innerHTML = celulaLinhas + celulaStatus
+
         // Colocamos a linha na tabela
         tabelaBody.appendChild(novaLinha);
     };
 
-    function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo) {
+    function constroiStatus(value) {
         // Recebemos as informações do "dicionario" (lista de Registros)
-        const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
+        //const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
 
         // Como nós colocamos mais de uma informação aonde só poderia ter uma unica...
         // ...vamos ter que pegar apenas o que queremos agora (no caso, a Previsão)
-        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada.Promessa);
-        let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
+        let horarioPrevistoPromessa = converteHoraMinuto(value.Promessa);
+        let horarioPrevistoAtual = converteHoraMinuto(value.Previsao);
         // Nessas duas variaveis em cima, estamos jogando horarios (promessa e previsão) em uma função que transforma o horario em minutos
         // Explicação: 22:40 vira 22 horas e 40 minutos. Por quê? Não podemos trabalhar com horas e minutos ao mesmo tempo.
         // Então? Vamos transformar tudo em minutos (pra não ter que trabalhar com decimais):
@@ -335,8 +359,8 @@ Seção da API, node, vercel, e afins
         // O javascript roda "em tempo real" e, se o valor da nossa variavel "statusCor" é "green" (veja ali em cima!)...
         // ...ele automaticamente pensa que deve escrever bg-green-100! E se for "yellow"...? Ele vai ler bg-yellow-100!
         // (isso só é possivel por causa que estamos inserindo um html através de um "template string". São os acentos: ``)
-        return novaLinha.innerHTML += `
-        <td class="text-center py-3 px-6">
+        return `
+        <td class="text-center py-3 px-6 status">
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-${statusCor}-100 text-${statusCor}-700 font-semibold text-sm lg:text-2xl">
                 <span class="relative flex w-2 h-2 mr-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-${statusCor}-400 opacity-75"></span>
