@@ -143,10 +143,6 @@ Seção da API, node, vercel, e afins
             const response = await fetch (`${vercel}/parada-radar`);
             // E quebramos ele, para ler como um arquivo .json
             const dados = await response.json();
-
-            // Achamos nossa tabela e limpamos ela, preparando para as informações
-            const tabelaBody = document.getElementById('tabelaBody');
-            tabelaBody.innerHTML = '';
             
             const horaRequest = dados.horaRequest;
 
@@ -165,11 +161,8 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
                 // Registrar nosso onibus na lista de Registros (não confundir com Ativos), para sabermos se ele ainda existe no sistema
-                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest);
+                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
 
-                // Estando tudo certo, construimos nossa tabela, inserindo cada coisa na sua respectiva célula
-                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
-                
                 // Adicionamos o onibus na lista de Ativos (não confundir com Registros)
                 onibusAtivos.add(proximoOnibusCodigo);
                 }
@@ -187,8 +180,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
-                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest);
-                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
+                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
 
                 onibusAtivos.add(proximoOnibusCodigo);
                 }
@@ -208,6 +200,8 @@ Seção da API, node, vercel, e afins
                     registroOnibus.delete(key);
                 }
             })
+
+            preparaTabela();
         }
 
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
@@ -217,7 +211,7 @@ Seção da API, node, vercel, e afins
     }
 
     // A função para colocar os onibus na lista de Registros (junto de informações uteis)
-    function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest) {
+    function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest) {
         // Como essa lista de Registros é um map(), ele funciona como um dicionario:
         // temos nossa "chave" e nosso "valor". No caso, a "chave" seria a palavra do dicionario que estamos procurando...
         // e o "valor" literalmente são as informações a respeito da palavra
@@ -228,6 +222,9 @@ Seção da API, node, vercel, e afins
         // Criamos um objeto/conjunto de informações (explico melhor ali em baixo)
         const onibusRegistroInfo = { 
             Letreiro: codigoLetreiro,
+            NomeSentido: sentidoLinha,
+            QntdOnibus: quantidadeOnibus,
+            Promessa: proximoOnibusPrevisao,
             Previsao: proximoOnibusPrevisao,
             DataPedido: horaRequest
         };
@@ -239,14 +236,40 @@ Seção da API, node, vercel, e afins
             // map() recebe apenas 2 parametros por item: a chave e o valor (no singular).
             // Se queremos colocar mais valores, precisamos fazer isso atráves de um objeto com todos os outros...
             // ...mas aí, precisaremos quebrar esse objeto para resgatar os valores de dentro dele
+        } else {
+            const fichaAntiga = registroOnibus.get(proximoOnibusCodigo);
+            fichaAntiga.Previsao = proximoOnibusPrevisao;
+            registroOnibus.set(proximoOnibusCodigo, fichaAntiga);
         };
 
     }
 
+    function preparaTabela() {
+        // Achamos nossa tabela e limpamos ela, preparando para as informações
+        const tabelaBody = document.getElementById('tabelaBody');
+        tabelaBody.innerHTML = '';
+
+        registroOnibus.forEach((value, key) => {
+            constroiTabela(value, key)
+        })
+    }
+
+
+
 
     // A função que chamamos lá em cima para construir a tabela, recebendo as informações que vamos usar
-    function constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest) {
+    function constroiTabela(value, proximoOnibusCodigo) {
+        //const onibusRegistroInfo = registroOnibus.get(proximoOnibusCodigo);
+
+        const codigoLetreiro = value.Letreiro;
+        const sentidoLinha = value.NomeSentido;
+        const quantidadeOnibus = value.QntdOnibus;
         
+        const proximoOnibusPrevisao = value.Previsao;
+        const horaRequest = value.DataPedido;
+
+
+
         // criamos nossa linha da tabela (uma por vez, o appendChild adiciona uma nova linha na tabela)
         const novaLinha = document.createElement('tr'); 
         novaLinha.className = "border-b hover:bg-gray-50";
@@ -269,7 +292,7 @@ Seção da API, node, vercel, e afins
 
         // Como nós colocamos mais de uma informação aonde só poderia ter uma unica...
         // ...vamos ter que pegar apenas o que queremos agora (no caso, a Previsão)
-        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada.Previsao);
+        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada.Promessa);
         let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
         // Nessas duas variaveis em cima, estamos jogando horarios (promessa e previsão) em uma função que transforma o horario em minutos
         // Explicação: 22:40 vira 22 horas e 40 minutos. Por quê? Não podemos trabalhar com horas e minutos ao mesmo tempo.
@@ -343,6 +366,7 @@ Seção da API, node, vercel, e afins
         return resultado;
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('barraPesquisa');
   const tabela = document.getElementById('tabelaBody');
