@@ -3,6 +3,8 @@ const express = require('express'); // Para facilitar o uso geral do node.js
 const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dados da api)
 const cors = require('cors');
 
+import { prisma } from './lib/prisma.js';
+
 const app = express();
 app.use(cors());
 

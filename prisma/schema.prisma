@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model configuracao {
+  id_cof             Int      @id
+  distanciatempo_cof Int
+  statustempo_cof    Int
+  usu_id             Int?
+  usuario            usuario? @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model fatec {
+  id_fac   Int       @id
+  name_fac String?   @db.VarChar(100)
+  usuario  usuario[]
+}
+
+model relatorio {
+  id_rel          Int      @id
+  nomeonibus_rel  String   @db.VarChar(100)
+  atrasado_rel    Int
+  adiantado_rel   Int
+  mediaespera_rel String   @db.Char(4)
+  usu_id          Int?
+  usuario         usuario? @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model usuario {
+  id_usu       Int            @id
+  email_usu    String         @unique @default("") @db.VarChar(100)
+  senha_usu    String         @default("") @db.VarChar(100)
+  fac_id       Int?
+  created_at   DateTime       @default(now()) @db.Timestamp(6)
+  configuracao configuracao[]
+  relatorio    relatorio[]
+  fatec        fatec?         @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
+}
