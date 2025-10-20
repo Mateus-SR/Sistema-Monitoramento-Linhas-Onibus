@@ -6,6 +6,7 @@
     "@prisma/client": "^6.17.1",
     "@tailwindcss/cli": "^4.1.13",
     "axios": "^1.12.2",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "tailwindcss": "^4.1.13"

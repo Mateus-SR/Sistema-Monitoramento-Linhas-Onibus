@@ -3,15 +3,44 @@ const express = require('express'); // Para facilitar o uso geral do node.js
 const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dados da api)
 const cors = require('cors');
 
+
 import { prisma } from './lib/prisma.js';
+import { Prisma } from '@prisma/client';
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
 const paradaPrevisao = '/Previsao/Parada?codigoParada=';
 let apiSessionCookie = null;
+
+app.post('/criar-usuario', async (req, res) => {
+
+  const { nome, email, senha } = req.body;
+
+  try {
+    const senha_hash = await bcrypt.hash(senha, 10);
+    await prisma.usuario.create({
+      data: {
+        nome_usu: nome,
+        email_usu: email,
+        senha_usu: senha_hash
+      }
+    });
+    res.status(201).json({
+      message: "Sucesso ao criar usuário!"
+    });
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({
+      error: 'Erro ao criar usuario.'
+    });
+  }
+});
 
 
 async function tokenPOST() {
@@ -194,6 +223,12 @@ app.get('/parada-radar', async (req, res) => {
     res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'})
   }
 })
+
+/*#######################################################################################################
+Seção da API, node, vercel, e afins
+#######################################################################################################*/
+
+
 
 
 
