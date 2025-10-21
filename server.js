@@ -19,15 +19,16 @@ let apiSessionCookie = null;
 
 app.post('/criar-usuario', async (req, res) => {
 
-  const { nome, email, senha } = req.body;
+  const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
 
   try {
     const senha_hash = await bcrypt.hash(senha, 10);
     await prisma.usuario.create({
       data: {
-        nome_usu: nome,
+        //nome_usu: nome,
         email_usu: email,
-        senha_usu: senha_hash
+        senha_usu: senha_hash,
+        fatec_id: 1
       }
     });
     res.status(201).json({

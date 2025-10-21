@@ -69,9 +69,37 @@ function validarCadastro() {
     if (validarCampos(dados, 'cadastro')) {
 
         // Se o codigo retornar verdadeiro (true), redireciona
-        window.location.href = "login.html";
+        enviarCadastroParaServidor(dados);
     }
 }
+
+async function enviarCadastroParaServidor(dados) {
+    const url = 'https://sistema-monitoramento-linhas-onibus.vercel.app/criar-usuario';
+
+    try {
+        const resposta = await fetch(url, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dados), 
+        });
+
+        const dadosResposta = await resposta.json();
+
+        if (resposta.ok) { // 'ok' significa status 200-299 (o nosso 201)
+            console.log(dadosResposta.message);
+            window.location.href = "login.html"; // Redireciona SÓ SE der certo
+        
+        } else { 
+            console.log('Erro: ' + dadosResposta.error); 
+        }
+
+    } catch (error) {
+        console.error('Falha ao conectar com o servidor:', error);
+        //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
+    }
+};
 
 function validarCampos(dados, tipo) {
 
