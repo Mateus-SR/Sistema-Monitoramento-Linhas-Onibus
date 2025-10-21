@@ -56,13 +56,14 @@ function validarLogin() {
 
 function validarCadastro() {
     // Pega os valores (value, checked) dos elementos
+    const nome = document.getElementById("text").value.trim();
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("password").value.trim();
     const instituicao = document.getElementById("instituicao").value;
     const semInstituicao = document.getElementById("semInstituicao").checked;
 
     // Junta os quatro em uma variavel
-    const dados ={email, senha, instituicao, semInstituicao};
+    const dados ={nome, email, senha, instituicao, semInstituicao};
 
     // Envia os quatro dados + a informação de qual tipo de validação estamos usando
     if (validarCampos(dados, 'cadastro')) {

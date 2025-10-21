@@ -4,8 +4,8 @@ const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dad
 const cors = require('cors');
 
 
-import { prisma } from './lib/prisma.js';
-import { Prisma } from '@prisma/client';
+const { PrismaClient, Prisma } = require('@prisma/client');
+const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
 
 const app = express();
