@@ -28,7 +28,7 @@ app.post('/criar-usuario', async (req, res) => {
         //nome_usu: nome,
         email_usu: email,
         senha_usu: senha_hash,
-        fatec_id: 1
+        fac_id: 1
       }
     });
     res.status(201).json({
