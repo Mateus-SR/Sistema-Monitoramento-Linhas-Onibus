@@ -33,7 +33,7 @@ model relatorio {
 }
 
 model usuario {
-  id_usu       Int            @id
+  id_usu       Int            @id @default(autoincrement())
   email_usu    String         @unique @default("") @db.VarChar(100)
   senha_usu    String         @default("") @db.VarChar(100)
   fac_id       Int?
