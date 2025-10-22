@@ -25,7 +25,7 @@ app.post('/criar-usuario', async (req, res) => {
     const senha_hash = await bcrypt.hash(senha, 10);
     await prisma.usuario.create({
       data: {
-        //nome_usu: nome,
+        nome_usu: nome,
         email_usu: email,
         senha_usu: senha_hash,
         fac_id: 1
