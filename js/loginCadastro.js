@@ -63,7 +63,7 @@ function validarCadastro() {
     const semInstituicao = document.getElementById("semInstituicao").checked;
 
     // Junta os quatro em uma variavel
-    const dados ={nome, email, senha, instituicao, semInstituicao};
+    const dados = {nome, email, senha, instituicao, semInstituicao};
 
     // Envia os quatro dados + a informação de qual tipo de validação estamos usando
     if (validarCampos(dados, 'cadastro')) {
@@ -74,7 +74,7 @@ function validarCadastro() {
 }
 
 async function enviarUsuarioParaServidor(dados, tipo) {
-    const url = 'https://sistema-monitoramento-linhas-onibus.vercel.app/criar-usuario';
+    const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/${tipo}-usuario`;
 
     try {
         const resposta = await fetch(url, {

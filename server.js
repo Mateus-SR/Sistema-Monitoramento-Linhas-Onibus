@@ -18,7 +18,7 @@ const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
 const paradaPrevisao = '/Previsao/Parada?codigoParada=';
 let apiSessionCookie = null;
 
-app.post('/criar-usuario', async (req, res) => {
+app.post('/cadastro-usuario', async (req, res) => {
 
   const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
 
@@ -44,7 +44,7 @@ app.post('/criar-usuario', async (req, res) => {
   }
 });
 
-app.post('/logar-usuario', async (req, res) => {
+app.post('/login-usuario', async (req, res) => {
   const {email, senha} = req.body;
 
   try {
@@ -75,10 +75,10 @@ app.post('/logar-usuario', async (req, res) => {
       );
 
       res.status(200).json({
-        message: 'Sucesso!',
+        message: 'Sucesso ao logar!',
         tokenLogin: tokenLogin
        });
-       
+
     } else {
       return res.status(401).json({
         error: 'E-mail ou senha inválidos.'
