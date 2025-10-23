@@ -35,6 +35,7 @@ model relatorio {
 model usuario {
   id_usu       Int            @id @default(autoincrement())
   email_usu    String         @unique @default("") @db.VarChar(100)
+  nome_usu     String         @default("Desconhecido") @db.VarChar(100)
   senha_usu    String         @default("") @db.VarChar(100)
   fac_id       Int?
   created_at   DateTime       @default(now()) @db.Timestamp(6)
