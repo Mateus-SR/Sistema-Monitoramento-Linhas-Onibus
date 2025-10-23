@@ -10,9 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const semInstituicaoBotao = document?.getElementById('semInstituicao');
 
     const esqueciSenha = document?.getElementById('esqueciSenha');
-
-    const tokenLogin = localStorage?.getItem('tokenLogin');
-
     // Configurando para os botôes funcionarem
     botaoCadastrar?.addEventListener('click', (e) => {
 
@@ -38,12 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Oops! Essa é uma mensagem temporária.\nÉ uma pena que você tenha esquecido sua senha...\n\nMas não se preocupe!\nEnviaremos em seu email um link para que você possa alterar sua senha!')
     });
 
-    function gerenciaBotoesConta(tokenLogin) {
-        if (tokenLogin) {
-            
-        } else {
-
-        }
 
     function validarLogin() {
         // Pega os valores (value) dos elementos
