@@ -50,7 +50,7 @@ function validarLogin() {
     if (validarCampos(dados, 'login')) {
 
         // Se o codigo retornar verdadeiro (true), redireciona
-        window.location.href = "exibicao.html";
+        enviarUsuarioParaServidor(dados, 'login');
     };
 }
 
@@ -69,11 +69,11 @@ function validarCadastro() {
     if (validarCampos(dados, 'cadastro')) {
 
         // Se o codigo retornar verdadeiro (true), redireciona
-        enviarCadastroParaServidor(dados);
+        enviarUsuarioParaServidor(dados, 'cadastro');
     }
 }
 
-async function enviarCadastroParaServidor(dados) {
+async function enviarUsuarioParaServidor(dados, tipo) {
     const url = 'https://sistema-monitoramento-linhas-onibus.vercel.app/criar-usuario';
 
     try {
@@ -87,9 +87,13 @@ async function enviarCadastroParaServidor(dados) {
 
         const dadosResposta = await resposta.json();
 
-        if (resposta.ok) { // 'ok' significa status 200-299 (o nosso 201)
+        if (resposta.ok && tipo.equals('cadastro')) { // 'ok' significa status 200-299 (o nosso 201)
             console.log(dadosResposta.message);
             window.location.href = "login.html"; // Redireciona SÓ SE der certo
+        
+        } else if (resposta.ok && tipo.equals('login')) { // 'ok' significa status 200-299 (o nosso 201)
+            console.log(dadosResposta.message);
+            window.location.href = "personalizacao.html"; // Redireciona SÓ SE der certo
         
         } else { 
             console.log('Erro: ' + dadosResposta.error); 

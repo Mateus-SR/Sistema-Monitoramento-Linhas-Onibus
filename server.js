@@ -7,6 +7,7 @@ const cors = require('cors');
 const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
+const jsonwebtoken= require('jsonwebtoken');
 
 const app = express();
 app.use(cors());
@@ -22,12 +23,12 @@ app.post('/criar-usuario', async (req, res) => {
   const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
 
   try {
-    const senha_hash = await bcrypt.hash(senha, 10);
+    const senhaHash = await bcrypt.hash(senha, 10);
     await prisma.usuario.create({
       data: {
         nome_usu: nome,
         email_usu: email,
-        senha_usu: senha_hash,
+        senha_usu: senhaHash,
         fac_id: 1
       }
     });
@@ -42,6 +43,54 @@ app.post('/criar-usuario', async (req, res) => {
     });
   }
 });
+
+app.post('/logar-usuario', async (req, res) => {
+  const {email, senha} = req.body;
+
+  try {
+    const usuarioEncontrado = await prisma.usuario.findUnique({
+      where: {
+        email_usu: email
+      },
+    });
+
+    if (!usuarioEncontrado) {
+      return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
+    }
+
+    const senhaHashDB = usuarioEncontrado.senha_usu;
+    const senhaCorreta = await bcrypt.compare(senha, senhaHashDB);
+
+    if (senhaCorreta) {
+      const payload = {
+        id_usu: usuarioEncontrado.id_usu,
+        email_usu: usuarioEncontrado.email_usu
+      };
+
+      const segredo = process.env.JWT_SECRET;
+      const tokenLogin = jwt.sign(
+        payload,
+        segredo/*,
+        { expiresIn: '18h'}*/
+      );
+
+      res.status(200).json({
+        message: 'Sucesso!',
+        tokenLogin: tokenLogin
+       });
+       
+    } else {
+      return res.status(401).json({
+        error: 'E-mail ou senha inválidos.'
+      });
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro de servidor' });
+  }
+});
+
 
 
 async function tokenPOST() {
