@@ -18,80 +18,6 @@ const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
 const paradaPrevisao = '/Previsao/Parada?codigoParada=';
 let apiSessionCookie = null;
 
-app.post('/cadastro-usuario', async (req, res) => {
-
-  const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
-
-  try {
-    const senhaHash = await bcrypt.hash(senha, 10);
-    await prisma.usuario.create({
-      data: {
-        nome_usu: nome,
-        email_usu: email,
-        senha_usu: senhaHash,
-        fac_id: 1
-      }
-    });
-    res.status(201).json({
-      message: "Sucesso ao criar usuário!"
-    });
-  } catch (error) {
-
-    console.error(error);
-    res.status(500).json({
-      error: 'Erro ao criar usuario.'
-    });
-  }
-});
-
-app.post('/login-usuario', async (req, res) => {
-  const {email, senha} = req.body;
-
-  try {
-    const usuarioEncontrado = await prisma.usuario.findUnique({
-      where: {
-        email_usu: email
-      },
-    });
-
-    if (!usuarioEncontrado) {
-      return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
-    }
-
-    const senhaHashDB = usuarioEncontrado.senha_usu;
-    const senhaCorreta = await bcrypt.compare(senha, senhaHashDB);
-
-    if (senhaCorreta) {
-      const payload = {
-        id_usu: usuarioEncontrado.id_usu,
-        email_usu: usuarioEncontrado.email_usu
-      };
-
-      const segredo = process.env.JWT_SECRET;
-      const tokenLogin = jwt.sign(
-        payload,
-        segredo/*,
-        { expiresIn: '18h'}*/
-      );
-
-      res.status(200).json({
-        message: 'Sucesso ao logar!',
-        tokenLogin: tokenLogin
-       });
-
-    } else {
-      return res.status(401).json({
-        error: 'E-mail ou senha inválidos.'
-      });
-    }
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro de servidor' });
-  }
-});
-
-
 
 async function tokenPOST() {
     try {
@@ -278,6 +204,78 @@ app.get('/parada-radar', async (req, res) => {
 Seção da API, node, vercel, e afins
 #######################################################################################################*/
 
+app.post('/cadastro-usuario', async (req, res) => {
+
+  const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
+
+  try {
+    const senhaHash = await bcrypt.hash(senha, 10);
+    await prisma.usuario.create({
+      data: {
+        nome_usu: nome,
+        email_usu: email,
+        senha_usu: senhaHash,
+        fac_id: 1
+      }
+    });
+    res.status(201).json({
+      message: "Sucesso ao criar usuário!"
+    });
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({
+      error: 'Erro ao criar usuario.'
+    });
+  }
+});
+
+app.post('/login-usuario', async (req, res) => {
+  const {email, senha} = req.body;
+
+  try {
+    const usuarioEncontrado = await prisma.usuario.findUnique({
+      where: {
+        email_usu: email
+      },
+    });
+
+    if (!usuarioEncontrado) {
+      return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
+    }
+
+    const senhaHashDB = usuarioEncontrado.senha_usu;
+    const senhaCorreta = await bcrypt.compare(senha, senhaHashDB);
+
+    if (senhaCorreta) {
+      const payload = {
+        id_usu: usuarioEncontrado.id_usu,
+        email_usu: usuarioEncontrado.email_usu
+      };
+
+      const segredo = process.env.JWT_SECRET;
+      const tokenLogin = jwt.sign(
+        payload,
+        segredo/*,
+        { expiresIn: '18h'}*/
+      );
+
+      res.status(200).json({
+        message: 'Sucesso ao logar!',
+        tokenLogin: tokenLogin
+       });
+
+    } else {
+      return res.status(401).json({
+        error: 'E-mail ou senha inválidos.'
+      });
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro de servidor' });
+  }
+});
 
 
 
