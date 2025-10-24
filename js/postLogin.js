@@ -1,12 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const botoesConta = document?.querySelectorAll('.botoesConta');
-    const botaoAcessaConta = document?.getElementById('botaoAcessaConta')
-    const nomeUsuario = document?.getElementById('nomeUsuario');
-    let perfilUsuarioLogado = null;
-    
-    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
-
-    document.addEventListener('DOMContentLoaded', () => {
     const botoesConta = document.querySelectorAll('.botoesConta');
     const botaoAcessaConta = document.getElementById('botaoAcessaConta');
     const nomeUsuario = document.getElementById('nomeUsuario');
