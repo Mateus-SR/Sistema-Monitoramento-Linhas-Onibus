@@ -62,5 +62,5 @@ model exibicao_parada {
   exibicao           exibicao @relation(fields: [id_exib], references: [id_exib])
   codigo_parada      String   // O código da parada SPTrans (Ex: "650004840") 
   // Garante que a mesma parada não seja adicionada duas vezes na *mesma* exibição
-  @@unique([id_exibicao, codigo_parada])
+  @unique([id_exibicao, codigo_parada])
 }
