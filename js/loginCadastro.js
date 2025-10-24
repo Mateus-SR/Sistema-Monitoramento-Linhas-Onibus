@@ -85,14 +85,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const dadosResposta = await resposta.json();
 
-            if (resposta.ok && tipo === 'cadastro') { // 'ok' significa status 200-299 (o nosso 201)
-                const tokenLogin = dadosResposta.tokenLogin;
-                localStorage.setItem('tokenLogin', tokenLogin);    
+            if (resposta.ok && tipo === 'cadastro') { // 'ok' significa status 200-299 (o nosso 201)    
 
                 console.log(dadosResposta.message);
                 window.location.href = "login.html"; // Redireciona SÓ SE der certo
             
             } else if (resposta.ok && tipo === 'login') { // 'ok' significa status 200-299 (o nosso 201)
+                const tokenLogin = dadosResposta.tokenLogin;
+                localStorage.setItem('tokenLogin', tokenLogin);
+                
                 console.log(dadosResposta.message);
                 window.location.href = "personalizacao.html"; // Redireciona SÓ SE der certo
             

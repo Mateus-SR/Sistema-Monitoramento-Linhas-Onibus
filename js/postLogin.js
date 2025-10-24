@@ -1,15 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const botoesConta = document?.getElementById('botoesConta');
+    const botoesConta = document?.querySelectorAll('.botoesConta');
     const botaoAcessaConta = document?.getElementById('botaoAcessaConta')
-    const tokenLogin = localStorage?.getItem('tokenLogin');
+    const tokenLogin = localStorage.getItem('tokenLogin');
+
+    gerenciaBotoesConta(tokenLogin);
 
     function gerenciaBotoesConta(tokenLogin) {
         if (tokenLogin) {
-            botoesConta.classList.toggle('invisible');
+
+            botoesConta.forEach(cadaUm => {
+                cadaUm.classList.toggle('invisible');
+            });
             botaoAcessaConta.classList.toggle('invisible');
-        } else {
-            botoesConta.classList.remove('invisible');
-            botaoAcessaConta.classList.add('invisible');
         }
     }
 });
