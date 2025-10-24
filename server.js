@@ -307,13 +307,16 @@ app.get('/get-usuario-perfil', verificarToken, async (req, res) => {
 
 function verificarToken(req, res, next) {
   const authHeader = req.headers['x-access-token'];
-  const tokenAuth = authHeader && authHeader.split(' ')[1];
 
   if (!authHeader ||!authHeader.startsWith('Bearer ')) {
     return res.status(401).json({
       error: 'Token de autenticação ausente ou não começa com "Bearer".'
     });
   }
+
+  // Pegando a string a partir do 7º caractere (pra pular o "Bearer ")
+  // E só depois de sabermos que é um token valido e existente
+  const tokenAuth = authHeader.substring(7);
 
   if (tokenAuth == null) {
     return res.status(401).json({
