@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tokenLogin = localStorage.getItem('tokenLogin');
     let perfilUsuarioLogado = null;
     
+    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
+
     guardaPerfilUsuario();
     async function guardaPerfilUsuario() {
         const perfil = await buscaPerfilUsuario();
@@ -14,15 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.log("Ocorreu um erro ao obter perfil do usuário");
         }
+
+        gerenciaBotoesConta(tokenLogin, perfilUsuarioLogado);
     }
 
     async function buscaPerfilUsuario() {
         if (!tokenLogin) {
             console.log("Erro: usuário não logado.")
-            return;
+            return null;
         }
 
-        const url = 'https://sistema-monitoramento-linhas-onibus.vercel.app/get-usuario-perfil';
+        const url = `${vercel}/get-usuario-perfil`;
 
         try {
             const resposta = await fetch(url, {
@@ -38,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return perfil;
 
             } else {
-                console.error("Ouve algum erro ao buscar perfil: ", await resposta.json());
+                console.error("Houve algum erro ao buscar perfil: ", await resposta.json());
                 return null;
             }
 
@@ -48,16 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    gerenciaBotoesConta(tokenLogin);
+    
 
-    function gerenciaBotoesConta(tokenLogin) {
+    function gerenciaBotoesConta(tokenLogin, perfilUsuarioLogado) {
         if (tokenLogin) {
-
             botoesConta.forEach(cadaUm => {
                 cadaUm.classList.toggle('invisible');
             });
             botaoAcessaConta.classList.toggle('invisible');
+        }
+
+        if (perfilUsuarioLogado) {
             nomeUsuario.innerHTML = perfilUsuarioLogado.nome_usu;
+        } else {
+            nomeUsuario.innerHTML = "Usuário Desconhecido";
         }
     }
 });
