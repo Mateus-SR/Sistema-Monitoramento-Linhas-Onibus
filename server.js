@@ -306,7 +306,7 @@ app.get('/get-usuario-perfil', verificarToken, async (req, res) => {
 });
 
 function verificarToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers['x-access-token'];
   const tokenAuth = authHeader && authHeader.split(' ')[1];
 
   if (tokenAuth == null) {

@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const resposta = await fetch(url, {
                 method: 'GET',
                 headers: {
-                  'Authorization': `Bearer ${tokenLogin}`
+                    'X-Access-Token': `Bearer ${token}`
                 }
-              });
+            });
             
             if (resposta.ok) {
                 const perfil = await resposta.json();
