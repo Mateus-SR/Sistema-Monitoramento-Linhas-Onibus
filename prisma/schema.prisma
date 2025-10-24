@@ -37,6 +37,7 @@ model usuario {
   email_usu    String         @unique @default("") @db.VarChar(100)
   nome_usu     String         @default("Desconhecido") @db.VarChar(100)
   senha_usu    String         @default("") @db.VarChar(100)
+  exibicoes    exibicao[]
   fac_id       Int?
   created_at   DateTime       @default(now()) @db.Timestamp(6)
   configuracao configuracao[]
