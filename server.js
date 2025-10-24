@@ -253,10 +253,9 @@ app.post('/login-usuario', async (req, res) => {
         email_usu: usuarioEncontrado.email_usu
       };
 
-      const segredo = process.env.JWT_SECRET;
       const tokenLogin = jwt.sign(
         payload,
-        segredo/*,
+        process.env.JWT_SECRET/*,
         { expiresIn: '18h'}*/
       );
 
@@ -325,7 +324,7 @@ function verificarToken(req, res, next) {
   }
 
   try {
-    const payload = jwt.verify(tokenAuth, segredo);
+    const payload = jwt.verify(tokenAuth, process.env.JWT_SECRET);
     req.id_usuario_logado = payload.id_usu;
     next();
 
