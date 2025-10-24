@@ -339,5 +339,6 @@ function verificarToken(req, res, next) {
     });
   }
 }
+}
 // Linha que faz o Vercel cuidar de executar tudo
 module.exports = app;
