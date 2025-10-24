@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 gerenciaBotoesConta(tokenLogin, perfil);
             } else {
                 console.log("Ocorreu um erro ao obter o perfil do usuário. O token pode ser inválido.");
-                localStorage.removeItem('tokenLogin');
-                location.reload();
+                //localStorage.removeItem('tokenLogin');
+                //location.reload();
             }
         }
     }
