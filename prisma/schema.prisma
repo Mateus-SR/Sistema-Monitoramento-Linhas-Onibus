@@ -43,3 +43,24 @@ model usuario {
   relatorio    relatorio[]
   fatec        fatec?         @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model exibicao {
+  id_exib      String     @id @default(uuid()) // aceitei esse experimento do gemini, mas poderia ser @id @default(autoincrement()) tranquilamente
+  id_usu       Int        // Chave estrangeira para ligar ao usuário
+  usuario      usuario    @relation(fields: [id_usu], references: [id_usu])
+  codigo_exib  String     @unique // O código gerado de 6 dígitos
+  nome_exibicao String?   // Um nome opcional
+  created_at   DateTime   @default(now()) @db.Timestamp(6)
+  last_update  DateTime   @default(now()) @db.Timestamp(6)
+  // Adiciona a relação: Uma exibição tem VÁRIAS paradas associadas
+  paradas      exibicao_parada[]
+}
+
+model exibicao_parada {
+  id_exib_parada     Int @id @default(autoincrement())
+  id_exib            String   // Chave estrangeira para ligar à exibição
+  exibicao           exibicao @relation(fields: [id_exib], references: [id_exib])
+  codigo_parada      String   // O código da parada SPTrans (Ex: "650004840") 
+  // Garante que a mesma parada não seja adicionada duas vezes na *mesma* exibição
+  @@unique([id_exibicao, codigo_parada])
+}
