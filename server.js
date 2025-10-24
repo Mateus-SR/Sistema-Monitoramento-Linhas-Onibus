@@ -277,8 +277,55 @@ app.post('/login-usuario', async (req, res) => {
   }
 });
 
+app.get('/get-usuario-perfil', verificarToken, async (req, res) => {
+  try {
+    const id_usu = req.id_usuario_logado;
 
+    const usuarioEncontrado = await prisma.usuario.findUnique({
+      where: {
+        id_usu: id_usu
+      },/*
+      select: {
+        nome_usu: true
+      }*/
+    });
 
+      if (usuarioEncontrado) {
+        res.status(200).json(usuarioEncontrado);
+      } else {
+        res.status(404).json({
+          error: 'Usuario não encontrado.'
+        })
+      };
+  } catch(error) {
+    console.error("Erro ao buscar usuário: ", error);
+    res.status(500).json({
+      error: 'Erro interno do servidor.'
+    });
+  }
+});
 
+function verificarToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const tokenAuth = authHeader && authHeader.split('')[1];
+
+  if (tokenAuth == null) {
+    return res.status(401).json({
+      error: 'Erro ao carregar tokenAuth. Você está mesmo autenticado?'
+    });
+  }
+
+  try {
+    const payload = jwt.verify(tokenAuth, segredo);
+    req.id_usuario_logado = payload.id_usu;
+
+    next();
+
+  } catch (error) {
+    return res.status(403).json({
+      error: 'Token é inválido ou expirou...'
+    })
+  }
+}
 // Linha que faz o Vercel cuidar de executar tudo
 module.exports = app;
