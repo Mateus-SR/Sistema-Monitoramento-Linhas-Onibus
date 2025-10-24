@@ -309,22 +309,32 @@ function verificarToken(req, res, next) {
   const authHeader = req.headers['x-access-token'];
   const tokenAuth = authHeader && authHeader.split(' ')[1];
 
+  if (!authHeader ||!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({
+      error: 'Token de autenticação ausente ou não começa com "Bearer".'
+    });
+  }
+
   if (tokenAuth == null) {
     return res.status(401).json({
-      error: 'Erro ao carregar tokenAuth. Você está mesmo autenticado?'
+      error: 'tokenAuth não pode ser encontrado'
     });
   }
 
   try {
     const payload = jwt.verify(tokenAuth, segredo);
     req.id_usuario_logado = payload.id_usu;
-
     next();
 
   } catch (error) {
-    return res.status(403).json({
-      error: 'Token é inválido ou expirou...'
-    })
+    if (error.name === 'TokenExpiredError') {
+      return res.status(403).json({
+        error: 'Token expirado.'
+      });
+    } else {
+      return res.status(403).json({
+        error: 'Token inválido.'
+    });
   }
 }
 // Linha que faz o Vercel cuidar de executar tudo
