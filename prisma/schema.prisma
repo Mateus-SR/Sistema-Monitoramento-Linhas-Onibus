@@ -50,8 +50,6 @@ model usuario {
   exibicoes    exibicao[]
 }
 
-}
-
 model exibicao {
   id_exib      String     @id @default(uuid()) // aceitei esse experimento do gemini, mas poderia ser @id @default(autoincrement()) tranquilamente
   id_usu       Int        // Chave estrangeira para ligar ao usuário
@@ -69,3 +67,4 @@ model exibicao_parada {
   id_exib            String   @unique // Chave estrangeira para ligar à exibição
   exibicao           exibicao @relation(fields: [id_exib], references: [id_exib])
   codigo_parada      String   @unique // O código da parada SPTrans (Ex: "650004840") 
+}
