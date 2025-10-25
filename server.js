@@ -3,6 +3,7 @@ const express = require('express'); // Para facilitar o uso geral do node.js
 const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dados da api)
 const cors = require('cors');
 
+const rateLimit = require('express-rate-limit');
 
 const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -12,6 +13,15 @@ const jwt = require('jsonwebtoken');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Set up rate limiter: 100 requests per 15 minutes per IP
+const perfilLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window per IP
+  message: {
+    error: 'Muitas requisições feitas deste IP. Por favor, tente novamente mais tarde.'
+  }
+});
 
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
@@ -276,7 +286,7 @@ app.post('/login-usuario', async (req, res) => {
   }
 });
 
-app.get('/get-usuario-perfil', verificarToken, async (req, res) => {
+app.get('/get-usuario-perfil', verificarToken, perfilLimiter, async (req, res) => {
   try {
     const id_usu = req.id_usuario_logado;
 

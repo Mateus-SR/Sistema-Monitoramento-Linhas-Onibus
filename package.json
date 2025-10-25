@@ -12,7 +12,8 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "express-rate-limit": "^8.1.0"
   },
   "name": "sistema-monitoramento-linhas-onibus",
   "version": "1.0.0",
