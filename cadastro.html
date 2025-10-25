@@ -9,100 +9,121 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body class="relative min-h-screen flex items-center justify-center font-inter">
 
-  <!-- Mateus eu n arrumei a responsividade, não sei como ta no celular, 
-     basicamente a responsividade está fazendo com que a caixa de cadastro tome o espaço da tela inteiro nas laterais,
-     em baixo e em cima n ta funfando não-->
-
-  <!-- imagem do fundo -->
+  <!-- Imagem de fundo -->
   <div class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
     style="background-image: url('img/Onibus.jpg');">
   </div>
-
-  <!-- manter opacidade -->
   <div class="absolute inset-0 bg-black/40"></div>
 
-
-  <!-- caixa flutuante do cadastro -->
-  <div
-    class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-4xl shadow-2xl shadow-black/60 z-20">
+  <!-- Caixa do cadastro -->
+  <div class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-4xl shadow-2xl shadow-black/60 z-20">
     <h2 class="text-3xl font-bold text-center mb-8 text-black">Cadastro</h2>
 
     <div class="absolute top-12 left-6">
       <a href="index.html"
-        class="text-1x1 text-center mb-5 text-black py-2 px-4 rounded-md transition text-sm font-inter
-        ">
+        class="text-1x1 text-center mb-5 text-black py-2 px-4 rounded-md transition text-sm font-inter">
         Voltar
       </a>
     </div>
 
-
     <form id="CadastroForm">
 
-      <!-- lugar do email -->
+      <!-- E-mail -->
       <div class="mb-6">
         <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
         <input type="email" id="email" placeholder="exemplo: guilherme@calixto.com" required
           class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
       </div>
 
-      <!-- lugar da senha -->
+      <!-- Senha -->
       <div class="mb-6">
         <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
         <input type="password" id="password" placeholder="senhaSegura123" required
           class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
       </div>
 
-      <!-- Lista das fatecs -->
+      <!-- Dropdown customizado das instituições -->
       <div class="mb-6">
-        <label for="instituicao" class="block text-sm font-medium text-gray-700 mb-2">Instituição</label>
-        <select id="instituicao"
-          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg text-black">
-          <!-- placeholder em cinza  você me ensino Mateus eu tive uma ajuda pra fazer esse-->
-          <option value="0" disabled selected class="text-gray-400">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Instituição</label>
+        <div class="relative w-full">
+          <button type="button" id="dropdownBtn"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-red-500">
             Selecione uma instituição
-          </option>
-
-          <!-- Opções -->
-          <option value="1">Fatec-Zona-Leste</option>
-          <option value="2">Fatec-Zona-Teste1</option>
-          <option value="3">Fatec-Zona-Teste2</option>
-          <option value="4">Fatec-Zona-Teste3</option>
-        </select>
+          </button>
+          <div id="dropdownMenu"
+            class="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-50 hidden max-h-60 overflow-auto">
+            <!-- Opções do Supabase vão aparecer aqui -->
+          </div>
+        </div>
 
         <div class="mt-3 flex items-center">
           <input type="checkbox" id="semInstituicao" class="mr-2">
           <label for="semInstituicao" class="text-sm text-gray-700">Não faço parte de uma instituição / Prefiro não informar</label>
         </div>
-
       </div>
 
-      <!--botão de ja tenho conta e de cadastro-->
-
+      <!-- Botões -->
       <div class="flex flex-col items-center space-y-6">
-
         <a href="login.html"
           class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition text-lg font-semibold mx-auto">Já
           tenho uma conta
         </a>
 
-        <input type="submit" value="Cadastrar" id="botaoCadastrar" href="#"
+        <input type="submit" value="Cadastrar" id="botaoCadastrar"
           class="flex flex-col items-center space-y-6 w-full max-w-md bg-red-600 text-white
           py-3 px-4 rounded-md hover:bg-red-700 transition text-lg font-semibold cursor-pointer">
-
+      </div>
 
     </form>
-    
   </div>
 
+  <!-- Script do Supabase -->
+  <script>
+    const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  <script src="./js/loginCadastro.js"></script>
+    const dropdownBtn = document.getElementById("dropdownBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
 
+    // Abrir/fechar dropdown
+    dropdownBtn.addEventListener("click", () => {
+      dropdownMenu.classList.toggle("hidden");
+    });
 
+    // Carregar instituições do Supabase
+    async function carregarInstituicoes() {
+      const { data, error } = await supabase.from("fatec").select("id_fac, nome_fac").order("nome_fac");
+      if (error) return console.error("Erro ao carregar instituições:", error);
+
+      dropdownMenu.innerHTML = data.map(inst =>
+        `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-id="${inst.id_fac}">${inst.nome_fac}</div>`
+      ).join('');
+
+      // Seleção de item
+      dropdownMenu.querySelectorAll("div").forEach(item => {
+        item.addEventListener("click", () => {
+          dropdownBtn.textContent = item.textContent;
+          dropdownBtn.dataset.value = item.dataset.id;
+          dropdownMenu.classList.add("hidden");
+        });
+      });
+    }
+
+    carregarInstituicoes();
+
+    // Fecha o dropdown ao clicar fora
+    document.addEventListener("click", (e) => {
+      if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.add("hidden");
+      }
+    });
+  </script>
 
 </body>
-
 </html>
