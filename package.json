@@ -3,7 +3,7 @@
     "dev": "npx @tailwindcss/cli -i ./input.css -o ./src/output.css --watch"
   },
   "dependencies": {
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "^6.18.0",
     "@tailwindcss/cli": "^4.1.13",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
@@ -29,6 +29,6 @@
   },
   "homepage": "https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus#readme",
   "devDependencies": {
-    "prisma": "^6.17.1"
+    "prisma": "^6.18.0"
   }
 }
