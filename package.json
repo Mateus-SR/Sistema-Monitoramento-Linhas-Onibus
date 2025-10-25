@@ -1,11 +1,13 @@
 {
   "scripts": {
-    "dev": "npx @tailwindcss/cli -i ./input.css -o ./src/output.css --watch"
+    "dev": "npx @tailwindcss/cli -i ./input.css -o ./src/output.css --watch",
+    "baseline": "npx prisma migrate baseline --name \"migracao_inicial_base\""
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
     "@tailwindcss/cli": "^4.1.13",
     "axios": "^1.12.2",
+    "baseline": "^0.3.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",

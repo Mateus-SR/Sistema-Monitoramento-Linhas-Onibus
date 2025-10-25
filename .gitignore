@@ -6,3 +6,4 @@ teste/
 .env
 
 /src/generated/prisma
+/migrations

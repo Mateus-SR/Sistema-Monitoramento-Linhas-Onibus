@@ -57,11 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const nome = document.getElementById("text").value.trim();
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
-        const instituicao = document.getElementById("instituicao").value;
-        const semInstituicao = document.getElementById("semInstituicao").checked;
+        //const instituicao = document.getElementById("instituicao").value;
+        //const semInstituicao = document.getElementById("semInstituicao").checked;
 
         // Junta os quatro em uma variavel
-        const dados = {nome, email, senha, instituicao, semInstituicao};
+        const dados = {nome, email, senha, /*instituicao, semInstituicao*/};
 
         // Envia os quatro dados + a informação de qual tipo de validação estamos usando
         if (validarCampos(dados, 'cadastro')) {
@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
+        /*
         // Se estamos lidando com um cadastro...
         if (tipo === 'cadastro') {
             // Verifica na função validarInstituicao marcamos que não somos de instituição ou se não selecionamos alguma
@@ -125,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return false;
             }
         }
+            */
 
         // Caso tenhamos passado por todas as verificações
         return true;
