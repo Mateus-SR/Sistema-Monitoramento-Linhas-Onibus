@@ -211,7 +211,7 @@ app.get('/parada-radar', async (req, res) => {
 })
 
 /*#######################################################################################################
-Seção da API, node, vercel, e afins
+Seção da banco de dados, prisma, supabase, e afins
 #######################################################################################################*/
 
 app.post('/cadastro-usuario', async (req, res) => {
