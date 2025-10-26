@@ -1,9 +1,8 @@
-node_modules
 # Keep environment variables out of version control
-teste.*
 temporario.*
 teste/
 .env
-
+.temp
+node_modules
 /src/generated/prisma
 /migrations
