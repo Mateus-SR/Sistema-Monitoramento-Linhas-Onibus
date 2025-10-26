@@ -72,9 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function enviarUsuarioParaServidor(dados, tipo) {
+        // Aqui, usamos ${tipo} como variavel dinamica:
+        // Se o codigo for do cadastro, a variavel "tipo" vai ser "cadastro", e aí o vercel chama a rota "cadastro-usuario".
+        // Se o codigo for do login, a variavel "tipo" vai ser "login", e aí o vercel chama a rota "login-usuario".
         const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/${tipo}-usuario`;
 
         try {
+            // Manda pra url ali de cima o post com os dados inseridos no formulario
             const resposta = await fetch(url, {
                 method: 'POST', 
                 headers: {
@@ -83,20 +87,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(dados), 
             });
 
+            // Transforma a resposta em um json
             const dadosResposta = await resposta.json();
 
-            if (resposta.ok && tipo === 'cadastro') { // 'ok' significa status 200-299 (o nosso 201)    
+            // Se tudo estiver ok e for do tipo cadastro...
+            if (resposta.ok && tipo === 'cadastro') { // ('ok' significa status 200-299 (sucesso)) 
 
                 console.log(dadosResposta.message);
-                window.location.href = "login.html"; // Redireciona SÓ SE der certo
+                window.location.href = "login.html"; // ... então redireciona pra pagina de login
             
-            } else if (resposta.ok && tipo === 'login') { // 'ok' significa status 200-299 (o nosso 201)
+            // Se tudo estiver ok e for do tipo login...
+            } else if (resposta.ok && tipo === 'login') { // ('ok' significa status 200-299 (sucesso)) 
                 const tokenLogin = dadosResposta.tokenLogin;
                 localStorage.setItem('tokenLogin', tokenLogin);
                 
                 console.log(dadosResposta.message);
-                window.location.href = "personalizacao.html"; // Redireciona SÓ SE der certo
+                window.location.href = "personalizacao.html"; // ... então redireciona pra pagina de personalização/configuração/perfil
             
+            // E se for qualquer outra coisa, dá erro
             } else { 
                 console.log('Erro: ' + dadosResposta.error); 
             }

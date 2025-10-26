@@ -215,11 +215,13 @@ Seção da banco de dados, prisma, supabase, e afins
 #######################################################################################################*/
 
 app.post('/cadastro-usuario', async (req, res) => {
-
+  // Esses dados vieram lá do front-end, e vieram dentro desse req
   const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
 
   try {
+    // Pedimos pra criar uma senha criptografada, e guardamos apenas ela (nada de guardar a senha original! Nunca!)
     const senhaHash = await bcrypt.hash(senha, 10);
+    // Mandamos o prisma criar (inserir) na tabela usuario as informações que entregamos no formulario
     await prisma.usuario.create({
       data: {
         nome_usu: nome,
@@ -228,11 +230,12 @@ app.post('/cadastro-usuario', async (req, res) => {
         fac_id: 1
       }
     });
+
     res.status(201).json({
       message: "Sucesso ao criar usuário!"
     });
-  } catch (error) {
 
+  } catch (error) {
     console.error(error);
     res.status(500).json({
       error: 'Erro ao criar usuario.'
@@ -244,19 +247,24 @@ app.post('/login-usuario', async (req, res) => {
   const {email, senha} = req.body;
 
   try {
+    // Procuramos no banco de dados por um email que coincida com aquele que colocamos no formulario
     const usuarioEncontrado = await prisma.usuario.findUnique({
       where: {
         email_usu: email
       },
     });
 
+    // Se não encontramos, então houve algum problema no processo
     if (!usuarioEncontrado) {
       return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
     }
 
+    // Trazemos de volta a senha criptografada...
     const senhaHashDB = usuarioEncontrado.senha_usu;
+    // ... e comparamos se ela é a mesma senha que colocamos agora
     const senhaCorreta = await bcrypt.compare(senha, senhaHashDB);
 
+    // Se for, criamos uma especie de "crachá de identificação"
     if (senhaCorreta) {
       const payload = {
         id_usu: usuarioEncontrado.id_usu,
@@ -286,10 +294,16 @@ app.post('/login-usuario', async (req, res) => {
   }
 });
 
+// "perfilLimiter" é uma sugestão do verificador automatico de codigo e segurança do github...
+// ... ele basicamente vai impedir que um mesmo IP possa fazer requisições de mais (ataque DDOS)
+// O que importa mesmo aqui é o "verificarToken": o nome é auto-explicativo
 app.get('/get-usuario-perfil', verificarToken, perfilLimiter, async (req, res) => {
   try {
+    // Pegamos o id do usuario que queremos achar...
     const id_usu = req.id_usuario_logado;
 
+    // ... e procuramos pra ver se ele existe mesmo
+    // Existindo, então mandamos pro front-end (veja ali que essa é uma rota GET)
     const usuarioEncontrado = await prisma.usuario.findUnique({
       where: {
         id_usu: id_usu
@@ -300,6 +314,7 @@ app.get('/get-usuario-perfil', verificarToken, perfilLimiter, async (req, res) =
     });
 
       if (usuarioEncontrado) {
+        // (mandando o perfil do usuario como json, para o front-end ler)
         res.status(200).json(usuarioEncontrado);
       } else {
         res.status(404).json({
@@ -315,15 +330,17 @@ app.get('/get-usuario-perfil', verificarToken, perfilLimiter, async (req, res) =
 });
 
 function verificarToken(req, res, next) {
+  // Pegamos o crachá que foi criado
   const authHeader = req.headers['x-access-token'];
 
+  // e vemos se ele começa com o padrão que o Jsonwebtoken cria
   if (!authHeader ||!authHeader.startsWith('Bearer ')) {
     return res.status(401).json({
       error: 'Token de autenticação ausente ou não começa com "Bearer".'
     });
   }
 
-  // Pegando a string a partir do 7º caractere (pra pular o "Bearer ")
+  // Pegando a string a partir do 7º caractere (pra pular o "Bearer ", coisa padrão do token do Jsonwebtoken)
   // E só depois de sabermos que é um token valido e existente
   const tokenAuth = authHeader.substring(7);
 
