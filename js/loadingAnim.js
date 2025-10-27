@@ -75,9 +75,10 @@ function erroAnim() {
     if (!divAnim) return; 
 
     const botaoFechar = document.createElement('div');
+    botaoFechar.style.position = "absolute";
     botaoFechar.style.top = "5%";
     botaoFechar.style.left = "5%";
-    botaoFechar.innerHTML = `<i class="fas fa-minus"></i>`;
+    botaoFechar.innerHTML = `<i class="fas fa-minus z-[1000]" style='font-size:28px></i>`;
     
     botaoFechar.addEventListener('click', () => {
         fechaAnim();
