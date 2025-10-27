@@ -1,3 +1,5 @@
+import { iniciaAnim, cancelaAnim } from './loadingAnim.js';
+
 // Pra ter certeza que vai acontecer quando tudo carregou
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -37,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function validarLogin() {
+        iniciaAnim();
+
         // Pega os valores (value) dos elementos
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
@@ -53,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function validarCadastro() {
+        iniciaAnim();
+
         // Pega os valores (value, checked) dos elementos
         const nome = document.getElementById("text").value.trim();
         const email = document.getElementById("email").value.trim();
@@ -102,15 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('tokenLogin', tokenLogin);
                 
                 console.log(dadosResposta.message);
-                window.location.href = "personalizacao.html"; // ... então redireciona pra pagina de personalização/configuração/perfil
+                window.location.href = "index.html"; // ... então redireciona pra pagina de personalização/configuração/perfil
             
             // E se for qualquer outra coisa, dá erro
-            } else { 
+            } else {
+                cancelaAnim();
                 console.log('Erro: ' + dadosResposta.error); 
             }
 
         } catch (error) {
             console.error('Falha ao conectar com o servidor:', error);
+            cancelaAnim();
             //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
         }
     };
@@ -122,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // (OBS: Login sempre passa por esse, mas nunca pelo próximo)
         if (!dados.email || !dados.senha) {
             alert("Por favor, preencha todos os campos!");
+            cancelaAnim();
             return false;
         }
 
@@ -144,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Caso a caixa "sem instituição" não estiver marcada E ao mesmo tempo não selecionamos alguma... erro!
         if (!semInstituicao && instituicao === "0") {
             alert("Por favor, selecione uma instituição.");
+            cancelaAnim();
             return false;
         }
 
