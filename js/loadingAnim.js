@@ -18,8 +18,8 @@ function fechaAnim() {
     const divAnim = document.getElementById('loadingAnim');
 
     if (divAnim) {
-        //divAnim.classList.add('animate-fadeOut');
-        nuvem.style.animation = `fadeOut 750ms linear`;
+        divAnim.classList.add('animate-fadeOut');
+        // Trocar essa animação para uma mais rapida
 
         divAnim.addEventListener('animationend', () =>{
             divAnim.remove();
