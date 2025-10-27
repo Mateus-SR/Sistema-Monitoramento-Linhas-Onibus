@@ -18,7 +18,8 @@ function fechaAnim() {
     const divAnim = document.getElementById('loadingAnim');
 
     if (divAnim) {
-        divAnim.classList.add('animate-fadeOut');
+        //divAnim.classList.add('animate-fadeOut');
+        nuvem.style.animation = `fadeOut 750ms linear`;
 
         divAnim.addEventListener('animationend', () =>{
             divAnim.remove();
@@ -78,7 +79,7 @@ function erroAnim() {
     botaoFechar.style.position = "absolute";
     botaoFechar.style.top = "5%";
     botaoFechar.style.right = "5%";
-    botaoFechar.innerHTML = `<i class="fas fa-minus z-[1000]" style='font-size:28px'></i>`;
+    botaoFechar.innerHTML = `<i class="fas fa-times z-[1000]" style='font-size:28px'></i>`;
     
     botaoFechar.addEventListener('click', () => {
         fechaAnim();
