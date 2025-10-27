@@ -37,7 +37,7 @@ function criaBaseAnim() {
 
     const baseAnim = `
         <div id="loadingBox" class="relative overflow-hidden bg-white border border-gray-800 rounded-xl py-40 aspect-square shadow-2xl shadow-black/60 flex flex-col items-center justify-center">
-            <img class="size-24 z-[1000] animate-busJiggle" src="img/bus-svgrepo-com-256.png">
+            <img id="campoImg" class="size-24 z-[1000] animate-busJiggle" src="img/bus-svgrepo-com-256.png">
             <p id="campoTextoStatus" class="text-2xl font-extrabold text-black animate-pulse">Carregando...</p>
             <p id="campoSubTexto" class="text-md font-bold text-black/60 italic">Por favor, aguarde.</p>
         </div>
@@ -79,7 +79,7 @@ function erroAnim() {
     botaoFechar.style.position = "absolute";
     botaoFechar.style.top = "5%";
     botaoFechar.style.right = "5%";
-    botaoFechar.innerHTML = `<i class="fas fa-times z-[1000]" style='font-size:28px'></i>`;
+    botaoFechar.innerHTML = `<i class="fas fa-times z-[1000] cursor-pointer text-black hover:text-sptrans transition-all duration-300 ease-out" style='font-size:28px'></i>`;
     
     botaoFechar.addEventListener('click', () => {
         fechaAnim();
@@ -89,13 +89,14 @@ function erroAnim() {
 
 
     const campoTextoStatus = document.getElementById('campoTextoStatus'); 
+    const campoImg = document.getElementById('campoImg'); 
 
     if (nuvemIntervalId) {
         clearInterval(nuvemIntervalId);
         nuvemIntervalId = null;
     }
     //Adicionar nessa parte mais coisas relacionadas a erro (botão de fechar, )
-    divAnim.classList.remove('animate-busJiggle');
+    campoImg.classList.remove('animate-busJiggle');
     campoTextoStatus.classList.remove('animate-pulse');
 }
 
