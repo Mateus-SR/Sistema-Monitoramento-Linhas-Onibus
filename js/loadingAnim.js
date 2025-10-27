@@ -16,8 +16,14 @@ function cancelaAnim() {
     }
 
     const divAnim = document.getElementById('loadingAnim');
+
     if (divAnim) {
-        divAnim.remove();
+        divAnim.classList.add('animate-fadeOut');
+
+        divAnim.addEventListener('animationend', () =>{
+            divAnim.remove();
+            divAnim?.classList.remove('animate-fadeOut');
+        }, {once: true});
     }
 }
 

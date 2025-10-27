@@ -1,9 +1,12 @@
+import { iniciaAnim, cancelaAnim } from './loadingAnim.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // Precisamos dizer parao javascript o endereço do lugar para fazer as requisições
     const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 
     // Rodamos a função assim que a pagina abre e...
+    iniciaAnim();
     radarOnibus();
     // ...configuramos para rodar a cada 5 segundos (5000 milessegundos)
     setInterval(radarOnibus, 5000);
@@ -202,6 +205,7 @@ Seção da API, node, vercel, e afins
             })
 
             preparaTabela(onibusAtivos, horaRequest);
+            cancelaAnim();
         }
 
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
@@ -401,7 +405,7 @@ Seção da API, node, vercel, e afins
         let minuto = parseInt(hmSeparado[1]);
 
         // Somamos os dois e devolvemos lá pra cima, para ver a diferença
-        resultado = hora + minuto;
+        let resultado = hora + minuto;
         return resultado;
     }
 });
