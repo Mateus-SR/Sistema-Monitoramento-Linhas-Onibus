@@ -9,7 +9,7 @@ function iniciaAnim() {
     }
 }
 
-function cancelaAnim() {
+function fechaAnim() {
     if (nuvemIntervalId) {
         clearInterval(nuvemIntervalId);
         nuvemIntervalId = null;
@@ -37,8 +37,8 @@ function criaBaseAnim() {
     const baseAnim = `
         <div id="loadingBox" class="relative overflow-hidden bg-white border border-gray-800 rounded-xl py-40 aspect-square shadow-2xl shadow-black/60 flex flex-col items-center justify-center">
             <img class="size-24 z-[1000] animate-busJiggle" src="img/bus-svgrepo-com-256.png">
-            <p class="text-2xl font-extrabold text-black animate-pulse">Carregando...</p>
-            <p class="text-md font-bold text-black/60 italic">Por favor, aguarde.</p>
+            <p id="campoTextoStatus" class="text-2xl font-extrabold text-black animate-pulse">Carregando...</p>
+            <p id="campoSubTexto" class="text-md font-bold text-black/60 italic">Por favor, aguarde.</p>
         </div>
     `
     novaDiv.innerHTML = baseAnim;
@@ -69,8 +69,48 @@ function criaNuvemAnim() {
 
     divAnim.appendChild(nuvem);
 }
+
+function erroAnim() {
+    const divAnim = document.getElementById('loadingBox'); 
+    if (!divAnim) return; 
+
+    const botaoFechar = document.createElement('div');
+    botaoFechar.style.top = "5%";
+    botaoFechar.style.left = "5%";
+    botaoFechar.innerHTML = `<i class="fas fa-minus"></i>`;
+    
+    botaoFechar.addEventListener('click', () => {
+        fechaAnim();
+    });
+
+    divAnim.appendChild(botaoFechar);
+
+
+    const campoTextoStatus = document.getElementById('campoTextoStatus'); 
+
+    if (nuvemIntervalId) {
+        clearInterval(nuvemIntervalId);
+        nuvemIntervalId = null;
+    }
+    //Adicionar nessa parte mais coisas relacionadas a erro (botão de fechar, )
+    divAnim.classList.remove('animate-busJiggle');
+    campoTextoStatus.classList.remove('animate-pulse');
+}
+
+function setTexto(texto) {
+    const campoTextoStatus = document.getElementById("campoTextoStatus");
+
+    campoTextoStatus.innerText = texto;
+}
+
+function setSubTexto(texto) {
+    const campoSubTexto = document.getElementById("campoSubTexto");
+
+    campoSubTexto.innerText = texto;
+}
+
 function random(min, max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export { iniciaAnim, cancelaAnim };
+export { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim };

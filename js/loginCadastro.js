@@ -1,4 +1,4 @@
-import { iniciaAnim, cancelaAnim } from './loadingAnim.js';
+import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
 // Pra ter certeza que vai acontecer quando tudo carregou
 document.addEventListener('DOMContentLoaded', () => {
@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function enviarUsuarioParaServidor(dados, tipo) {
+        setTexto("Enviando dados...");
         // Aqui, usamos ${tipo} como variavel dinamica:
         // Se o codigo for do cadastro, a variavel "tipo" vai ser "cadastro", e aí o vercel chama a rota "cadastro-usuario".
         // Se o codigo for do login, a variavel "tipo" vai ser "login", e aí o vercel chama a rota "login-usuario".
@@ -92,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify(dados), 
             });
+
+            setTexto("Recebendo dados...");
 
             // Transforma a resposta em um json
             const dadosResposta = await resposta.json();
@@ -112,25 +115,30 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // E se for qualquer outra coisa, dá erro
             } else {
-                cancelaAnim();
-                console.log('Erro: ' + dadosResposta.error); 
+                const erroMsg = dadosResposta.error;
+
+                setTexto("Oops! Erro!!");
+                setSubTexto(erroMsg)
+                erroAnim();
             }
 
         } catch (error) {
-            console.error('Falha ao conectar com o servidor:', error);
-            cancelaAnim();
+            setTexto("Oops! Erro!!");
+            setSubTexto(`Falha ao conectar com o servidor: ${error}`);
+            erroAnim();
             //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
         }
     };
 
     function validarCampos(dados, tipo) {
-
+        setTexto("Validando campos")
         // Se email "não for" ou senha "não for", manda alert e retorna false (nesse caso, "falha")
         // Caso email e senha sejam válidos, passa reto por esse if e vai pro próximo
         // (OBS: Login sempre passa por esse, mas nunca pelo próximo)
         if (!dados.email || !dados.senha) {
-            alert("Por favor, preencha todos os campos!");
-            cancelaAnim();
+            setTexto("Oops!");
+            setSubTexto("Por favor, preencha todos os campos.");
+            erroAnim();
             return false;
         }
 
@@ -152,8 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function validarInstituicao(semInstituicao, instituicao) {
         // Caso a caixa "sem instituição" não estiver marcada E ao mesmo tempo não selecionamos alguma... erro!
         if (!semInstituicao && instituicao === "0") {
-            alert("Por favor, selecione uma instituição.");
-            cancelaAnim();
+            setTexto("Oops!");
+            setSubTexto("Por favor, selecione uma instituição.");
+            erroAnim();
             return false;
         }
 
