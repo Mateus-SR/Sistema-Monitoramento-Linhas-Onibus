@@ -1,4 +1,4 @@
-import { iniciaAnim, cancelaAnim } from './loadingAnim.js';
+import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -205,11 +205,14 @@ Seção da API, node, vercel, e afins
             })
 
             preparaTabela(onibusAtivos, horaRequest);
-            cancelaAnim();
+            fechaAnim();
         }
 
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
         catch (error) {
+            erroAnim();
+            setTexto("Oops! Erro!!");
+            setSubTexto(`Um erro (${error}) ocorreu.`)
             console.error(`${timestamp}: erro (${error}) ao rodar bloco try.`);
         }
     }
