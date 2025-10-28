@@ -1,3 +1,5 @@
+import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
+
 // Pra ter certeza que vai acontecer quando tudo carregou
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -37,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function validarLogin() {
+        iniciaAnim();
+
         // Pega os valores (value) dos elementos
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
@@ -53,15 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function validarCadastro() {
+        iniciaAnim();
+
         // Pega os valores (value, checked) dos elementos
         const nome = document.getElementById("text").value.trim();
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
-        const instituicao = document.getElementById("instituicao").value;
-        const semInstituicao = document.getElementById("semInstituicao").checked;
+        //const instituicao = document.getElementById("instituicao").value;
+        //const semInstituicao = document.getElementById("semInstituicao").checked;
 
         // Junta os quatro em uma variavel
-        const dados = {nome, email, senha, instituicao, semInstituicao};
+        const dados = {nome, email, senha, /*instituicao, semInstituicao*/};
 
         // Envia os quatro dados + a informação de qual tipo de validação estamos usando
         if (validarCampos(dados, 'cadastro')) {
@@ -72,9 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function enviarUsuarioParaServidor(dados, tipo) {
+        setTexto("Enviando dados...");
+        // Aqui, usamos ${tipo} como variavel dinamica:
+        // Se o codigo for do cadastro, a variavel "tipo" vai ser "cadastro", e aí o vercel chama a rota "cadastro-usuario".
+        // Se o codigo for do login, a variavel "tipo" vai ser "login", e aí o vercel chama a rota "login-usuario".
         const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/${tipo}-usuario`;
 
         try {
+            // Manda pra url ali de cima o post com os dados inseridos no formulario
             const resposta = await fetch(url, {
                 method: 'POST', 
                 headers: {
@@ -83,40 +94,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(dados), 
             });
 
+            setTexto("Recebendo dados...");
+
+            // Transforma a resposta em um json
             const dadosResposta = await resposta.json();
 
-            if (resposta.ok && tipo === 'cadastro') { // 'ok' significa status 200-299 (o nosso 201)    
+            // Se tudo estiver ok e for do tipo cadastro...
+            if (resposta.ok && tipo === 'cadastro') { // ('ok' significa status 200-299 (sucesso)) 
 
                 console.log(dadosResposta.message);
-                window.location.href = "login.html"; // Redireciona SÓ SE der certo
+                window.location.href = "login.html"; // ... então redireciona pra pagina de login
             
-            } else if (resposta.ok && tipo === 'login') { // 'ok' significa status 200-299 (o nosso 201)
+            // Se tudo estiver ok e for do tipo login...
+            } else if (resposta.ok && tipo === 'login') { // ('ok' significa status 200-299 (sucesso)) 
                 const tokenLogin = dadosResposta.tokenLogin;
                 localStorage.setItem('tokenLogin', tokenLogin);
                 
                 console.log(dadosResposta.message);
-                window.location.href = "personalizacao.html"; // Redireciona SÓ SE der certo
+                window.location.href = "index.html"; // ... então redireciona pra pagina de personalização/configuração/perfil
             
-            } else { 
-                console.log('Erro: ' + dadosResposta.error); 
+            // E se for qualquer outra coisa, dá erro
+            } else {
+                const erroMsg = dadosResposta.error;
+
+                setTexto("Oops! Erro!!");
+                setSubTexto(erroMsg)
+                erroAnim();
             }
 
         } catch (error) {
-            console.error('Falha ao conectar com o servidor:', error);
+            setTexto("Oops! Erro!!");
+            setSubTexto(`Falha ao conectar com o servidor: ${error}`);
+            erroAnim();
             //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
         }
     };
 
     function validarCampos(dados, tipo) {
-
+        setTexto("Validando campos")
         // Se email "não for" ou senha "não for", manda alert e retorna false (nesse caso, "falha")
         // Caso email e senha sejam válidos, passa reto por esse if e vai pro próximo
         // (OBS: Login sempre passa por esse, mas nunca pelo próximo)
         if (!dados.email || !dados.senha) {
-            alert("Por favor, preencha todos os campos!");
+            setTexto("Oops!");
+            setSubTexto("Por favor, preencha todos os campos.");
+            erroAnim();
             return false;
         }
 
+        /*
         // Se estamos lidando com um cadastro...
         if (tipo === 'cadastro') {
             // Verifica na função validarInstituicao marcamos que não somos de instituição ou se não selecionamos alguma
@@ -125,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return false;
             }
         }
+            */
 
         // Caso tenhamos passado por todas as verificações
         return true;
@@ -133,7 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function validarInstituicao(semInstituicao, instituicao) {
         // Caso a caixa "sem instituição" não estiver marcada E ao mesmo tempo não selecionamos alguma... erro!
         if (!semInstituicao && instituicao === "0") {
-            alert("Por favor, selecione uma instituição.");
+            setTexto("Oops!");
+            setSubTexto("Por favor, selecione uma instituição.");
+            erroAnim();
             return false;
         }
 
