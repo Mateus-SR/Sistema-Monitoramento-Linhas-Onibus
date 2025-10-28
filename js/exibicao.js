@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    function mudarZoom() {
+    function mudarZoom(tipo) {
         // Declara "zoomValor" como sendo o mesmo valor de "zoomNivel" na posição de "zoomAtual"
         const zoomValor = zoomNivel[zoomAtual];
 
@@ -97,20 +97,51 @@ document.addEventListener('DOMContentLoaded', () => {
             plus.classList.add('hover:text-sptrans');
             // plus.classList.remove('cursor-not-allowed');
         }
-    };
 
+        mostraZoom(zoomValor, tipo);
+    };
+    
     // Variavel configurando todas as possibilidades de zoom
                     // [0]-[1]-[2]-[3]-[4]--[5]--[6]--[7]--[8]
     const zoomNivel = [50, 67, 75, 90, 100, 110, 125, 133, 150];
     let zoomAtual = 4; //              ^ esse aqui (5º espaço, posição numero 4)
     //  ^ Declarando o valor inicial, mas depois será usado para declarar o valor atual
 
+
+    const zoomPopUpID = 'zoomPopUpContainer';
+
+    function mostraZoom(zoomValor, tipo) {
+            
+        // 1. Sempre remove o pop-up anterior, se existir.
+        // Isso garante que a animação seja reiniciada a cada nova chamada.
+        let oldPopUp = document.getElementById(zoomPopUpID);
+        if (oldPopUp) {
+            oldPopUp.remove();
+        }
+    
+        // 2. Cria o *novo* elemento contêiner (o <div>)
+        const zoomPopUp = document.createElement('div');;
+        zoomPopUp.id = zoomPopUpID;
+        zoomPopUp.className = "text-3xl fixed top-4 left-1/2 -translate-x-1/2 z-[1000] mt-[32px] py-[10px] px-[14px] text-center font-roboto-mono animate-fadeOutHold bg-white text-sptrans font-bold shadow-xl rounded-2xl border-2 border-gray-400";
+        
+        const iHTML = `<i class="fas fa-search-${tipo}" style="vertical-align: middle;"></i>`;
+        const pHTML = `<span class="ml-2" style="fvertical-align: middle;">${zoomValor}%</span>`;
+        zoomPopUp.innerHTML = iHTML + pHTML;
+
+        document.body.appendChild(zoomPopUp);
+
+        zoomPopUp.addEventListener('animationend', () => {
+            zoomPopUp.remove();
+        }, { once: true });
+    };
+
+
     // Atualiza (adiciona) zoom assim que o botão + é clicado
     plus.addEventListener('click', () => {
     // Se zoomAtual é menor que o máximo de posições do array [ler explicação no mudarZoom()], então pode aumentar zoom
         if (zoomAtual < zoomNivel.length - 1) {
             zoomAtual++;
-            mudarZoom();
+            mudarZoom("plus");
         };
     });
 
@@ -119,9 +150,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Se zoomAtual é maior que 0 (minimo), então pode tirar zoom
         if (zoomAtual > 0) {
             zoomAtual--;
-            mudarZoom();
+            mudarZoom("minus");
         };
     });
+
+    const input = document.getElementById('barraPesquisa');
+    const tabela = document.getElementById('tabelaBody');
+    const linhas = tabela.getElementsByTagName('tr');
+  
+    input.addEventListener('input', () => {
+      const filtro = input.value.toLowerCase();
+  
+      for (let i = 0; i < linhas.length; i++) {
+        const linha = linhas[i];
+        const texto = linha.textContent.toLowerCase();
+        linha.style.display = texto.includes(filtro) ? '' : 'none';
+      }
+    });
+
 
 /*#######################################################################################################
 Seção da API, node, vercel, e afins
@@ -249,6 +295,8 @@ Seção da API, node, vercel, e afins
             registroOnibus.set(proximoOnibusCodigo, fichaAntiga);
         };
 
+        
+
     }
 
     function preparaTabela(onibusAtivos, horaRequest) {
@@ -291,9 +339,6 @@ Seção da API, node, vercel, e afins
         }
     }
 
-
-
-
     // A função que chamamos lá em cima para construir a tabela, recebendo as informações que vamos usar
     function constroiTabela(value, proximoOnibusCodigo) {
         //const onibusRegistroInfo = registroOnibus.get(proximoOnibusCodigo);
@@ -327,6 +372,15 @@ Seção da API, node, vercel, e afins
         novaLinha.addEventListener('animationend', () =>{
             novaLinha?.classList.remove('animate-fadeIn');
         }, {once: true});
+
+
+        const filtroAtual = input.value.toLowerCase();
+        if (filtroAtual) {
+            const textoDaLinha = novaLinha.textContent.toLowerCase();
+            if (!textoDaLinha.includes(filtroAtual)) {
+                novaLinha.style.display = 'none';
+            }
+        }
 
         // Colocamos a linha na tabela
         tabelaBody.appendChild(novaLinha);
@@ -411,20 +465,4 @@ Seção da API, node, vercel, e afins
         let resultado = hora + minuto;
         return resultado;
     }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('barraPesquisa');
-  const tabela = document.getElementById('tabelaBody');
-  const linhas = tabela.getElementsByTagName('tr');
-
-  input.addEventListener('input', () => {
-    const filtro = input.value.toLowerCase();
-
-    for (let i = 0; i < linhas.length; i++) {
-      const linha = linhas[i];
-      const texto = linha.textContent.toLowerCase();
-      linha.style.display = texto.includes(filtro) ? '' : 'none';
-    }
-  });
 });

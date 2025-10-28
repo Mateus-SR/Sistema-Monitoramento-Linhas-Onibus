@@ -18,12 +18,11 @@ function fechaAnim() {
     const divAnim = document.getElementById('loadingAnim');
 
     if (divAnim) {
-        divAnim.classList.add('animate-fadeOut');
+        divAnim.classList.add('animate-shrink');
         // Trocar essa animação para uma mais rapida
 
         divAnim.addEventListener('animationend', () =>{
             divAnim.remove();
-            divAnim?.classList.remove('animate-fadeOut');
         }, {once: true});
     }
 }
