@@ -466,3 +466,46 @@ Seção da API, node, vercel, e afins
         return resultado;
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Seleciona todos os botões de favorito da tabela
+  const botoes = document.querySelectorAll('.btn-favorito');
+
+  botoes.forEach(botao => {
+    const linha = botao.closest('tr');
+    const codigo = linha.dataset.codigo;
+    const nome = linha.dataset.nome;
+    const previsao = linha.dataset.previsao || '--:--';
+    const status = linha.dataset.status || 'Desconhecido';
+
+    // Recupera favoritos do localStorage
+    let favoritos = JSON.parse(localStorage.getItem('linhasFavoritas')) || [];
+
+    // Atualiza ícone se já estiver favoritado
+    if (favoritos.some(f => f.codigo === codigo)) {
+      botao.textContent = '★';
+    }
+
+    botao.addEventListener('click', () => {
+      const usuarioLogado = localStorage.getItem('usuarioLogado');
+      if (!usuarioLogado) {
+        alert('Faça login para favoritar linhas!');
+        return;
+      }
+
+      const linhaObj = { codigo, nome, previsao, status };
+
+      // Adiciona ou remove dos favoritos
+      if (favoritos.some(f => f.codigo === codigo)) {
+        favoritos = favoritos.filter(f => f.codigo !== codigo);
+        botao.textContent = '⭐';
+      } else {
+        favoritos.push(linhaObj);
+        botao.textContent = '★';
+      }
+
+      // Salva novamente no localStorage
+      localStorage.setItem('linhasFavoritas', JSON.stringify(favoritos));
+    });
+  });
+});

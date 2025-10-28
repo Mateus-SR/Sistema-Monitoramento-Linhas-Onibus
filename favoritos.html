@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" type="text/css" href="./css/styles.css" />
+  <link href="./src/output.css" rel="stylesheet">
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <title>Minhas Linhas Favoritas</title>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar" role="banner">
+    <div class="container topbar-inner mx-auto">
+      <a class="brand" href="index.html">
+        <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
+      </a>
+
+      <nav aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a class="nav-link" href="index.html">Início</a></li>
+          <li><a class="nav-link" href="index.html">Mapa</a></li>
+          <li><a class="nav-link" href="exibicao.html">Linhas</a></li>
+          <li><a class="nav-link" href="favoritos.html">Minhas Linhas</a></li>
+          <li><a class="nav-link" href="#sobre">Sobre</a></li>
+        </ul>
+      </nav>
+
+      <div class="actions">
+        <a href="login.html" class="btn btn-outline">Entrar</a>
+        <a href="cadastro.html" class="btn btn-primary">Criar conta</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Campo de pesquisa -->
+  <div class="flex justify-center my-6">
+    <input 
+      type="text" 
+      id="barraPesquisaFavoritos"
+      placeholder="Pesquisar linha"
+      class="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans"
+    />
+  </div>
+
+  <!-- Tabela de linhas favoritas -->
+  <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6 overflow-x-auto">
+    <table class="min-w-full table-auto border-collapse">
+      <thead>
+        <tr class="bg-gray-100 font-bold">
+          <th class="py-3 px-6 text-center">Código</th>
+          <th class="py-3 px-6 text-center">Nome</th>
+          <th class="py-3 px-6 text-center">Previsão</th>
+          <th class="py-3 px-6 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaFavoritos">
+        <!-- JS vai inserir aqui -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabela = document.getElementById('tabelaFavoritos');
+
+      // Verifica se o usuário está logado
+      const usuarioLogado = localStorage.getItem('usuarioLogado');
+      if (!usuarioLogado) {
+        tabela.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center py-6 text-gray-500">
+              Faça login para ver suas linhas favoritas
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Recupera favoritos do localStorage
+      const favoritos = JSON.parse(localStorage.getItem('linhasFavoritas')) || [];
+
+      if (favoritos.length === 0) {
+        tabela.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center py-6 text-gray-500">
+              Você ainda não favoritou nenhuma linha 😢
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Exibe cada linha favorita
+      favoritos.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.classList.add('border-b', 'hover:bg-gray-50');
+        tr.innerHTML = `
+          <td class="text-center py-3 px-6 font-bold">${f.codigo}</td>
+          <td class="text-center py-3 px-6">${f.nome}</td>
+          <td class="text-center py-3 px-6">${f.previsao || '--:--'}</td>
+          <td class="text-center py-3 px-6">${f.status || 'Desconhecido'}</td>
+        `;
+        tabela.appendChild(tr);
+      });
+
+      // Pesquisa
+      const barraPesquisa = document.getElementById('barraPesquisaFavoritos');
+      barraPesquisa.addEventListener('input', () => {
+        const termo = barraPesquisa.value.toLowerCase();
+        tabela.querySelectorAll('tr').forEach(tr => {
+          const codigo = tr.children[0].textContent.toLowerCase();
+          const nome = tr.children[1].textContent.toLowerCase();
+          tr.style.display = codigo.includes(termo) || nome.includes(termo) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
