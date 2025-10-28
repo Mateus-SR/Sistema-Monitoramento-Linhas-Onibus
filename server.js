@@ -9,6 +9,7 @@ const { PrismaClient, Prisma } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { nanoid } = require('nanoid');
 
 const app = express();
 app.use(cors());
@@ -208,7 +209,11 @@ app.get('/parada-radar', async (req, res) => {
     }
     res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'})
   }
-})
+});
+
+app.post('/cria-exibicao', verificarToken, perfilLimiter, async (req, res) => {
+  
+});
 
 /*#######################################################################################################
 Seção da banco de dados, prisma, supabase, e afins

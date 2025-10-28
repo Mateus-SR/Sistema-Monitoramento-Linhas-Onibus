@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         zoomPopUp.className = "text-3xl fixed top-4 left-1/2 -translate-x-1/2 z-[1000] mt-[32px] py-[10px] px-[14px] text-center font-roboto-mono animate-fadeOutHold bg-white text-sptrans font-bold shadow-xl rounded-2xl border-2 border-gray-400";
         
         const iHTML = `<i class="fas fa-search-${tipo}" style="vertical-align: middle;"></i>`;
-        const pHTML = `<span class="ml-2" style="fvertical-align: middle;">${zoomValor}%</span>`;
+        const pHTML = `<span class="ml-2" style="vertical-align: middle;">${zoomValor}%</span>`;
         zoomPopUp.innerHTML = iHTML + pHTML;
 
         document.body.appendChild(zoomPopUp);
