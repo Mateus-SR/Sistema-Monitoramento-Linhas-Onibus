@@ -3,8 +3,15 @@ const express = require('express'); // Para facilitar o uso geral do node.js
 const axios = require('axios'); // Para facilicar o uso de fetchs (chamar os dados da api)
 const cors = require('cors');
 
+
+const { PrismaClient, Prisma } = require('@prisma/client');
+const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
@@ -193,7 +200,145 @@ app.get('/parada-radar', async (req, res) => {
   }
 })
 
+/*#######################################################################################################
+Seção da API, node, vercel, e afins
+#######################################################################################################*/
 
+app.post('/cadastro-usuario', async (req, res) => {
 
+  const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
+
+  try {
+    const senhaHash = await bcrypt.hash(senha, 10);
+    await prisma.usuario.create({
+      data: {
+        nome_usu: nome,
+        email_usu: email,
+        senha_usu: senhaHash,
+        fac_id: 1
+      }
+    });
+    res.status(201).json({
+      message: "Sucesso ao criar usuário!"
+    });
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({
+      error: 'Erro ao criar usuario.'
+    });
+  }
+});
+
+app.post('/login-usuario', async (req, res) => {
+  const {email, senha} = req.body;
+
+  try {
+    const usuarioEncontrado = await prisma.usuario.findUnique({
+      where: {
+        email_usu: email
+      },
+    });
+
+    if (!usuarioEncontrado) {
+      return res.status(401).json({ error: 'E-mail ou senha inválidos.' });
+    }
+
+    const senhaHashDB = usuarioEncontrado.senha_usu;
+    const senhaCorreta = await bcrypt.compare(senha, senhaHashDB);
+
+    if (senhaCorreta) {
+      const payload = {
+        id_usu: usuarioEncontrado.id_usu,
+        email_usu: usuarioEncontrado.email_usu
+      };
+
+      const tokenLogin = jwt.sign(
+        payload,
+        process.env.JWT_SECRET/*,
+        { expiresIn: '18h'}*/
+      );
+
+      res.status(200).json({
+        message: 'Sucesso ao logar!',
+        tokenLogin: tokenLogin
+       });
+
+    } else {
+      return res.status(401).json({
+        error: 'E-mail ou senha inválidos.'
+      });
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro de servidor' });
+  }
+});
+
+app.get('/get-usuario-perfil', verificarToken, async (req, res) => {
+  try {
+    const id_usu = req.id_usuario_logado;
+
+    const usuarioEncontrado = await prisma.usuario.findUnique({
+      where: {
+        id_usu: id_usu
+      },/*
+      select: {
+        nome_usu: true
+      }*/
+    });
+
+      if (usuarioEncontrado) {
+        res.status(200).json(usuarioEncontrado);
+      } else {
+        res.status(404).json({
+          error: 'Usuario não encontrado.'
+        })
+      };
+  } catch(error) {
+    console.error("Erro ao buscar usuário: ", error);
+    res.status(500).json({
+      error: 'Erro interno do servidor.'
+    });
+  }
+});
+
+function verificarToken(req, res, next) {
+  const authHeader = req.headers['x-access-token'];
+
+  if (!authHeader ||!authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({
+      error: 'Token de autenticação ausente ou não começa com "Bearer".'
+    });
+  }
+
+  // Pegando a string a partir do 7º caractere (pra pular o "Bearer ")
+  // E só depois de sabermos que é um token valido e existente
+  const tokenAuth = authHeader.substring(7);
+
+  if (tokenAuth == null) {
+    return res.status(401).json({
+      error: 'tokenAuth não pode ser encontrado'
+    });
+  }
+
+  try {
+    const payload = jwt.verify(tokenAuth, process.env.JWT_SECRET);
+    req.id_usuario_logado = payload.id_usu;
+    next();
+
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(403).json({
+        error: 'Token expirado.'
+      });
+    } else {
+      return res.status(403).json({
+        error: 'Token inválido.'
+    });
+  }
+}
+}
 // Linha que faz o Vercel cuidar de executar tudo
 module.exports = app;

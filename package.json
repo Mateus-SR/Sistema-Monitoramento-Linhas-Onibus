@@ -3,10 +3,13 @@
     "dev": "npx @tailwindcss/cli -i ./input.css -o ./src/output.css --watch"
   },
   "dependencies": {
+    "@prisma/client": "^6.17.1",
     "@tailwindcss/cli": "^4.1.13",
     "axios": "^1.12.2",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "tailwindcss": "^4.1.13"
   },
   "name": "sistema-monitoramento-linhas-onibus",
@@ -24,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus/issues"
   },
-  "homepage": "https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus#readme"
+  "homepage": "https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus#readme",
+  "devDependencies": {
+    "prisma": "^6.17.1"
+  }
 }

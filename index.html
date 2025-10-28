@@ -13,6 +13,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -44,8 +48,11 @@
       </nav>
 
       <div class="actions">
-        <a href="login.html" class="btn btn-outline">Entrar</a>
-        <a href="cadastro.html" class="btn btn-primary">Criar conta</a>
+        <a href="login.html"  class="btn btn-outline botoesConta">Entrar</a>
+        <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
+        <div id="botaoAcessaConta" class="flex text-center cursor-pointer invisible">
+          <a href="cadastro.html" class="btn btn-primary"><i class='fas fa-user-circle'></i> Olá, <span id="nomeUsuario">Usuário</span>!</a>
+        </div>
       </div>
     </div>
   </header>
@@ -71,7 +78,7 @@
 </section>
   </main>
 
-  <!-- Botão flutuante -->
+  <!-- Botão a flutuante -->
   <div class="fixed bottom-32 right-12 md:bottom-32 md:right-12">
     <a href="exibicao.html" 
        class="bg-red-600 text-white font-bold
@@ -89,6 +96,7 @@
   <script src="js/mobile-navbar.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="js/mapa.js"></script>
+  <script src="js/postLogin.js"></script>
 
 </body>
 </html>

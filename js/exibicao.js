@@ -143,10 +143,6 @@ Seção da API, node, vercel, e afins
             const response = await fetch (`${vercel}/parada-radar`);
             // E quebramos ele, para ler como um arquivo .json
             const dados = await response.json();
-
-            // Achamos nossa tabela e limpamos ela, preparando para as informações
-            const tabelaBody = document.getElementById('tabelaBody');
-            tabelaBody.innerHTML = '';
             
             const horaRequest = dados.horaRequest;
 
@@ -165,11 +161,8 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
                 // Registrar nosso onibus na lista de Registros (não confundir com Ativos), para sabermos se ele ainda existe no sistema
-                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest);
+                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
 
-                // Estando tudo certo, construimos nossa tabela, inserindo cada coisa na sua respectiva célula
-                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
-                
                 // Adicionamos o onibus na lista de Ativos (não confundir com Registros)
                 onibusAtivos.add(proximoOnibusCodigo);
                 }
@@ -187,8 +180,7 @@ Seção da API, node, vercel, e afins
                 const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
                 const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
                 
-                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest);
-                constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest);
+                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
 
                 onibusAtivos.add(proximoOnibusCodigo);
                 }
@@ -208,6 +200,8 @@ Seção da API, node, vercel, e afins
                     registroOnibus.delete(key);
                 }
             })
+
+            preparaTabela(onibusAtivos, horaRequest);
         }
 
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
@@ -217,7 +211,7 @@ Seção da API, node, vercel, e afins
     }
 
     // A função para colocar os onibus na lista de Registros (junto de informações uteis)
-    function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, proximoOnibusPrevisao, horaRequest) {
+    function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest) {
         // Como essa lista de Registros é um map(), ele funciona como um dicionario:
         // temos nossa "chave" e nosso "valor". No caso, a "chave" seria a palavra do dicionario que estamos procurando...
         // e o "valor" literalmente são as informações a respeito da palavra
@@ -228,6 +222,9 @@ Seção da API, node, vercel, e afins
         // Criamos um objeto/conjunto de informações (explico melhor ali em baixo)
         const onibusRegistroInfo = { 
             Letreiro: codigoLetreiro,
+            NomeSentido: sentidoLinha,
+            QntdOnibus: quantidadeOnibus,
+            Promessa: proximoOnibusPrevisao,
             Previsao: proximoOnibusPrevisao,
             DataPedido: horaRequest
         };
@@ -239,38 +236,103 @@ Seção da API, node, vercel, e afins
             // map() recebe apenas 2 parametros por item: a chave e o valor (no singular).
             // Se queremos colocar mais valores, precisamos fazer isso atráves de um objeto com todos os outros...
             // ...mas aí, precisaremos quebrar esse objeto para resgatar os valores de dentro dele
+        } else {
+            const fichaAntiga = registroOnibus.get(proximoOnibusCodigo);
+            fichaAntiga.Previsao = proximoOnibusPrevisao;
+            registroOnibus.set(proximoOnibusCodigo, fichaAntiga);
         };
 
     }
 
+    function preparaTabela(onibusAtivos, horaRequest) {
+        // Achamos nossa tabela e limpamos ela, preparando para as informações
+        const tabelaBody = document.getElementById('tabelaBody');
+        //tabelaBody.innerHTML = '';
+
+        registroOnibus.forEach((value, proximoOnibusCodigo) => {
+            let linhaExistente = document.getElementById(`onibus-${proximoOnibusCodigo}`);
+
+            if (!linhaExistente) {
+                constroiTabela(value, proximoOnibusCodigo)
+            } else {
+                const celulaPrevisao = linhaExistente.querySelector('.previsao');
+                celulaPrevisao.textContent = value.Previsao;
+
+                const celulaStatus = linhaExistente.querySelector('.status');
+                const novoStatus = constroiStatus(value);
+
+                celulaStatus.outerHTML = novoStatus;
+                
+            }
+        })
+
+        for (const onibus of tabelaBody.children) {
+            const codigo = onibus.id.split('-')[1];
+
+            if (!onibusAtivos.has(codigo)) {
+                if (!onibus.classList.contains('animate-fadeOut')) {
+                    onibus.classList.add('animate-fadeOut');
+
+                    onibus.addEventListener('animationend', () =>{
+                        onibus.remove();
+                        onibus?.classList.remove('animate-fadeOut');
+                }, {once: true});
+                }
+            } else {
+                onibus.classList.remove('animate-fadeOut');
+            }
+        }
+    }
+
+
+
 
     // A função que chamamos lá em cima para construir a tabela, recebendo as informações que vamos usar
-    function constroiTabela(codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusCodigo, proximoOnibusPrevisao, horaRequest) {
+    function constroiTabela(value, proximoOnibusCodigo) {
+        //const onibusRegistroInfo = registroOnibus.get(proximoOnibusCodigo);
+
+        const codigoLetreiro = value.Letreiro;
+        const sentidoLinha = value.NomeSentido;
+        const quantidadeOnibus = value.QntdOnibus;
         
+        const proximoOnibusPrevisao = value.Previsao;
+        const horaRequest = value.DataPedido;
+
+
+
         // criamos nossa linha da tabela (uma por vez, o appendChild adiciona uma nova linha na tabela)
         const novaLinha = document.createElement('tr'); 
         novaLinha.className = "border-b hover:bg-gray-50";
+        novaLinha.id = `onibus-${proximoOnibusCodigo}`
 
-        novaLinha.innerHTML = `
+        const celulaLinhas = `
             <td class="text-center py-3 px-6 font-extrabold">${codigoLetreiro}</td>
             <td class="text-center py-3 px-6 ">${sentidoLinha}</td>
-            <td class="text-center py-3 px-6 ">${proximoOnibusPrevisao}</td>`
+            <td class="text-center py-3 px-6 previsao">${proximoOnibusPrevisao}</td>`
 
-            // Terminando de construir a linha, vamos construir o status
-            constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo);
+        // Terminando de construir a linha, vamos construir o status
+        const celulaStatus = constroiStatus(value, proximoOnibusCodigo);
         
+        novaLinha.innerHTML = celulaLinhas + celulaStatus
+
+        novaLinha.classList.add('animate-fadeIn');
+
+        novaLinha.addEventListener('animationend', () =>{
+            novaLinha?.classList.remove('animate-fadeIn');
+        }, {once: true});
+
         // Colocamos a linha na tabela
         tabelaBody.appendChild(novaLinha);
     };
 
-    function constroiStatus(novaLinha, horaRequest, proximoOnibusPrevisao, proximoOnibusCodigo) {
+    function constroiStatus(value) {
         // Recebemos as informações do "dicionario" (lista de Registros)
-        const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
+        //const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
 
         // Como nós colocamos mais de uma informação aonde só poderia ter uma unica...
         // ...vamos ter que pegar apenas o que queremos agora (no caso, a Previsão)
-        let horarioPrevistoPromessa = converteHoraMinuto(promessaGuardada.Previsao);
-        let horarioPrevistoAtual = converteHoraMinuto(proximoOnibusPrevisao);
+        let horarioPrevistoPromessa = converteHoraMinuto(value.Promessa);
+        let horarioPrevistoAtual = converteHoraMinuto(value.Previsao);
         // Nessas duas variaveis em cima, estamos jogando horarios (promessa e previsão) em uma função que transforma o horario em minutos
         // Explicação: 22:40 vira 22 horas e 40 minutos. Por quê? Não podemos trabalhar com horas e minutos ao mesmo tempo.
         // Então? Vamos transformar tudo em minutos (pra não ter que trabalhar com decimais):
@@ -312,8 +374,8 @@ Seção da API, node, vercel, e afins
         // O javascript roda "em tempo real" e, se o valor da nossa variavel "statusCor" é "green" (veja ali em cima!)...
         // ...ele automaticamente pensa que deve escrever bg-green-100! E se for "yellow"...? Ele vai ler bg-yellow-100!
         // (isso só é possivel por causa que estamos inserindo um html através de um "template string". São os acentos: ``)
-        return novaLinha.innerHTML += `
-        <td class="text-center py-3 px-6">
+        return `
+        <td class="text-center py-3 px-6 status">
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-${statusCor}-100 text-${statusCor}-700 font-semibold text-sm lg:text-2xl">
                 <span class="relative flex w-2 h-2 mr-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-${statusCor}-400 opacity-75"></span>
@@ -343,6 +405,7 @@ Seção da API, node, vercel, e afins
         return resultado;
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('barraPesquisa');
   const tabela = document.getElementById('tabelaBody');
