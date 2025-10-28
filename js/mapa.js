@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Coordenadas iniciais (exemplo: São Paulo)
-  const latitude = -23.5505;
-  const longitude = -46.6333;
+  const latitude = -23.52249;
+  const longitude = -46.47596;
 
   // Inicializa o mapa no elemento com id="mapa"
   const mapa = L.map('mapa').setView([latitude, longitude], 13);

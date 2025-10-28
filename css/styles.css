@@ -209,17 +209,37 @@ h1 {
 #barraPesquisa:focus {
   background-color: #f9f9f9;
 }
+.content-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+ 
+  width: 100%;
+  max-width: 1200px;
+  margin-left: 10%; 
+}
+
 #mapa {
-  width: 600px;   /* largura */
-  height: 500px;  /* altura igual à largura */
+  width: 60%;     
+  max-width: 1200px;  
+  height: 500px;
   border: 2px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-.content-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start; /* alinha à esquerda */
-  margin-top: 1.5rem;
-  margin-left: 22rem;
+
+/* Responsividade — centraliza no celular */
+@media (max-width: 768px) {
+  .content-column {
+    align-items: center;
+    margin-left: 0;
+  }
+
+  #mapa {
+    width: 90%;
+    height: 400px;
+  }
 }
