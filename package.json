@@ -6,13 +6,13 @@
     "@prisma/client": "^6.18.0",
     "@tailwindcss/cli": "^4.1.13",
     "axios": "^1.12.2",
-    "baseline": "^0.3.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "tailwindcss": "^4.1.13",
-    "express-rate-limit": "^8.1.0"
+    "nanoid": "^5.1.6",
+    "tailwindcss": "^4.1.13"
   },
   "name": "sistema-monitoramento-linhas-onibus",
   "version": "1.0.0",
