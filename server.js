@@ -93,6 +93,15 @@ app.get('/testar-auth', async (req, res) => {
 app.get('/parada-radar', async (req, res) => {
   console.log('Iniciando radar nas paradas...');
   try{
+    const codigos = req.query.codigos;
+
+    if (!codigos) {
+      res.status(404).json({
+        error: 'Erro ao buscar exibição.'
+      });
+
+      const listaCodigos = req.query.codigos.split(',');
+    
     // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
     if (!apiSessionCookie) {
       console.log('Não estamos autenticados! Mas vamos tentar estar em breve...');
@@ -104,124 +113,166 @@ app.get('/parada-radar', async (req, res) => {
       return res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'});
     }
 
-    // Como no momento precisamos apenas pesquisar por esses dois pontos de onibus, essa solução de procurar só por eles é suficiente
-    const codigoParada1 = "650004840"; // É o ponto em frente ao campinho
-    const codigoParada2 = "360004841"; // É o ponto do outro lado da rua
-
-    // Aqui, estamos criando duas pesquisas, mas apenas criando elas e anexando nossa chave (token), porque...
-    const pesquisa1 = axios.get(`${apiURL}${paradaPrevisao}${codigoParada1}`, { headers: {'Cookie': apiSessionCookie}
-    });
-    const pesquisa2 = axios.get(`${apiURL}${paradaPrevisao}${codigoParada2}`, { headers: {'Cookie': apiSessionCookie}
+    const arrayPesquisas = listaCodigos.map(codigoParada => {
+      return axios.get(`${apiURL}${paradaPrevisao}${codigoDaParada}`, { 
+        headers: {'Cookie': apiSessionCookie}
+      });
     });
 
-    //... como vamos fazer duas pesquisas, é mais sábio fazer elas ao mesmo tempo.
-    // Pra isso, nós usamos esse "Promise.all", com as pesquisas que criamos ali em cima...
-    const resultado = await Promise.all([pesquisa1, pesquisa2]);
-    //... e os resultados vem em uma array, que guardamos seu conteudo separamente.
-    const resultadoPesquisa1 = resultado[0].data;
-    const resultadoPesquisa2 = resultado[1].data;
+    const respostas = await Promise.all(arrayPesquisas);
 
-    // E por fim, exibimos os resultados em formato json
-/*     res.json({
-      pesquisa1: {codigoParada: codigoParada1, resultados: resultadoPesquisa1},
-      pesquisa2: {codigoParada: codigoParada2, resultados: resultadoPesquisa2}
-    }) */
+    const resumosProcessados = respostas.map(resposta => {
+      const dadosParada = resposta.data;
 
-    const resumoPesquisa1 = {
-      horaRequest: resultadoPesquisa1.hr,
-      ponto: resultadoPesquisa1.p.cp,
-
-      linhas: resultadoPesquisa1.p.l.map(linhaIndividual => {
-        let proximoOnibus = null;
-        if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
-
-          let checkPrevisao = linhaIndividual.vs[0].t;
-          checkPrevisao = converteHoraMinuto(checkPrevisao);
-
-          let horaRequest = resultadoPesquisa2.hr;
-          horaRequest = converteHoraMinuto(horaRequest);
-
-          const resultadoCheck = checkPrevisao - horaRequest;
-
-          if (resultadoCheck >= 0 && resultadoCheck <= 20) {
-          proximoOnibus = {
-            proximoOnibusCodigo: linhaIndividual.vs[0].p,
-            proximoOnibusPrevisao: linhaIndividual.vs[0].t,
-            proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
-            proximoOnibusPosicaoY: linhaIndividual.vs[0].py
-          }
-          }
-      }
-
-        return {
-          codigoLetreiro: linhaIndividual.c,
-          sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
-          quantidadeOnibus: linhaIndividual.qv,
-          proximoOnibus: proximoOnibus
-        };
-      })
-    };
-
-    const resumoPesquisa2 = {
-      horaRequest: resultadoPesquisa2.hr,
-      ponto: resultadoPesquisa2.p.cp,
-
-      linhas: resultadoPesquisa2.p.l.map(linhaIndividual => {
-        let proximoOnibus = null;
-        if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
-
-          let checkPrevisao = linhaIndividual.vs[0].t;
-          checkPrevisao = converteHoraMinuto(checkPrevisao);
-
-          let horaRequest = resultadoPesquisa2.hr;
-          horaRequest = converteHoraMinuto(horaRequest);
-
-          const resultadoCheck = checkPrevisao - horaRequest;
-
-          if (resultadoCheck >= 0 && resultadoCheck <= 20) {
-          proximoOnibus = {
-            proximoOnibusCodigo: linhaIndividual.vs[0].p,
-            proximoOnibusPrevisao: linhaIndividual.vs[0].t,
-            proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
-            proximoOnibusPosicaoY: linhaIndividual.vs[0].py
-          }
-          }
-      }
-
-        return {
-          codigoLetreiro: linhaIndividual.c,
-          sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
-          quantidadeOnibus: linhaIndividual.qv,
-          proximoOnibus: proximoOnibus
-        };
-      })
-    };
-
-    res.json({resumoPesquisa1: resumoPesquisa1,
-      resumoPesquisa2: resumoPesquisa2
+      return processarResultadoParada(dadosParada);
     });
+
+    res.json(resumosProcessados);
 
     // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
-  } catch (error) {
+} catch (error) {
     if (error.response && error.response.status === 401) {
       console.log('[401] Pesquisa inválida ou sessão expirada.')
       apiSessionCookie = null;
+    } else {
+      // Adicionado para logar outros erros
+      console.error('Erro ao processar radar:', error.message);
     }
-    res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'})
+    res.status(500).json({error: 'Houve uma falha na comunicação com a API da SPTrans.'})
   }
 });
 
+function processarResultadoParada(dadosParada){
+  return {
+    horaRequest: dadosParada.hr,
+    ponto: dadosParada.p.cp,
+    linhas: dadosParada.p.l.map(linhaIndividual => {
+      let proximoOnibus = null;
+      if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
+
+        let checkPrevisao = linhaIndividual.vs[0].t;
+        checkPrevisao = converteHoraMinuto(checkPrevisao);
+
+        // <-- MUDANÇA/CORREÇÃO DE BUG:
+        // O código original usava 'resultadoPesquisa2.hr' aqui dentro.
+        // O correto é usar a hora da *própria* parada ('dadosParada.hr').
+        let horaRequest = dadosParada.hr; 
+        horaRequest = converteHoraMinuto(horaRequest);
+
+        const resultadoCheck = checkPrevisao - horaRequest;
+
+        // (Sua lógica de 20 minutos está perfeita)
+        if (resultadoCheck >= 0 && resultadoCheck <= 20) {
+          proximoOnibus = {
+            proximoOnibusCodigo: linhaIndividual.vs[0].p,
+            proximoOnibusPrevisao: linhaIndividual.vs[0].t,
+            proximoOnibusPosicaoX: linhaIndividual.vs[0].px,
+            proximoOnibusPosicaoY: linhaIndividual.vs[0].py
+          }
+        }
+      }
+
+      return {
+        codigoLetreiro: linhaIndividual.c,
+        sentidoLinha: linhaIndividual.sl === 1 ? linhaIndividual.lt0 : linhaIndividual.lt1,
+        quantidadeOnibus: linhaIndividual.qv,
+        proximoOnibus: proximoOnibus
+      };
+    })
+  };
+}
+
+
+
 app.post('/cria-exibicao', verificarToken, perfilLimiter, async (req, res) => {
+  const usuarioLogado = req.id_usuario_logado;
+  const {codigos_parada, nome_exibicao } = req.body;
   
+  if (!codigos_parada || !Array.isArray(codigos_parada) || codigos_parada.length === 0 || codigos_parada.length > 5) {
+    return res.status(400).json({ 
+      error: 'Há um problema com codigos_parada. (Não é nulo? É um array? Igual que 0? Maior que 5?).' 
+    });
+  }
+
+  try {
+    let codigo_exib;
+    let existe = true;
+
+    while (existe) {
+      codigo_exib = nanoid(6);
+      const exibicaoExistente = await prisma.exibicao.findUnique({
+        where: { codigo_exib: codigo_exib }
+      });
+      existe = !!exibicaoExistente;
+    }
+  
+    const novaExibicao = await prisma.exibicao.create({
+      data: {
+        id_usu: usuarioLogado,
+        codigo_exib: codigo_exib,
+        nome_exibicao: nome_exibicao,
+        
+        paradas: {
+          create: codigos_parada.map( cadaCodigo => ({
+            codigo_parada: cadaCodigo
+          }))
+        }
+      }
+    });
+
+    res.status(201).json({
+      message: "Sucesso ao criar exibição!",
+      codigo_exib: codigo_exib,
+      dados: novaExibicao // Envia o objeto completo recém-criado
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: 'Erro ao criar exibição.'
+    });
+  }
 });
 
+app.get('/exibicao/:codigo_exib', async (req, res) => {
+  const codigo_exib = req.params.codigo_exib;
+
+  try {
+    const exibicao = await prisma.exibicao.findUnique({
+      where: { codigo_exib: codigo_exib
+      },
+      include: {
+        paradas: {
+          select: { 
+            codigo_parada: true } 
+        }
+      }
+    });
+
+    if (exibicao) {
+      res.status(200).json(exibicao);
+    } else {
+      console.error(error);
+      res.status(404).json({
+        error: 'Erro ao buscar exibição.'
+      });
+    }
+    
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: 'Ocorreu um erro interno do servidor.'
+     });
+  }
+});
 /*#######################################################################################################
 Seção da banco de dados, prisma, supabase, e afins
 #######################################################################################################*/
 
 app.post('/cadastro-usuario', async (req, res) => {
   // Esses dados vieram lá do front-end, e vieram dentro desse req
-  const dados ={nome, email, senha, instituicao, semInstituicao} = req.body;
+  const {nome, email, senha, instituicao, semInstituicao} = req.body;
 
   try {
     // Pedimos pra criar uma senha criptografada, e guardamos apenas ela (nada de guardar a senha original! Nunca!)
