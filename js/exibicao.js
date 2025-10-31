@@ -465,6 +465,8 @@ Seção da API, node, vercel, e afins
         let resultado = hora + minuto;
         return resultado;
     }
+
+    
 });
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -30,6 +30,7 @@
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
+    --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-700: oklch(37.3% 0.034 259.733);
     --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-gray-900: oklch(21% 0.034 264.665);
@@ -82,6 +83,7 @@
     --animate-fadeIn: fadeIn 2.5s ease-in-out normal;
     --animate-busJiggle: busJiggle 1.5s ease-in-out infinite;
     --animate-fullRightLeft: fullRightLeft 3s linear 2;
+    --animate-LTRfadeIn: LTRfadeIn 0.2s ease-in-out normal;
   }
 }
 @layer base {
@@ -377,9 +379,6 @@
   .hidden {
     display: none;
   }
-  .inline {
-    display: inline;
-  }
   .inline-flex {
     display: inline-flex;
   }
@@ -438,9 +437,6 @@
   .min-w-full {
     min-width: 100%;
   }
-  .flex-shrink {
-    flex-shrink: 1;
-  }
   .shrink {
     flex-shrink: 1;
   }
@@ -468,6 +464,9 @@
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
+  .animate-LTRfadeIn {
+    animation: var(--animate-LTRfadeIn);
   }
   .animate-busJiggle {
     animation: var(--animate-busJiggle);
@@ -508,6 +507,12 @@
   .flex-row {
     flex-direction: row;
   }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .content-end {
+    align-content: flex-end;
+  }
   .items-center {
     align-items: center;
   }
@@ -523,8 +528,8 @@
   .justify-evenly {
     justify-content: space-evenly;
   }
-  .justify-start {
-    justify-content: flex-start;
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
   }
   .space-y-6 {
     :where(& > :not(:last-child)) {
@@ -689,6 +694,9 @@
   .py-5 {
     padding-block: calc(var(--spacing) * 5);
   }
+  .py-6 {
+    padding-block: calc(var(--spacing) * 6);
+  }
   .py-40 {
     padding-block: calc(var(--spacing) * 40);
   }
@@ -706,9 +714,6 @@
   }
   .text-center {
     text-align: center;
-  }
-  .text-end {
-    text-align: end;
   }
   .text-left {
     text-align: left;
@@ -782,6 +787,9 @@
   }
   .text-blue-700 {
     color: var(--color-blue-700);
+  }
+  .text-gray-500 {
+    color: var(--color-gray-500);
   }
   .text-gray-700 {
     color: var(--color-gray-700);
@@ -1284,6 +1292,16 @@
   100% {
     transform: translateX(-300%);
     opacity: 0%;
+  }
+}
+@keyframes LTRfadeIn {
+  0% {
+    transform: translateX(-150%);
+    opacity: 0%;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 100%;
   }
 }
 @layer properties {

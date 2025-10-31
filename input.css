@@ -32,7 +32,6 @@
     }
 
     --animate-shrink: shrink 0.5s ease-in-out normal;
-
     @keyframes shrink {
         0% {
           transform: scale(100%);
@@ -51,7 +50,6 @@
     }
 
     --animate-fadeIn: fadeIn 2.5s ease-in-out normal;
-
     @keyframes fadeIn {
         0% {
             opacity: 0%;
@@ -93,5 +91,34 @@
           transform: translateX(-300%);
           opacity: 0%;
       }
+    }
+
+/*Left to Right Fade-In*/
+    --animate-LTRfadeIn: LTRfadeIn 0.2s ease-in-out normal;
+    @keyframes LTRfadeIn {
+        0% {
+          transform: translateX(-150%);
+          opacity: 0%;
+        }
+
+        100% {
+          transform: translateX(0%);
+          opacity: 100%;
+        }
+    }
+
+/*Left to Right Fade-Out*/
+    --animate-LTRfadeOut: LTRfadeIn 0.2s ease-in-out normal;
+
+    @keyframes LTRfadeOut {
+        0% {
+          transform: translateX(0%);
+          opacity: 100%;
+        }
+
+        100% {
+          transform: translateX(150%);
+          opacity: 0%;
+        }
     }
   }

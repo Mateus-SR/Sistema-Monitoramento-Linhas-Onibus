@@ -96,11 +96,12 @@ app.get('/parada-radar', async (req, res) => {
     const codigos = req.query.codigos;
 
     if (!codigos) {
-      res.status(404).json({
+      res.status(400).json({
         error: 'Erro ao buscar exibição.'
       });
+    }
 
-      const listaCodigos = req.query.codigos.split(',');
+    const listaCodigos = codigosString.split(',');
     
     // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
     if (!apiSessionCookie) {
@@ -153,15 +154,12 @@ function processarResultadoParada(dadosParada){
         let checkPrevisao = linhaIndividual.vs[0].t;
         checkPrevisao = converteHoraMinuto(checkPrevisao);
 
-        // <-- MUDANÇA/CORREÇÃO DE BUG:
-        // O código original usava 'resultadoPesquisa2.hr' aqui dentro.
-        // O correto é usar a hora da *própria* parada ('dadosParada.hr').
         let horaRequest = dadosParada.hr; 
         horaRequest = converteHoraMinuto(horaRequest);
 
         const resultadoCheck = checkPrevisao - horaRequest;
 
-        // (Sua lógica de 20 minutos está perfeita)
+        // futuramente mudar esse 20 pra uma variavel da tabela configuração
         if (resultadoCheck >= 0 && resultadoCheck <= 20) {
           proximoOnibus = {
             proximoOnibusCodigo: linhaIndividual.vs[0].p,
@@ -181,8 +179,6 @@ function processarResultadoParada(dadosParada){
     })
   };
 }
-
-
 
 app.post('/cria-exibicao', verificarToken, perfilLimiter, async (req, res) => {
   const usuarioLogado = req.id_usuario_logado;
@@ -379,6 +375,33 @@ app.get('/get-usuario-perfil', verificarToken, perfilLimiter, async (req, res) =
       };
   } catch(error) {
     console.error("Erro ao buscar usuário: ", error);
+    res.status(500).json({
+      error: 'Erro interno do servidor.'
+    });
+  }
+});
+
+app.get('/get-usuario-exibicoes', verificarToken, async (req, res) => {
+  try {
+    // Pegamos o id do usuario que queremos achar...
+    const id_usu = req.id_usuario_logado;
+
+    const exibicoes = await prisma.exibicao.findMany({
+      where: {
+        id_usu: id_usu
+      },
+      include: {
+        paradas: {
+          select: { codigo_parada: true }
+        }
+      }
+    });
+
+    res.status(200).json(exibicoes);
+
+
+  } catch(error) {
+    console.error("Erro ao buscar exibições: ", error);
     res.status(500).json({
       error: 'Erro interno do servidor.'
     });
