@@ -19,13 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
     botaoRemover.addEventListener('click', () => {
         if (counterFieldAdiciona >= 2) {
             counterFieldAdiciona--;
+
             let paradaFieldRecente = document.getElementById(`paradaField_${counterFieldAdiciona}`)
             
-            paradaFieldRecente.style.animation = `LTR-FadeOut 0.2s ease-in-out`;
+            if (paradaFieldRecente) {
+                paradaFieldRecente.classList.remove("LTRfadeIn");
+                paradaFieldRecente.classList.add("LTRfadeOut");
 
-            paradaFieldRecente.addEventListener('animationend', () => {
-                paradaFieldRecente.remove();
-            });
+                paradaFieldRecente.addEventListener('animationend', () => {
+                    paradaFieldRecente.remove();
+                }, { once: true });
+            }
+ 
         }
     })
 

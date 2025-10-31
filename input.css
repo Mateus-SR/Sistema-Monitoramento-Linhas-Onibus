@@ -108,7 +108,7 @@
     }
 
 /*Left to Right Fade-Out*/
-    --animate-LTRfadeOut: LTRfadeIn 0.2s ease-in-out normal;
+    --animate-LTRfadeOut: LTRfadeOut 0.2s ease-in-out forwards;
 
     @keyframes LTRfadeOut {
         0% {
