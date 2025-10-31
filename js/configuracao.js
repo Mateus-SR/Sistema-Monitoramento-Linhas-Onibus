@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     botaoRemover.addEventListener('click', () => {
         if (counterFieldAdiciona >= 2) {
             counterFieldAdiciona--;
-
             let paradaFieldRecente = document.getElementById(`paradaField_${counterFieldAdiciona}`)
+ 
             
             if (paradaFieldRecente) {
                 paradaFieldRecente.classList.remove("LTRfadeIn");
