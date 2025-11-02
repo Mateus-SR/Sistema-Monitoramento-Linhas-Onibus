@@ -31,14 +31,14 @@ function fechaAnim() {
 function criaBaseAnim() {
     const novaDiv = document.createElement('div'); 
 
-    novaDiv.className = "fixed top-0 left-0 w-full h-full flex items-center justify-center font-roboto-mono z-[800] overflow-hidden";
+    novaDiv.className = "fixed top-0 left-0 w-full h-full flex items-center justify-center font-roboto-mono z-[800] overflow-hidden backdrop-blur-xs";
     novaDiv.id = "loadingAnim";
 
     const baseAnim = `
-        <div id="loadingBox" class="relative overflow-hidden bg-white border border-gray-800 rounded-xl py-40 aspect-square shadow-2xl shadow-black/60 flex flex-col items-center justify-center">
+        <div id="loadingBox" class="relative overflow-hidden bg-white border border-gray-800 rounded-xl py-40 max-w-md aspect-square shadow-2xl shadow-black/60 flex flex-col items-center justify-center">
             <img id="campoImg" class="size-24 z-[1000] animate-busJiggle" src="img/bus-svgrepo-com-256.png">
-            <p id="campoTextoStatus" class="text-2xl font-extrabold text-black animate-pulse">Carregando...</p>
-            <p id="campoSubTexto" class="text-md font-bold text-black/60 italic">Por favor, aguarde.</p>
+            <p id="campoTextoStatus" class="text-2xl font-extrabold text-black animate-pulse text-center mx-5">Carregando...</p>
+            <p id="campoSubTexto" class="text-md text-center font-bold text-black/60 italic mx-10">Por favor, aguarde.</p>
         </div>
     `
     novaDiv.innerHTML = baseAnim;

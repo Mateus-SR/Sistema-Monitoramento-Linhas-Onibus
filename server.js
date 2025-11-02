@@ -182,11 +182,11 @@ function processarResultadoParada(dadosParada){
 
 app.post('/cria-exibicao', verificarToken, perfilLimiter, async (req, res) => {
   const usuarioLogado = req.id_usuario_logado;
-  const {codigos_parada, nome_exibicao } = req.body;
+  const { nome_exibicao, codigos_parada } = req.body;
   
   if (!codigos_parada || !Array.isArray(codigos_parada) || codigos_parada.length === 0 || codigos_parada.length > 5) {
     return res.status(400).json({ 
-      error: 'Há um problema com codigos_parada. (Não é nulo? É um array? Igual que 0? Maior que 5?).' 
+      error: 'Há um problema com codigos_parada. (Não é nulo? É um array? Igual a 0? Maior que 5?).' 
     });
   }
 

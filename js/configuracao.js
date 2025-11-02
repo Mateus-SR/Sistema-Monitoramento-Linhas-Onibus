@@ -1,44 +1,98 @@
+import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const ConfiguraçãoForm = document.getElementById('ConfiguraçãoForm');
     const botaoAdicionar = document.getElementById('botaoAdicionar');
     const botaoRemover = document.getElementById('botaoRemover');
-    const paradaField = document.getElementById('paradaField');
+    const botaoSalvar = document.getElementById('botaoSalvar');
+    const codParadaOG = document.getElementById('codParada_1');
+
+    const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/cria-exibicao`;
     
     let counterFieldAdiciona = 1;
     verificaEstado();
 
     botaoAdicionar.addEventListener('click', () =>{
         if (counterFieldAdiciona <= 4) {
-            const novoParadaField = paradaField.cloneNode(true); 
+            const novocodParada = codParadaOG.cloneNode(true);
             
             counterFieldAdiciona++;
-            novoParadaField.id = 'paradaField_' + counterFieldAdiciona;
-            ConfiguraçãoForm.appendChild(novoParadaField);
+            novocodParada.id = 'codParada_' + counterFieldAdiciona;
+            
+            novocodParada.value = '';
+
+            if (novocodParada.classList.contains('bg-sptrans/25')) {
+                novocodParada.classList.remove('bg-sptrans/25')
+            };
+
+            ConfiguraçãoForm.appendChild(novocodParada);
 
             verificaEstado();
         }
-    })
+    });
+
+    const campoCodErro = (input) => {
+        input.classList.add('bg-sptrans/25');
+    }
+
+    const campoCodCorreto = (input) => {
+        input.classList.remove('bg-sptrans/25');
+    }
+
 
     botaoRemover.addEventListener('click', () => {
         if (counterFieldAdiciona >= 2) {
 
-            let paradaFieldRecente = document.getElementById(`paradaField_${counterFieldAdiciona}`)
+            let codParadaRecente = document.getElementById(`codParada_${counterFieldAdiciona}`)
  
             
-            if (paradaFieldRecente) {
-                paradaFieldRecente.classList.remove("animate-LTRfadeIn");
-                paradaFieldRecente.classList.add("animate-LTRfadeOut");
+            if (codParadaRecente) {
+                codParadaRecente.classList.remove("animate-LTRfadeIn");
+                codParadaRecente.classList.add("animate-LTRfadeOut");
 
 
                 
-                paradaFieldRecente.addEventListener('animationend', () => {
-                    paradaFieldRecente.remove();
+                codParadaRecente.addEventListener('animationend', () => {
+                    codParadaRecente.remove();
                     counterFieldAdiciona--;
                     verificaEstado();
                 }, { once: true });
             }
         }
-    })
+    });
+
+    botaoSalvar.addEventListener('click', (e) => {
+
+        e.preventDefault();
+        salvarExibicao();
+    });
+
+    ConfiguraçãoForm.addEventListener('input', (e) => {
+        if (e.target.classList.contains('campoCodParada')) {
+            const input = e.target;
+
+            input.value = input.value.replace(/\D/g, '');
+            
+            if (input.value.length > 0 && input.value.length !== 9) {
+                campoCodErro(input);
+            } else {
+                campoCodCorreto(input);
+            }
+        }
+    });
+
+    ConfiguraçãoForm.addEventListener('focusout', (e) => {
+        if (e.target.classList.contains('campoCodParada')) {
+            const input = e.target;
+
+            if (input.value.length > 0 && input.value.length !== 9) {
+                campoCodErro(input);
+            } else {
+                campoCodCorreto(input);
+            }
+        }
+    });
 
 function verificaEstado() {
     if (counterFieldAdiciona == 5) {
@@ -75,6 +129,78 @@ function verificaEstado() {
         botaoRemover.classList.add('cursor-pointer');
         botaoRemover.classList.remove('cursor-not-allowed');
     }
-}
+};
+
+async function salvarExibicao() {
+    iniciaAnim();
+    setTexto("Validando dados...");
+
+
+    const nome = document?.getElementById('nomeExib').value;
+
+    let formularioValido = true;
+
+    const todosCodigos = document.querySelectorAll('.campoCodParada');
+
+    // Estamos usando um loop "for" ou inves do "forEach" pois o for permite que usemos "break" para cancelar a execução do codigo. "forEach" não permite.
+    for (const cadaUm of todosCodigos) {
+        const valido = cadaUm.value.length === 9 && !cadaUm.classList.contains('bg-sptrans/25');
+        if (!valido) {
+            formularioValido = false;
+            break;
+        }
+    };
+
+    if (!formularioValido) {
+        erroAnim();
+        setTexto("Oops! Erro!!")
+        setSubTexto("Verifique se todos os códigos foram inseridos corretamente.")
+        return;
+    }
+
+
+    const arrayCodigos = Array.from(todosCodigos).map(cadaUm => cadaUm.value);
+
+    try {
+        const tokenLogin = localStorage.getItem('tokenLogin');
+        const dados = { 
+            nome_exibicao: nome,
+            codigos_parada: arrayCodigos
+        };
+
+        // Manda pra url ali de cima o post com os dados inseridos no formulario
+        const resposta = await fetch(url, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Access-Token': `Bearer ${tokenLogin}`
+            },
+            body: JSON.stringify(dados), 
+        });
+
+        setTexto("Enviando dados...");
+
+        const dadosResposta = await resposta.json();
+        // Se tudo estiver ok...
+        if (resposta.ok) { // ('ok' significa status 200-299 (sucesso)) 
+            console.log(dadosResposta.codigo_exib);
+            // chamar popUp sucesso
+        
+        // E se for qualquer outra coisa, dá erro
+        } else {
+            const erroMsg = dadosResposta.error;
+            setTexto("Oops! Erro!!");
+            setSubTexto(erroMsg)
+            erroAnim();
+        }
+    } catch (error) {
+        setTexto("Oops! Erro!!");
+        setSubTexto(`Falha ao conectar com o servidor: ${error}`);
+        erroAnim();
+        //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
+    };
+
+};
+
 
 });

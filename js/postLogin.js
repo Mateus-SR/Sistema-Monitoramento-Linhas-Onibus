@@ -58,11 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function gerenciaBotoesConta(tokenLogin, perfilUsuarioLogado) {
         const estaLogado =!!tokenLogin; // =!! é uma forma diferente de converter algo para boolean (meio parecido com == ou ===)
 
-        if (botaoAcessaConta.classList.contains('invisible') === estaLogado) {
+        if (botaoAcessaConta.classList.contains('hidden') === estaLogado) {
             botoesConta.forEach(cadaUm => {
-                cadaUm.classList.toggle('invisible');
+                cadaUm.classList.toggle('hidden');
+                cadaUm.classList.toggle('flex');
             });
-            botaoAcessaConta.classList.toggle('invisible');
+            botaoAcessaConta.classList.toggle('hidden');
         }
 
         if (perfilUsuarioLogado) {

@@ -3,6 +3,3 @@ temporario.*
 teste/
 .env
 .temp
-node_modules
-/src/generated/prisma
-/migrations
