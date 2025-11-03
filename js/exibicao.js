@@ -308,7 +308,7 @@ Seção da API, node, vercel, e afins
                 }
             })
 
-            preparaTabela(onibusAtivos, horaRequest);
+            preparaTabela(onibusAtivos);
             fechaAnim();
 
         }
@@ -358,7 +358,7 @@ Seção da API, node, vercel, e afins
 
     }
 
-    function preparaTabela(onibusAtivos, horaRequest) {
+    function preparaTabela(onibusAtivos) {
         // Achamos nossa tabela e limpamos ela, preparando para as informações
         const tabelaBody = document.getElementById('tabelaBody');
         //tabelaBody.innerHTML = '';
