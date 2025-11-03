@@ -1,4 +1,4 @@
-import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
+import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim, setSimNao } from './loadingAnim.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             await radarOnibus(codigosParada);
             setInterval(() => radarOnibus(codigosParada), 5000);
+            setTituloCodigo(exibicao);
 
 
         } catch (error) {
@@ -55,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const plus = document.getElementById('plus');
     const minusPlus = document.getElementById('minusPlus');
     const HideBtnText = document.getElementById('HideBtnText');
+    const textoTitulo = document.getElementById('textoTitulo');
+    const textoCodigo = document.getElementById('textoCodigo');
     let isHidden = false;
 
     // Nessa função, configuramos a animação de esconder o menu
@@ -202,9 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
 Seção da API, node, vercel, e afins
 #######################################################################################################*/
 
-    async function getCodigos(codigoDaExibicao) {
+    async function setTituloCodigo(exibicao) {
+        if (!exibicao.nome_exibicao) {
+            textoTitulo.innerText = "Exibição"
+        } else {
+            textoTitulo.innerText = exibicao.nome_exibicao;
+        }
+        textoCodigo.innerText += ' ' + exibicao.codigo_exib;
+    }
+
+    async function getCodigos(codigoExibicao) {
         try {
-            const codigosUrl = `${vercel}/exibicao/${codigoDaExibicao}`
+            const codigosUrl = `${vercel}/exibicao/${codigoExibicao}`
             const resposta = await fetch(codigosUrl);
 
             if (!resposta.ok) {

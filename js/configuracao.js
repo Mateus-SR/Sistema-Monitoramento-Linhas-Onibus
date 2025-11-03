@@ -1,4 +1,4 @@
-import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
+import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim, setSimNao } from './loadingAnim.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const botaoSalvar = document.getElementById('botaoSalvar');
     const codParadaOG = document.getElementById('codParada_1');
 
-    const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/cria-exibicao`;
+    const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
     
     let counterFieldAdiciona = 1;
     verificaEstado();
@@ -169,7 +169,7 @@ async function salvarExibicao() {
         };
 
         // Manda pra url ali de cima o post com os dados inseridos no formulario
-        const resposta = await fetch(url, {
+        const resposta = await fetch(`${vercel}/cria-exibicao`, {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json',
@@ -183,8 +183,18 @@ async function salvarExibicao() {
         const dadosResposta = await resposta.json();
         // Se tudo estiver ok...
         if (resposta.ok) { // ('ok' significa status 200-299 (sucesso)) 
-            console.log(dadosResposta.codigo_exib);
-            // chamar popUp sucesso
+
+            setTexto("Exibição criada com sucesso!")
+            setSubTexto("Gostaria de acessá-la agora?")
+
+            const codigoCriado = dadosResposta.codigo_exib;
+
+            const confirma = await setSimNao("Acessar", "Depois");
+            if (confirma) {
+                window.location.href = `../exibicao.html?codigo=${codigoCriado}`;
+            } else {
+                console.log("Função ainda não implementada...")
+            }
         
         // E se for qualquer outra coisa, dá erro
         } else {

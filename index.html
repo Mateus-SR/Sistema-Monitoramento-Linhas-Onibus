@@ -80,17 +80,20 @@
   </main>
 
   <!-- Botão a flutuante -->
-  <div class="fixed bottom-32 right-12 md:bottom-32 md:right-12">
-    <a href="exibicao.html" 
-       class="bg-red-600 text-white font-bold
-              px-12 py-5 md:px-8 md:py-5 
-              text-2xl md:text-4xl 
-              rounded-2xl shadow-lg 
-              hover:bg-red-800  
-              focus:ring-2 focus:ring-red-400 focus:ring-opacity-75
-              transition-all duration-200 ease-out">
-      Acessar
-    </a>
+  <div class="fixed bottom-32 right-12 md:bottom-32 md:right-12 z-[1000]">
+    <div class="flex flex-col flex-wrap justify-between gap-1.5"> 
+        <input type="text" id="campoCodigo" placeholder="Exemplo: UpilXc" required maxlength="6" class="campoCodParada px-12 py-5 md:px-8 md:py-5 border border-gray-500 bg-white rounded-2xl text-xl z-[999] font-roboto-mono font-extrabold">
+      <span id="botaoAcessar" 
+         class="bg-red-600 text-white font-bold text-center z-[1000] cursor-pointer
+                px-12 py-5 md:px-8 md:py-5 
+                text-2xl md:text-4xl 
+                rounded-2xl shadow-lg 
+                hover:bg-red-800  
+                focus:ring-2 focus:ring-red-400 focus:ring-opacity-75
+                transition-all duration-200 ease-out">
+        Acessar
+    </span>
+    </div>
   </div>
 
   <!-- Scripts -->
@@ -98,6 +101,8 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="js/mapa.js"></script>
   <script src="js/postLogin.js"></script>
+  <script type="module" src="js/inicial.js"></script>
+
 
 </body>
 </html>

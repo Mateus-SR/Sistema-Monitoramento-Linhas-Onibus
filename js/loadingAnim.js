@@ -111,8 +111,51 @@ function setSubTexto(texto) {
     campoSubTexto.innerText = texto;
 }
 
+function setSimNao(simTexto, naoTexto) {
+    return new Promise((resolve) => {
+        const divAnim = document.getElementById('loadingBox'); 
+        if (!divAnim) {
+            resolve(false);
+            return; 
+        }
+
+    const divMestre = document.createElement('div');
+    divMestre.className = `flex flex-row flex-wrap justify-center gap-2 m-2`;
+    divAnim.appendChild(divMestre);
+
+
+    const botaoStyle = `text-black font-bold border-2 border-sptrans
+    px-8 py-4 cursor-pointer 
+    text-lg
+    rounded-2xl shadow-lg 
+    hover:bg-sptrans hover:border-black hover:text-white
+    focus:ring-2 focus:ring-red-400 focus:ring-opacity-75
+    transition-all duration-200 ease-out`;
+
+    const botaoNao = document.createElement('div');
+    botaoNao.className = botaoStyle;
+    botaoNao.innerText = naoTexto;
+    
+    botaoNao.addEventListener('click', () => {
+        fechaAnim();
+        resolve(false); 
+    });
+
+    const botaoSim = document.createElement('div');
+    botaoSim.className = botaoStyle;
+    botaoSim.innerText = simTexto;
+        
+    botaoSim.addEventListener('click', () => {
+        resolve(true);
+});
+
+    divMestre.appendChild(botaoSim);
+    divMestre.appendChild(botaoNao);
+    });
+}
+
 function random(min, max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim };
+export { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim, setSimNao };

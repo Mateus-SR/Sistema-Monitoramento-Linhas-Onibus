@@ -270,6 +270,39 @@ app.get('/exibicao/:codigo_exib', async (req, res) => {
      });
   }
 });
+
+app.get('/exibicao/get-titulo-codigo', async (req, res) => {
+  const codigo_exib = req.params.codigo_exib;
+
+  try {
+    const info = await prisma.exibicao.findUnique({
+      where: { codigo_exib: codigo_exib
+      },
+      include: {
+        paradas: {
+          select: { 
+            codigo_parada: true } 
+        }
+      }
+    });
+
+    if (info) {
+      res.status(200).json(info);
+    } else {
+      console.error(error);
+      res.status(404).json({
+        error: 'Erro ao buscar informações.'
+      });
+    }
+    
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: 'Ocorreu um erro interno do servidor.'
+     });
+  }
+});
 /*#######################################################################################################
 Seção da banco de dados, prisma, supabase, e afins
 #######################################################################################################*/
