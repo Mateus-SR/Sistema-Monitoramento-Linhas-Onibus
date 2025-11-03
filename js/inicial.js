@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     botaoAcessar.addEventListener('click', () => { 
         const codigo = campoCodigo.value;
-        window.location.href = `../exibicao.html?codigo=${codigo}`;
+        window.location.href = `/sistema-monitoramento-linhas-onibus/exibicao.html?codigo=${codigo}`;
     })
 
     campoCodigo.addEventListener('input', (e) => {
