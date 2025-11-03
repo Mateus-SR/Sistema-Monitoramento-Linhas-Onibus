@@ -6,10 +6,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 
     // Rodamos a função assim que a pagina abre e...
-    iniciaAnim();
-    radarOnibus();
-    // ...configuramos para rodar a cada 5 segundos (5000 milessegundos)
-    setInterval(radarOnibus, 5000);
+
+    iniciaSistema();
+
+    async function iniciaSistema() {
+        iniciaAnim();
+
+        try {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const codigoExibicao = urlParams.get('codigo');
+
+            if (!codigoExibicao) {
+                throw new Error("Não foi possível encontrar a exibição.");
+            }
+
+            const exibicao = await getCodigos(codigoExibicao);
+
+            if (!exibicao || !exibicao.paradas || exibicao.paradas.length === 0) {
+                throw new Error("Exibição encontrada, mas não contém pontos de parada.");
+            }
+
+            const codigosParada = exibicao.paradas.map(p => p.codigo_parada).join(',');
+
+            await radarOnibus(codigosParada);
+            setInterval(() => radarOnibus(codigosParada), 5000);
+
+
+        } catch (error) {
+            erroAnim();
+            setTexto("Oops! Erro!!");
+            setSubTexto(error.message);
+        }
+    };
 
     // Encontramos a tag <html>, para alterar seu zoom posteriormente
     const htmlElement = document.documentElement;
@@ -172,9 +201,30 @@ document.addEventListener('DOMContentLoaded', () => {
 /*#######################################################################################################
 Seção da API, node, vercel, e afins
 #######################################################################################################*/
- 
+
+    async function getCodigos(codigoDaExibicao) {
+        try {
+            const codigosUrl = `${vercel}/exibicao/${codigoDaExibicao}`
+            const resposta = await fetch(codigosUrl);
+
+            if (!resposta.ok) {
+                if (resposta.status === 404) {
+                    throw new Error("Essa exibição não existe. O código está certo?");
+                }
+                throw new Error("Não foi possível encontrar a exibição.");
+            }
+
+            return await resposta.json();
+
+        } catch (error) {
+            erroAnim();
+            setTexto("Oops! Erro!!");
+            setSubTexto(error.message);
+        }
+    };
+
     // Função async, pois o codigo precisa esperar tudo terminar para prosseguir
-    async function radarOnibus() { 
+    async function radarOnibus(codigosParada) { 
         // Pegando o tempo como timestamp apenas para referencia no console.log
         const timestamp = Date.now();
         
@@ -189,25 +239,50 @@ Seção da API, node, vercel, e afins
             console.log(`${timestamp}: rodando bloco try.`);
 
             // Pedimos todo o bloco de informações (que ja filtramos la no servidor)
-            const response = await fetch (`${vercel}/parada-radar`);
+            const resposta = await fetch(`${vercel}/parada-radar?codigos=${codigosParada}`, {
+                method: 'GET', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            if (!resposta.ok) {
+                let errorMsg = `Erro ${resposta.status} do servidor.`;
+                try {
+                    // Vamos tentar ler a mensagem de erro que o backend enviou
+                    const errorData = await resposta.json();
+                    // Se o backend enviou {error: "..."}, vamos usar essa mensagem
+                    errorMsg = errorData.error || errorMsg; 
+                } catch (e) {
+                    // Se o erro 500 não for um JSON, apenas usamos a mensagem de status
+                }
+                // Isso vai PARAR a execução do 'try' e pular direto para o 'catch'
+                throw new Error(errorMsg); 
+            }
+
+
+
             // E quebramos ele, para ler como um arquivo .json
-            const dados = await response.json();
+            const dados = await resposta.json();
+            console.log('Dados recebidos do backend:', dados);
             
-            const horaRequest = dados.horaRequest;
 
             // Resgatando/separando cada informação que recebemos no bloco de informações...
             // ...para utilizar nos respectivos lugares (inserir na tabela, realizar comparações)
-            dados.resumoPesquisa1.linhas.forEach(linhas => {
-                // IMPORTANTE: Repare nisso ^
+            dados.forEach(resumoParada => {
+// IMPORTANTE: Repare ^ naquilo
             // Isso quer dizer que vamos fazer tudo isso aqui para cada onibus que pudermos achar na resposta (bloco) que a api nos deu
-                if (linhas.proximoOnibus) { // Verificação simples pra só fazermos isso se tivermos informações de verdade
-                const codigoLetreiro = linhas.codigoLetreiro;
-                const sentidoLinha = linhas.sentidoLinha;
-                const quantidadeOnibus = linhas.quantidadeOnibus;
-                const proximoOnibusCodigo = linhas.proximoOnibus.proximoOnibusCodigo;
-                const proximoOnibusPrevisao = linhas.proximoOnibus.proximoOnibusPrevisao;
-                const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
-                const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
+            const horaRequest = resumoParada.horaRequest;
+
+            resumoParada.linhas.forEach(linha => {
+                if (linha.proximoOnibus) { // Verificação simples pra só fazermos isso se tivermos informações de verdade
+                const codigoLetreiro = linha.codigoLetreiro;
+                const sentidoLinha = linha.sentidoLinha;
+                const quantidadeOnibus = linha.quantidadeOnibus;
+                const proximoOnibusCodigo = linha.proximoOnibus.proximoOnibusCodigo;
+                const proximoOnibusPrevisao = linha.proximoOnibus.proximoOnibusPrevisao;
+                const proximoOnibusPosicaoX = linha.proximoOnibus.proximoOnibusPosicaoX;
+                const proximoOnibusPosicaoY = linha.proximoOnibus.proximoOnibusPosicaoY;
                 
                 // Registrar nosso onibus na lista de Registros (não confundir com Ativos), para sabermos se ele ainda existe no sistema
                 escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
@@ -216,23 +291,6 @@ Seção da API, node, vercel, e afins
                 onibusAtivos.add(proximoOnibusCodigo);
                 }
             });
-
-            // Essa seção é a mesma de cima, e só estamos repetindo essa parte de codigo para facilitar os testes...
-            // ...futuramente, o ideal é que tenhamos apenas uma, dinamica, para comportar quantas pesquisas forem necessárias
-            dados.resumoPesquisa2.linhas.forEach(linhas => {
-                if (linhas.proximoOnibus) {
-                const codigoLetreiro = linhas.codigoLetreiro;
-                const sentidoLinha = linhas.sentidoLinha;
-                const quantidadeOnibus = linhas.quantidadeOnibus;
-                const proximoOnibusCodigo = linhas.proximoOnibus.proximoOnibusCodigo;
-                const proximoOnibusPrevisao = linhas.proximoOnibus.proximoOnibusPrevisao;
-                const proximoOnibusPosicaoX = linhas.proximoOnibus.proximoOnibusPosicaoX;
-                const proximoOnibusPosicaoY = linhas.proximoOnibus.proximoOnibusPosicaoY;
-                
-                escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
-
-                onibusAtivos.add(proximoOnibusCodigo);
-                }
             });
 
             // Terminando as separações e construções...
@@ -252,6 +310,7 @@ Seção da API, node, vercel, e afins
 
             preparaTabela(onibusAtivos, horaRequest);
             fechaAnim();
+
         }
 
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu

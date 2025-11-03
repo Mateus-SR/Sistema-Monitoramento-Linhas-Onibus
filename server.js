@@ -67,15 +67,23 @@ async function tokenPOST() {
     }
   }
 
-function converteHoraMinuto(horaMinuto) {
-  const hmSeparado = horaMinuto.split(':');
-  hora = parseInt(hmSeparado[0]);
-  hora = hora * 60;
+  function converteHoraMinuto(horaMinuto) {
+    // NOVO: Checagem de segurança. Se horaMinuto não for uma string válida, retorna 0.
+    if (typeof horaMinuto !== 'string' || !horaMinuto.includes(':')) {
+        console.warn(`Tentativa de converter hora inválida: ${horaMinuto}`);
+        return 0; // Evita o crash
+    }
 
-  minuto = parseInt(hmSeparado[1]);
-
-  resultado = hora + minuto;
-  return resultado;
+    const hmSeparado = horaMinuto.split(':');
+    
+    // NOVO: Usar 'let' para declarar variáveis corretamente
+    let hora = parseInt(hmSeparado[0]);
+    hora = hora * 60;
+  
+    let minuto = parseInt(hmSeparado[1]);
+  
+    let resultado = hora + minuto;
+    return resultado;
 }
 
 // Definições das rotas (o que fazer quando chamarmos tal coisa)
@@ -101,7 +109,7 @@ app.get('/parada-radar', async (req, res) => {
       });
     }
 
-    const listaCodigos = codigosString.split(',');
+    const listaCodigos = codigos.split(',');
     
     // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
     if (!apiSessionCookie) {
@@ -115,10 +123,10 @@ app.get('/parada-radar', async (req, res) => {
     }
 
     const arrayPesquisas = listaCodigos.map(codigoParada => {
-      return axios.get(`${apiURL}${paradaPrevisao}${codigoDaParada}`, { 
+      return axios.get(`${apiURL}${paradaPrevisao}${codigoParada}`, { 
         headers: {'Cookie': apiSessionCookie}
       });
-    });
+    });;
 
     const respostas = await Promise.all(arrayPesquisas);
 
