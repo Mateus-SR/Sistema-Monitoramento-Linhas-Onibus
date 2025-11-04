@@ -191,7 +191,7 @@ async function salvarExibicao() {
 
             const confirma = await setSimNao("Acessar", "Depois");
             if (confirma) {
-                window.location.href = `/Sistema-Monitoramento-Linhas-Onibus/exibicao.html?codigo=${codigo}`;
+                window.location.href = `../exibicao.html?codigo=${codigoCriado}`;
             } else {
                 console.log("Função ainda não implementada...")
             }
