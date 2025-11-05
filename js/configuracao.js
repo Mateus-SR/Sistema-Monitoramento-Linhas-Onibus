@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             input.value = input.value.replace(/\D/g, '');
             
-            if (input.value.length > 0 && input.value.length !== 9) {
+            if (input.value.length > 0 && (input.value.length !== 9 && input.value.length !== 7)) {
                 campoCodErro(input);
             } else {
                 campoCodCorreto(input);
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.classList.contains('campoCodParada')) {
             const input = e.target;
 
-            if (input.value.length > 0 && input.value.length !== 9) {
+            if (input.value.length > 0 && (input.value.length !== 9 && input.value.length !== 7)) {
                 campoCodErro(input);
             } else {
                 campoCodCorreto(input);
@@ -135,26 +135,57 @@ async function salvarExibicao() {
     iniciaAnim();
     setTexto("Validando dados...");
 
+    const tokenLogin = localStorage.getItem('tokenLogin');
+
+    if (!tokenLogin) {
+        erroAnim();
+        setTexto("Oops! Erro!!");
+        setSubTexto("Você não está logado. Por favor, faça login novamente.");
+        return;
+    }
 
     const nome = document?.getElementById('nomeExib').value;
-
-    let formularioValido = true;
-
     const todosCodigos = document.querySelectorAll('.campoCodParada');
 
-    // Estamos usando um loop "for" ou inves do "forEach" pois o for permite que usemos "break" para cancelar a execução do codigo. "forEach" não permite.
-    for (const cadaUm of todosCodigos) {
-        const valido = cadaUm.value.length === 9 && !cadaUm.classList.contains('bg-sptrans/25');
-        if (!valido) {
-            formularioValido = false;
-            break;
-        }
-    };
+    const promessasDeValidacao = Array.from(todosCodigos).map(cadaCampo => {
+        const codigoDoPonto = cadaCampo.value;
+
+        return fetch(`${vercel}/ping-ponto?codigo=${codigoDoPonto}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Access-Token': `Bearer ${tokenLogin}`
+            }
+        })
+        .then(resposta => {
+            //
+            if (resposta.ok) { // 'ok' = status 200-299
+                campoCodCorreto(cadaCampo); // Presumindo que você tenha essa função
+                return true;
+            } else { // 'ok' = false = status 404 (Inválido), 401 (Token), 500 (Server)
+                campoCodErro(cadaCampo); // Presumindo que você tenha essa função
+                return false;
+            }
+        })
+        .catch(err => {
+            // Erro de rede, etc.
+            console.error("Erro na validação fetch:", err);
+            campoCodErro(cadaCampo);
+            return false;
+        });
+    });
+
+    // Espera TODAS as validações em paralelo terminarem
+    const resultados = await Promise.all(promessasDeValidacao);
+
+    // Checa se TODOS os resultados no array são 'true'
+    const formularioValido = resultados.every(resultado => resultado === true);
 
     if (!formularioValido) {
         erroAnim();
-        setTexto("Oops! Erro!!")
-        setSubTexto("Verifique se todos os códigos foram inseridos corretamente.")
+        setTexto("Oops! Erro!!");
+        // Mensagem de erro mais útil
+        setSubTexto("Um ou mais códigos são inválidos. Verifique os campos em vermelho.");
         return;
     }
 
@@ -162,7 +193,6 @@ async function salvarExibicao() {
     const arrayCodigos = Array.from(todosCodigos).map(cadaUm => cadaUm.value);
 
     try {
-        const tokenLogin = localStorage.getItem('tokenLogin');
         const dados = { 
             nome_exibicao: nome,
             codigos_parada: arrayCodigos

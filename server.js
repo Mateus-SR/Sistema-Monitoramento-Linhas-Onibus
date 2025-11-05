@@ -27,6 +27,7 @@ const perfilLimiter = rateLimit({
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
 const paradaPrevisao = '/Previsao/Parada?codigoParada=';
+const pingPonto = '/Parada/Buscar?termosBusca=';
 let apiSessionCookie = null;
 
 
@@ -68,7 +69,6 @@ async function tokenPOST() {
   }
 
   function converteHoraMinuto(horaMinuto) {
-    // NOVO: Checagem de segurança. Se horaMinuto não for uma string válida, retorna 0.
     if (typeof horaMinuto !== 'string' || !horaMinuto.includes(':')) {
         console.warn(`Tentativa de converter hora inválida: ${horaMinuto}`);
         return 0; // Evita o crash
@@ -76,7 +76,6 @@ async function tokenPOST() {
 
     const hmSeparado = horaMinuto.split(':');
     
-    // NOVO: Usar 'let' para declarar variáveis corretamente
     let hora = parseInt(hmSeparado[0]);
     hora = hora * 60;
   
@@ -97,7 +96,73 @@ app.get('/testar-auth', async (req, res) => {
     // Envia o resultado da autenticação de volta para o navegador
     res.json(resultado);
   });
- 
+
+app.get('/ping-ponto', async (req, res) => {
+  console.log('Verificando ponto...');
+  try{
+    const codigo = req.query.codigo;
+
+    if (!codigo) {
+      res.status(400).json({
+        error: 'Erro ao verificar código. (400, Bad Request)'
+      });
+    }
+    
+    // Verificando se estamos autenticados. Caso não, então vamos nos autenticar.
+    if (!apiSessionCookie) {
+      console.log('Não estamos autenticados! Mas vamos tentar estar em breve...');
+      await tokenPOST();
+    }
+
+    // E então verificamos de novo, mas só dessa vez, pra não entrar em um loop infinito de verificações
+    if (!apiSessionCookie) {
+      return res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'});
+    }
+
+      const respostaPing = await axios.get(`${apiURL}${pingPonto}${codigo}`, { 
+        headers: {'Cookie': apiSessionCookie}
+    });
+
+    const pingDados = respostaPing.data;
+
+    if (respostaPing.status === 200 && (pingDados === null || pingDados.p === null)) {
+      throw new Error('Ponto de ônibus inválido ou não encontrado.');
+    }
+
+    res.status(200).json({
+      message: 'Ponto de ônibus válido!'
+    });
+
+    // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
+} catch (error) {
+    if (error.response) {
+      // O erro veio da API da SPTrans (axios)
+      const status = error.response.status;
+
+      if (status === 401) {
+        console.log('[401] Pesquisa inválida ou sessão expirada.')
+        apiSessionCookie = null;
+        return res.status(401).json({ error: 'Token da API expirado ou inválido.' });
+      
+      } else {
+        // Outro erro da API (400, 404, 500, 503...)
+        console.error(`Erro da API SPTrans: ${status}`, error.message);
+        return res.status(status).json({ error: `Erro da API SPTrans: ${status}` });
+      }
+
+    } else if (error.message === 'Ponto de ônibus inválido ou não encontrado.') {
+      // Captura o erro que lançamos acima
+      console.log('Validação falhou:', error.message);
+      return res.status(404).json({ error: error.message });
+    
+    } else {
+      // Erro inesperado (ex: falha no tokenPOST(), erro de rede)
+      console.error('Erro ao processar verificação:', error.message);
+      return res.status(500).json({ error: 'Houve uma falha interna na comunicação.' });
+    }
+  }
+});
+
 app.get('/parada-radar', async (req, res) => {
   console.log('Iniciando radar nas paradas...');
   try{
