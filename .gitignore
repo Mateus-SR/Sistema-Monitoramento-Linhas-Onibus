@@ -3,3 +3,4 @@ temporario.*
 teste/
 .env
 .temp
+node_modules/
