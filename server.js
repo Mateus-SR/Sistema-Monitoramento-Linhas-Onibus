@@ -27,7 +27,6 @@ const perfilLimiter = rateLimit({
 const tolkien = process.env.tolkien;
 const apiURL = 'https://api.olhovivo.sptrans.com.br/v2.1'
 const paradaPrevisao = '/Previsao/Parada?codigoParada=';
-const pingPonto = '/Parada/Buscar?termosBusca=';
 let apiSessionCookie = null;
 
 
@@ -71,7 +70,7 @@ async function tokenPOST() {
   function converteHoraMinuto(horaMinuto) {
     if (typeof horaMinuto !== 'string' || !horaMinuto.includes(':')) {
         console.warn(`Tentativa de converter hora inválida: ${horaMinuto}`);
-        return 0; // Evita o crash
+        return 0; 
     }
 
     const hmSeparado = horaMinuto.split(':');
@@ -119,7 +118,7 @@ app.get('/ping-ponto', async (req, res) => {
       return res.status(500).json({error: 'Houve uma falha na comunicação, e a API não nos autenticou.'});
     }
 
-      const respostaPing = await axios.get(`${apiURL}${pingPonto}${codigo}`, { 
+      const respostaPing = await axios.get(`${apiURL}${paradaPrevisao}${codigo}`, { 
         headers: {'Cookie': apiSessionCookie}
     });
 
