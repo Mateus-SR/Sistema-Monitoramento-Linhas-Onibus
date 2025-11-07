@@ -5,19 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Estilos -->
-  <link rel="stylesheet" type="text/css" href="./css/styles.css" />
-  <link href="./src/output.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="stylesheet" href="./src/output.css" />
+  <link rel="stylesheet" href="./css/userMenu.css" /> <!-- novo arquivo -->
 
-  <!-- Fontes -->
+  <!-- Fontes e ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
   <title>Monitoramento de Ônibus</title>
@@ -49,17 +47,28 @@
       </nav>
 
       <div class="actions">
-        <a href="login.html"  class="btn btn-outline botoesConta">Entrar</a>
+        <a href="login.html" class="btn btn-outline botoesConta">Entrar</a>
         <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
-        <div id="botaoAcessaConta" class="hidden text-center cursor-pointer">
-          <a href="configuracao.html" class="btn btn-primary"><i class='fas fa-user-circle'></i> Olá, <span id="nomeUsuario">Usuário</span>!</a>
+
+        <!-- Menu do usuário (só aparece quando logado) -->
+        <div id="botaoAcessaConta" class="hidden relative text-center cursor-pointer">
+          <button id="userButton" class="btn btn-primary flex items-center gap-2">
+            <i class="fas fa-user-circle"></i>
+            <span>Olá, <span id="nomeUsuario">Usuário</span>!</span>
+            <i class="fas fa-caret-down"></i>
+          </button>
+
+          <ul id="userDropdown" class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
+            <li><a href="exibicao.html" class="block px-4 py-2 hover:bg-gray-100">Minhas exibições</a></li>
+            <li><a href="configuracao.html" class="block px-4 py-2 hover:bg-gray-100">Configurações</a></li>
+            <li><button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Sair da conta</button></li>
+          </ul>
         </div>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- Hero -->
     <section class="hero flex" id="inicio">
       <div class="container hero-grid">
         <div>
@@ -70,29 +79,25 @@
       </div>
     </section>
 
-    <!-- Mapa -->
-   <section class="content-column" id="mapa-section">
-<div id="mapa" class="w-full max-w-md h-80 sm:h-96 mx-auto"></div>
-
-
-
-</section>
+    <section class="content-column" id="mapa-section">
+      <div id="mapa" class="w-full max-w-md h-80 sm:h-96 mx-auto"></div>
+    </section>
   </main>
 
-  <!-- Botão a flutuante -->
-  <div class="fixed bottom-32 right-12 md:bottom-32 md:right-12 z-[1000]">
+  <!-- Botão flutuante -->
+  <div class="fixed bottom-32 right-12 md:bottom-32 md:right-12 z-1000">
     <div class="flex flex-col flex-wrap justify-between gap-1.5"> 
-        <input type="text" id="campoCodigo" placeholder="Exemplo: UpilXc" required maxlength="6" class="campoCodParada px-12 py-5 md:px-8 md:py-5 border border-gray-500 bg-white rounded-2xl text-xl z-[999] font-roboto-mono font-extrabold">
+      <input type="text" id="campoCodigo" placeholder="Exemplo: UpilXc" required maxlength="6" class="campoCodParada px-12 py-5 md:px-8 md:py-5 border border-gray-500 bg-white rounded-2xl text-xl z-999 font-roboto-mono font-extrabold">
       <span id="botaoAcessar" 
-         class="bg-red-600 text-white font-bold text-center z-[1000] cursor-pointer
-                px-12 py-5 md:px-8 md:py-5 
-                text-2xl md:text-4xl 
-                rounded-2xl shadow-lg 
-                hover:bg-red-800  
-                focus:ring-2 focus:ring-red-400 focus:ring-opacity-75
-                transition-all duration-200 ease-out">
+        class="bg-red-600 text-white font-bold text-center z-1000 cursor-pointer
+              px-12 py-5 md:px-8 md:py-5 
+              text-2xl md:text-4xl 
+              rounded-2xl shadow-lg 
+              hover:bg-red-800  
+              focus:ring-2 focus:ring-red-400 focus:ring-opacity-75
+              transition-all duration-200 ease-out">
         Acessar
-    </span>
+      </span>
     </div>
   </div>
 
@@ -102,7 +107,8 @@
   <script src="js/mapa.js"></script>
   <script src="js/postLogin.js"></script>
   <script type="module" src="js/inicial.js"></script>
-
-
+  <script src="js/userMenu.js"></script> <!-- novo arquivo -->
 </body>
 </html>
+
+

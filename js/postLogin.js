@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nomeUsuario.innerHTML = perfilUsuarioLogado.nome_usu;
         } else {
             nomeUsuario.innerHTML = "Visitante";
-        }
+        } 
     }
 
     // Inicia todo o processo.

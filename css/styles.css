@@ -243,3 +243,37 @@ h1 {
     height: 400px;
   }
 }
+/* Alinha os botões e o menu do usuário na mesma linha central */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* espaço entre os itens */
+  margin-top: 0; /* garante alinhamento vertical */
+  height: 100%;
+}
+
+/* Ajuste fino dos botões de conta */
+.actions .btn {
+  vertical-align: middle;
+  padding: 6px 14px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Ajuste do botão de usuário */
+#botaoAcessaConta {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+#avisoLogin {
+  position: fixed !important;
+  z-index: 999999 !important;
+}
