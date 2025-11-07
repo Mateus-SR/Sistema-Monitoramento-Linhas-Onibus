@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Estilos -->
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+  <link href="src/output.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/userMenu.css" />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+</head>
+<body>
+  <!-- Imagem de fundo -->
+  <div class="relative min-h-screen">
+    <div class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
+      style="background-image: url('img/Onibus2.png'); filter: blur(4px)"></div>
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+
+    <!-- Topbar -->
+    <div class="relative z-10">
+      <div id="hideElement1" class="transition-transform duration-700 ease-in-out z-50">
+        <header class="topbar" role="banner">
+          <div class="container topbar-inner mx-auto">
+            <a class="brand" href="index.html" aria-label="">
+              <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
+            </a>
+
+            <nav aria-label="Navegação principal">
+              <div class="mobile-menu">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+              </div>
+
+              <ul class="nav-list">
+                <li><a class="nav-link" href="index.html">Início</a></li>
+                <li><a class="nav-link" href="index.html">Mapa</a></li>
+                <li><a class="nav-link" href="exibicao.html">Linhas</a></li>
+                <li><a class="nav-link" href="personalizacao.html">Suas Linhas</a></li>
+                <li><a class="nav-link" href="#sobrehtml">Sobre</a></li> 
+              </ul>
+            </nav>
+
+            <div class="actions">
+              <!-- Botões padrão -->
+              <div id="botoesConta">
+                <a href="login.html" class="btn btn-outline">Entrar</a>
+                <a href="cadastro.html" class="btn btn-primary">Criar conta</a>
+              </div>
+
+              <!-- Menu do usuário (mostrado após login) -->
+              <div id="botaoAcessaConta" class="hidden relative text-center cursor-pointer">
+                <button id="userButton" class="btn btn-primary flex items-center gap-2">
+                  <i class="fas fa-user-circle"></i>
+                  <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
+                  <i class="fas fa-caret-down"></i>
+                </button>
+
+                <ul id="userDropdown"
+                  class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
+                  <li><a href="exibicao.html" class="block px-4 py-2 hover:bg-gray-100">Minhas exibições</a></li>
+                  <li><a href="configuracao.html" class="block px-4 py-2 hover:bg-gray-100">Configurações</a></li>
+                  <li><button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Sair da conta</button></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
+    </div>
+    
+    <!-- Caixa do Sobre -->
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+  <div class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-4xl shadow-2xl shadow-black/60 z-20">
+    <h2 class="text-3xl font-bold text-center mb-8 text-black">Sobre</h2>
+
+    <!-- Texto -->
+    <div class="text-gray-700 text-sm break-words" style="text-align: justify;">
+      <p class="mb-4">
+       Começando com o nosso projeto, ele foi feito para o nosso PI, após uma feira de projetos, onde a ideia de um site de monitoramento de ônibus nos chamou a atenção por ser algo que muita gente do nosso vínculo sempre gostaria de ter: um site de monitoramento próprio para a Fatec. Foi isso que buscamos realizar neste semestre, baseado no mestrado do nosso coordenador, Edson Company. O projeto utiliza uma API da SPTrans, que dá suporte a todas as funcionalidades.
+      </p>
+
+      <p>
+       Na nossa equipe, originalmente, havia quatro integrantes no segundo semestre da nossa faculdade (Fatec), mas, por infortúnios, só restaram três: João Pedro, Mateus e Pedro, com menções honrosas a Luciano Batista (que trancou o curso) e Guilherme Calixto (que conseguiu ingressar em outra faculdade).
+      </p>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
