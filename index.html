@@ -47,8 +47,10 @@
       </nav>
 
       <div class="actions">
-        <a href="login.html" class="btn btn-outline botoesConta">Entrar</a>
-        <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
+        <div id="botaoAntesLogin" class="hidden">
+          <a href="login.html" class="btn btn-outline botoesConta">Entrar</a>
+          <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
+        </div>
 
         <!-- Menu do usuário (só aparece quando logado) -->
         <div id="botaoAcessaConta" class="hidden relative text-center cursor-pointer">
@@ -105,7 +107,7 @@
   <script src="js/mobile-navbar.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="js/mapa.js"></script>
-  <script src="js/postLogin.js"></script>
+  <!-- <script src="js/postLogin.js"></script> -->
   <script type="module" src="js/inicial.js"></script>
   <script src="js/userMenu.js"></script> <!-- novo arquivo -->
 </body>
