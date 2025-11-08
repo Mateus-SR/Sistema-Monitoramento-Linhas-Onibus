@@ -27,7 +27,7 @@
   <!-- Topbar -->
   <header class="topbar" role="banner">
     <div class="container topbar-inner mx-auto">
-      <a class="brand" href="index.html">
+      <a class="brand" href="index.html" aria-label="Página inicial VigiBus">
         <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
       </a>
 
@@ -48,27 +48,28 @@
       </nav>
 
       <div class="actions">
-        <!-- Botões padrão -->
-        <div id="botoesConta">
-          <a href="login.html" class="btn btn-outline">Entrar</a>
-          <a href="cadastro.html" class="btn btn-primary">Criar conta</a>
+        <div id="botaoAntesLogin" class="hidden">
+          <a href="login.html" class="btn btn-outline botoesConta">Entrar</a>
+          <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
         </div>
 
-        <!-- Menu de usuário (aparece só quando logado) -->
-        <div id="botaoAcessaConta" class="hidden relative text-center cursor-pointer">
-          <button id="userButton" class="btn btn-primary flex items-center gap-2">
-            <i class="fas fa-user-circle"></i>
-            <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
-            <i class="fas fa-caret-down"></i>
-          </button>
+        <!-- Menu do usuário (só aparece quando logado) -->
+        <div id="botaoDepoisLogin" class="hidden">
+        <div id="botaoAcessaConta" class="relative text-center cursor-pointer">
+            <button id="userButton" class="btn btn-primary flex items-center gap-2">
+              <i class="fas fa-user-circle"></i>
+              <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
+              <i class="fas fa-caret-down"></i>
+            </button>
+          
 
-          <ul id="userDropdown"
-              class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
-              <li><a href="favoritos.html" class="block px-4 py-2 hover:bg-gray-100">Minhas linhas</a></li>
+          <ul id="userDropdown" class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
+            <li><a href="exibicao.html" class="block px-4 py-2 hover:bg-gray-100">Minhas exibições</a></li>
             <li><a href="configuracao.html" class="block px-4 py-2 hover:bg-gray-100">Configurações</a></li>
             <li><button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Sair da conta</button></li>
           </ul>
         </div>
+      </div>
       </div>
     </div>
   </header>
@@ -169,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
   <!-- Scripts -->
   <script src="js/userMenu.js"></script>
   <script src="js/mobile-navbar.js"></script>
- <script src="js/postLogin.js"></script>
 
 </body>
 </html>

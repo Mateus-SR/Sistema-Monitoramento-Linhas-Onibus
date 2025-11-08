@@ -53,12 +53,14 @@
         </div>
 
         <!-- Menu do usuário (só aparece quando logado) -->
-        <div id="botaoAcessaConta" class="hidden relative text-center cursor-pointer">
-          <button id="userButton" class="btn btn-primary flex items-center gap-2">
-            <i class="fas fa-user-circle"></i>
-            <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
-            <i class="fas fa-caret-down"></i>
-          </button>
+        <div id="botaoDepoisLogin" class="hidden">
+        <div id="botaoAcessaConta" class="relative text-center cursor-pointer">
+            <button id="userButton" class="btn btn-primary flex items-center gap-2">
+              <i class="fas fa-user-circle"></i>
+              <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
+              <i class="fas fa-caret-down"></i>
+            </button>
+          
 
           <ul id="userDropdown" class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
             <li><a href="exibicao.html" class="block px-4 py-2 hover:bg-gray-100">Minhas exibições</a></li>
@@ -66,6 +68,7 @@
             <li><button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Sair da conta</button></li>
           </ul>
         </div>
+      </div>
       </div>
     </div>
   </header>
@@ -107,7 +110,6 @@
   <script src="js/mobile-navbar.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="js/mapa.js"></script>
-  <script src="js/postLogin.js"></script>
   <script type="module" src="js/inicial.js"></script>
   <script src="js/userMenu.js"></script> <!-- novo arquivo -->
 </body>
