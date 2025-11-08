@@ -20,7 +20,30 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<style>
+    /* Força o header a estar acima de tudo */
+    header.topbar {
+      position: relative;
+      z-index: 1000;
+    }
 
+    /* Garante que o dropdown fique acima de qualquer outra camada */
+    #botaoAcessaConta {
+      position: relative;
+      z-index: 2000 !important;
+    }
+
+    #userDropdown {
+      position: absolute;
+      z-index: 3000 !important;
+    }
+
+    /* O "sobre" não deve ultrapassar o menu */
+    .sobre-container {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
 </head>
 <body>
   <!-- Imagem de fundo -->
@@ -103,4 +126,7 @@
 
 
 </body>
+<script src="js/postLogin.js"></script>
+<script src="js/mobile-navbar.js"></script>
+ <script src="js/userMenu.js"></script>
 </html>
