@@ -45,17 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (counterFieldAdiciona >= 2) {
 
             let codParadaRecente = document.getElementById(`codParada_${counterFieldAdiciona}`)
- 
+            
             
             if (codParadaRecente) {
+                counterFieldAdiciona--;
                 codParadaRecente.classList.remove("animate-LTRfadeIn");
                 codParadaRecente.classList.add("animate-LTRfadeOut");
-
+                
 
                 
                 codParadaRecente.addEventListener('animationend', () => {
                     codParadaRecente.remove();
-                    counterFieldAdiciona--;
                     verificaEstado();
                 }, { once: true });
             }
