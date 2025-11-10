@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model configuracao {
+  id_cof             Int     @id @default(autoincrement())
+  distanciatempo_cof Int
+  statustempo_cof    Int
+  usu_id             Int
+  usuario            usuario @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model fatec {
+  id_fac               Int       @id @default(autoincrement())
+  nome_fac             String    @db.VarChar(100)
+  sigla_fac            String?   @default("NULL") @db.VarChar
+  categoria_fac        String?   @default("NULL") @db.VarChar
+  tipo_instituicao_fac String?   @default("NULL") @db.VarChar
+  municipio_fac        String    @default("NULL") @db.VarChar
+  usuario              usuario[]
+}
+
+model relatorio {
+  id_rel          Int     @id @default(autoincrement())
+  nomeonibus_rel  String  @db.VarChar(100)
+  atrasado_rel    Int
+  adiantado_rel   Int
+  mediaespera_rel String  @db.Char(4)
+  usu_id          Int
+  usuario         usuario @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model usuario {
+  id_usu       Int            @id @default(autoincrement())
+  email_usu    String         @unique @db.VarChar(100)
+  senha_usu    String         @db.VarChar(100)
+  fac_id       Int
+  created_at   DateTime       @default(now()) @db.Timestamp(6)
+  nome_usu     String         @default("") @db.VarChar(100)
+  token_usu    String?        @db.VarChar(100)
+  configuracao configuracao[]
+  relatorio    relatorio[]
+  fatec        fatec          @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
+  exibicoes    exibicao[]
+}
+
+model exibicao {
+  id_exib      String     @id @default(uuid()) // aceitei esse experimento do gemini, mas poderia ser @id @default(autoincrement()) tranquilamente
+  id_usu       Int        // Chave estrangeira para ligar ao usuário
+  usuario      usuario    @relation(fields: [id_usu], references: [id_usu])
+  codigo_exib  String     @unique // O código gerado de 6 dígitos
+  nome_exibicao String?   // Um nome opcional
+  created_at   DateTime   @default(now()) @db.Timestamp(6)
+  last_update  DateTime   @default(now()) @db.Timestamp(6)
+  // Adiciona a relação: Uma exibição tem VÁRIAS paradas associadas
+  paradas      exibicao_parada[]
+}
+
+model exibicao_parada {
+  id_exib_parada  Int      @id @default(autoincrement())
+  codigo_parada   String
+  id_exib         String   
+  exibicao        exibicao @relation(fields: [id_exib], references: [codigo_exib])
+
+  @@unique([id_exib, codigo_parada])
+}

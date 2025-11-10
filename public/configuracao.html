@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuração</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+  <link href="src/output.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/userMenu.css" />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+  <!-- Imagem de fundo -->
+  <div class="relative min-h-screen">
+    <div class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
+      style="background-image: url('img/Onibus2.png'); filter: blur(4px)"></div>
+    <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+    <!-- Topbar -->
+    <div class="relative z-10">
+      <header class="topbar" role="banner">
+        <div class="container topbar-inner mx-auto">
+          <a class="brand" href="index.html" aria-label="Página inicial VigiBus">
+            <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
+          </a>
+    
+          <nav aria-label="Navegação principal">
+            <div class="mobile-menu">
+              <div class="line1"></div>
+              <div class="line2"></div>
+              <div class="line3"></div>
+            </div>
+    
+            <ul class="nav-list">
+              <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
+              <li><a class="nav-link" href="index.html">Mapa</a></li>
+              <li><a class="nav-link" href="exibicao.html">Linhas</a></li>
+              <li><a class="nav-link" href="favoritos.html">Minhas Linhas</a></li>
+              <li><a class="nav-link" href="sobre.html">Sobre</a></li>
+            </ul>
+          </nav>
+    
+          <div class="actions">
+            <div id="botaoAntesLogin" class="hidden">
+              <a href="login.html" class="btn btn-outline botoesConta">Entrar</a>
+              <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
+            </div>
+    
+            <!-- Menu do usuário (só aparece quando logado) -->
+            <div id="botaoDepoisLogin" class="hidden">
+            <div id="botaoAcessaConta" class="relative text-center cursor-pointer">
+                <button id="userButton" class="btn btn-primary flex items-center gap-2">
+                  <i class="fas fa-user-circle"></i>
+                  <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
+                  <i class="fas fa-caret-down"></i>
+                </button>
+              
+    
+              <ul id="userDropdown" class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
+                <li><a href="exibicao.html" class="block px-4 py-2 hover:bg-gray-100">Minhas exibições</a></li>
+                <li><a href="configuracao.html" class="block px-4 py-2 hover:bg-gray-100">Configurações</a></li>
+                <li><button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Sair da conta</button></li>
+              </ul>
+            </div>
+          </div>
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="min-h-screen flex items-center justify-center font-inter overflow-hidden">
+      <div
+        class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-4xl shadow-2xl shadow-black/60 z-20">
+        <h2 class="text-3xl font-bold text-center mb-8 text-black">Configuração</h2>
+
+        <div class="absolute top-12 left-6">
+          <a href="index.html"
+            class="text-1x1 text-center mb-5 text-black py-2 px-4 rounded-md transition text-sm font-inter">
+            Voltar
+          </a>
+        </div>
+
+        <form id="ConfiguraçãoForm">
+          <div class="mb-6">
+            <label for="nomeExib" class="block text-sm font-medium text-gray-700 mb-2">Nome da exibição
+              (Opcional)</label>
+            <input type="text" id="nomeExib" placeholder="exemplo: Fatec-ZL" required
+              class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+          </div>
+
+          <div id='paradaField'>
+            <div class="flex flex-row flex-wrap justify-between w-full text-sm font-medium text-gray-700 mb-2">
+              <label for="codParada_1">Código do ponto de ônibus</label>
+              <div
+                class="underline underline-offset-2 cursor-pointer hover:text-sptrans transition duration-300 ease-in-out">
+                <span class="linkAjuda" style='vertical-align: middle;'>Onde achar o código</span>
+                <i class="far fa-question-circle z-[1000]" style='font-size:18px; vertical-align: middle;'></i>
+              </div>
+            </div>
+
+            <input type="text" id="codParada_1" placeholder="exemplo: 650004840" required inputmode="numeric"
+              pattern="[0-9]{9}" maxlength="9"
+              class="campoCodParada animate-LTRfadeIn mb-2 w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+          </div>
+        </form>
+
+        <div class="flex flex-row flex-wrap content-end mt-3">
+          <div class="flex flex-row flex-auto flex-wrap content-end gap-10">
+            <div id="botaoAdicionar"
+              class="cursor-pointer text-black hover:text-sptrans transition-all duration-300 ease-out">
+              <i class="fas fa-plus z-[1000]" style='font-size:28px; vertical-align: middle;'></i>
+              <span class="italic font-roboto-mono" style="vertical-align: middle;">Adicionar</span>
+            </div>
+
+            <div id="botaoRemover"
+              class="cursor-pointer text-black hover:text-sptrans transition-all duration-300 ease-out">
+              <i class="fas fa-minus z-[1000]" style='font-size:28px; vertical-align: middle;'></i>
+              <span class="italic font-roboto-mono" style="vertical-align: middle;">Remover</span>
+            </div>
+          </div>
+
+          <div id="botaoSalvar"
+            class="text-end cursor-pointer! text-black hover:text-sptrans transition-all duration-300 ease-out">
+            <i class="far fa-save z-[1000]" style='font-size:28px; vertical-align: middle;'></i>
+            <input type="submit" value="Salvar" id="botaoSalvar"
+              class="cursor-pointer! italic font-roboto-mono" style="vertical-align: middle;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="./js/configuracao.js"></script>
+  <script src="js/userMenu.js"></script>
+  <script src="js/postLogin.js"></script>
+  <script src="js/mobile-navbar.js"></script>
+</body>
+</html>
