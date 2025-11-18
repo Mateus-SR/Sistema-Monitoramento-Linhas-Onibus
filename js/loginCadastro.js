@@ -131,31 +131,44 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function validarCampos(dados, tipo) {
-        setTexto("Validando campos")
-        // Se email "não for" ou senha "não for", manda alert e retorna false (nesse caso, "falha")
-        // Caso email e senha sejam válidos, passa reto por esse if e vai pro próximo
-        // (OBS: Login sempre passa por esse, mas nunca pelo próximo)
-        if (!dados.email || !dados.senha) {
-            setTexto("Oops!");
-            setSubTexto("Por favor, preencha todos os campos.");
-            erroAnim();
-            return false;
-        }
+    setTexto("Validando campos");
 
-        /*
-        // Se estamos lidando com um cadastro...
-        if (tipo === 'cadastro') {
-            // Verifica na função validarInstituicao marcamos que não somos de instituição ou se não selecionamos alguma
-            // 
-            if (!validarInstituicao(dados.semInstituicao, dados.instituicao)) {
-                return false;
-            }
-        }
-            */
-
-        // Caso tenhamos passado por todas as verificações
-        return true;
+    if (!dados.email || !dados.senha) {
+        setTexto("Oops!");
+        setSubTexto("Por favor, preencha todos os campos.");
+        erroAnim();
+        return false;
     }
+
+    // Validação de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(dados.email)) {
+        setTexto("Oops!");
+        setSubTexto("Por favor, insira um email válido.");
+        erroAnim();
+        return false;
+    }
+
+    // Validação de senha
+    const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!senhaRegex.test(dados.senha)) {
+        setTexto("Oops!");
+        setSubTexto("Senha deve ter pelo menos 6 caracteres, incluindo letras e números, sem espaços.");
+        erroAnim();
+        return false;
+    }
+
+    // Validação de nome (apenas cadastro)
+    if (tipo === 'cadastro' && (!dados.nome || dados.nome.length < 3)) {
+        setTexto("Oops!");
+        setSubTexto("Por favor, insira um nome válido.");
+        erroAnim();
+        return false;
+    }
+
+    return true;
+}
+
 
     function validarInstituicao(semInstituicao, instituicao) {
         // Caso a caixa "sem instituição" não estiver marcada E ao mesmo tempo não selecionamos alguma... erro!
