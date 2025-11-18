@@ -1,3 +1,10 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
 // Pra ter certeza que vai acontecer quando tudo carregou
@@ -33,9 +40,28 @@ document.addEventListener('DOMContentLoaded', () => {
         instituicaoField.toggleAttribute('disabled');
         instituicaoField.value = 0;
     });
-    esqueciSenha?.addEventListener('click', () => {
-        alert('Oops! Essa é uma mensagem temporária.\nÉ uma pena que você tenha esquecido sua senha...\n\nMas não se preocupe!\nEnviaremos em seu email um link para que você possa alterar sua senha!')
-    });
+    esqueciSenha?.addEventListener('click', async () => {
+    const email = prompt('Digite seu e-mail cadastrado:')
+    if (!email) return
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://SEUSITE.com/reset-senha.html' // coloque aqui a página de redefinição
+    })
+
+    if (error) {
+        setTexto("Oops! Erro ao enviar email.")
+        setSubTexto(error.message)
+        erroAnim();
+    } else {
+        setTexto("Email enviado!")
+        setSubTexto("Verifique seu e-mail para redefinir a senha.")
+        // Você pode opcionalmente fechar a animação após alguns segundos
+        setTimeout(() => {
+            fechaAnim()
+        }, 2000)
+    }
+});
+
 
 
     function validarLogin() {
