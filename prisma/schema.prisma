@@ -33,40 +33,66 @@ model relatorio {
   adiantado_rel   Int
   mediaespera_rel String  @db.Char(4)
   usu_id          Int
+  id_onibus       Int?
   usuario         usuario @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model usuario {
   id_usu       Int            @id @default(autoincrement())
-  email_usu    String         @unique @db.VarChar(100)
+  email_usu    String         @unique
   senha_usu    String         @db.VarChar(100)
-  fac_id       Int
+  fac_id       Int?
   created_at   DateTime       @default(now()) @db.Timestamp(6)
   nome_usu     String         @default("") @db.VarChar(100)
   token_usu    String?        @db.VarChar(100)
   configuracao configuracao[]
-  relatorio    relatorio[]
-  fatec        fatec          @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
   exibicoes    exibicao[]
+  favoritos    favoritos[]
+  relatorio    relatorio[]
+  fatec        fatec?         @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
+  usuario_log  usuario_log[]
 }
 
 model exibicao {
-  id_exib      String     @id @default(uuid()) // aceitei esse experimento do gemini, mas poderia ser @id @default(autoincrement()) tranquilamente
-  id_usu       Int        // Chave estrangeira para ligar ao usuário
-  usuario      usuario    @relation(fields: [id_usu], references: [id_usu])
-  codigo_exib  String     @unique // O código gerado de 6 dígitos
-  nome_exibicao String?   // Um nome opcional
-  created_at   DateTime   @default(now()) @db.Timestamp(6)
-  last_update  DateTime   @default(now()) @db.Timestamp(6)
-  // Adiciona a relação: Uma exibição tem VÁRIAS paradas associadas
-  paradas      exibicao_parada[]
+  id_exib       String            @id @default(uuid())
+  id_usu        Int
+  codigo_exib   String            @unique
+  nome_exibicao String?
+  created_at    DateTime          @default(now()) @db.Timestamp(6)
+  last_update   DateTime          @default(now()) @db.Timestamp(6)
+  usuario       usuario           @relation(fields: [id_usu], references: [id_usu])
+  paradas       exibicao_parada[]
+  favoritos     favoritos[]
 }
 
 model exibicao_parada {
-  id_exib_parada  Int      @id @default(autoincrement())
-  codigo_parada   String
-  id_exib         String   
-  exibicao        exibicao @relation(fields: [id_exib], references: [codigo_exib])
+  id_exib_parada Int      @id @default(autoincrement())
+  codigo_parada  String
+  id_exib        String
+  exibicao       exibicao @relation(fields: [id_exib], references: [codigo_exib])
 
   @@unique([id_exib, codigo_parada])
+}
+
+model favoritos {
+  id_fav    Int      @id @default(autoincrement())
+  usu_id    Int
+  exib_id   String
+  criado_em DateTime @default(now()) @db.Timestamp(6)
+  exibicao  exibicao @relation(fields: [exib_id], references: [id_exib], onDelete: NoAction, onUpdate: NoAction)
+  usuario   usuario  @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model relatorio_db {
+  id         BigInt   @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model usuario_log {
+  id_log      BigInt    @id @default(autoincrement())
+  usu_id      Int
+  usu_nome    String    @db.VarChar
+  session_log DateTime? @default(now()) @db.Timestamp(6)
+  usuario     usuario   @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
 }
