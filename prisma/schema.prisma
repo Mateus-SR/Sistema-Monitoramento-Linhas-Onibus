@@ -38,10 +38,10 @@ model relatorio {
   atrasado_rel    Int
   adiantado_rel   Int
   mediaespera_rel String   @db.Char(4)
-  usu_id          Int
+  usu_id          Int?
   id_onibus       Int?
   created_at      DateTime @db.Timestamptz(6)
-  usuario         usuario  @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+  usuario         usuario?  @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
 
   @@schema("public")
 }

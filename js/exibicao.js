@@ -540,16 +540,18 @@ Seção da API, node, vercel, e afins
     }
 
     async function registrarIncidente(nome, proximoOnibusCodigo, status, diferenca) {
-        const token = localStorage.getItem('tokenLogin');
-        if(!token) return;
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+    
+        if (token) {
+            headers['X-Access-Token'] = `Bearer ${token}`;
+        }
     
         try {
             await fetch('https://sistema-monitoramento-linhas-onibus.vercel.app/registrar-status', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Token': `Bearer ${token}`
-                },
+                headers: headers,
                 body: JSON.stringify({
                     nome_onibus: nome,
                     status: status,

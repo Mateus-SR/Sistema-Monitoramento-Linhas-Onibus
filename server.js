@@ -481,17 +481,30 @@ app.get('/get-usuario-exibicoes', verificarToken, async (req, res) => {
   }
 });
 
-app.post('/registrar-status', verificarToken, async (req, res) => {
-  const { nome_onibus, id_onibus, status, diferenca_minutos } = req.body;
-  const id_usu = req.id_usuario_logado;
+app.post('/registrar-status', /* verificarToken, <-- REMOVIDO */ async (req, res) => {
+  const { nome_onibus, status, diferenca_minutos, id_onibus } = req.body;
+  
+  // Lógica para tentar identificar o usuário (se houver token), mas sem bloquear se não houver
+  let id_usu = null;
+  const authHeader = req.headers['x-access-token'];
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    try {
+        // Tenta decodificar quem é o usuário
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        id_usu = payload.id_usu;
+    } catch (e) {
+        // Se o token for inválido, apenas ignoramos e segue como anônimo (id_usu = null)
+        console.log("Token inválido ou expirado no registro de status, registrando como anônimo.");
+    }
+  }
 
   try {
-    // Define os valores baseados no status recebido
     const atrasado = status === 'Atrasado' ? 1 : 0;
     const adiantado = status === 'Adiantado' ? 1 : 0;
 
-    // Salva no banco de dados usando o Prisma
-    const novoRelatorio = await prisma.relatorio.create({
+    await prisma.relatorio.create({
       data: {
         nomeonibus_rel: nome_onibus,
         atrasado_rel: atrasado,
@@ -502,13 +515,14 @@ app.post('/registrar-status', verificarToken, async (req, res) => {
       }
     });
 
-    res.status(200).json({ message: "Status registrado", id: novoRelatorio.id_rel });
+    res.status(200).json({ message: "Status registrado com sucesso" });
 
   } catch (error) {
     console.error("Erro ao registrar status:", error);
     res.status(500).json({ error: "Erro interno" });
   }
 });
+
 function verificarToken(req, res, next) {
   // Pegamos o crachá que foi criado
   const authHeader = req.headers['x-access-token'];
