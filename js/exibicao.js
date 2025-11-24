@@ -540,6 +540,7 @@ Seção da API, node, vercel, e afins
     }
 
     async function registrarIncidente(nome, proximoOnibusCodigo, status, diferenca) {
+        const token = localStorage.getItem('tokenLogin');
         const headers = {
             'Content-Type': 'application/json'
         };
