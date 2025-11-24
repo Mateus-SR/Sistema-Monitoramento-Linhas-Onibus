@@ -482,7 +482,7 @@ app.get('/get-usuario-exibicoes', verificarToken, async (req, res) => {
 });
 
 app.post('/registrar-status', verificarToken, async (req, res) => {
-  const { nome_onibus, status, diferenca_minutos, id_onibus } = req.body;
+  const { nome_onibus, id_onibus, status, diferenca_minutos } = req.body;
   const id_usu = req.id_usuario_logado;
 
   try {
