@@ -481,6 +481,34 @@ app.get('/get-usuario-exibicoes', verificarToken, async (req, res) => {
   }
 });
 
+app.post('/registrar-status', verificarToken, async (req, res) => {
+  const { nome_onibus, status, diferenca_minutos, id_onibus } = req.body;
+  const id_usu = req.id_usuario_logado;
+
+  try {
+    // Define os valores baseados no status recebido
+    const atrasado = status === 'Atrasado' ? 1 : 0;
+    const adiantado = status === 'Adiantado' ? 1 : 0;
+
+    // Salva no banco de dados usando o Prisma
+    const novoRelatorio = await prisma.relatorio.create({
+      data: {
+        nomeonibus_rel: nome_onibus,
+        atrasado_rel: atrasado,
+        adiantado_rel: adiantado,
+        mediaespera_rel: diferenca_minutos.toString(),
+        usu_id: id_usu,
+        id_onibus: id_onibus
+      }
+    });
+
+    res.status(200).json({ message: "Status registrado", id: novoRelatorio.id_rel });
+
+  } catch (error) {
+    console.error("Erro ao registrar status:", error);
+    res.status(500).json({ error: "Erro interno" });
+  }
+});
 function verificarToken(req, res, next) {
   // Pegamos o crachá que foi criado
   const authHeader = req.headers['x-access-token'];
