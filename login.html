@@ -35,17 +35,18 @@
     <form id="loginForm">
       <div class="mb-6">
         <label for="email" class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
-        <input type="email" id="email" placeholder="exemplo: erick@neo.com" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+        <input type="email" id="email" placeholder="Seu email..." required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
       </div>
 
       <div class="mb-6">
         <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-        <input type="password" id="password" placeholder="senhaSegura123" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+        <input type="password" id="password" name="senha" autocomplete="new-password" placeholder="Sua senha..." class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+        
       </div>
       
       <div class="flex items-center mb-6">
-        <input type="checkbox" id="lembreMe" class="mr-2">
-        <label for="lembreMe" class="text-gray-700 text-sm">Lembre de mim</label>
+        <input type="checkbox" id="lembreMe" />
+        <label for="lembreMe">Lembre-se de mim</label>
       </div>
 
       <div class="flex flex-col items-center space-y-6">

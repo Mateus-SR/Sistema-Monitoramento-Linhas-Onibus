@@ -74,87 +74,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Substitua a função validarLogin inteira por esta:
+   
 
 async function validarLogin() {
-    iniciaAnim();
-    setTexto("Validando...");
-
-    // Pega os valores
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("password").value.trim();
-    const lembrar = document.getElementById("lembreMe").checked;
-
-    if (!email || !senha) {
-        setTexto("Campos vazios!");
-        setSubTexto("Preencha e-mail e senha.");
-        erroAnim();
-        return;
-    }
-
-    setTexto("Verificando...");
+        iniciaAnim();
+        setTexto("Validando...");
     
-    if (!window.supabase && !supabase) {
-            setTexto("Erro!"); 
-            setSubTexto("Erro interno: Supabase não carregou.");
+        // Pega os valores
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("password").value.trim();
+        // Verifica se a checkbox existe antes de pegar o checked
+        const checkbox = document.getElementById("lembreMe");
+        const lembrar = checkbox ? checkbox.checked : false;
+    
+        if (!email || !senha) {
+            setTexto("Campos vazios!");
+            setSubTexto("Preencha e-mail e senha.");
             erroAnim();
             return;
-    }
+        }
     
-    const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
-
-    // Tenta fazer o login
-    const { data, error } = await sbClient.auth.signInWithPassword({
-        email: email,
-        password: senha
-    });
-
-    if (error) {
-        console.error("Erro login Supabase:", error);
-        setTexto("Acesso Negado");
-        if (error.message.includes("Invalid login")) {
-            setSubTexto("E-mail ou senha incorretos.");
-        } else {
-            setSubTexto(error.message);
-        }
-        erroAnim();
-    } else {
-
-        console.log("Login feito com Supabase:", data);
+        setTexto("Verificando...");
         
-        // --- [CORREÇÃO AQUI] ---
-        // Pegamos o nome que foi salvo no cadastro (full_name)
-        // Se não tiver nome, usamos o começo do e-mail
-        const meta = data.user.user_metadata || {};
-        const nomeParaSalvar = meta.full_name || meta.nome || data.user.email.split('@')[0];
-
-        // Salvamos o NOME no localStorage (sempre no local, pro userMenu achar fácil)
-        localStorage.setItem('nomeUsuario', nomeParaSalvar);
-
-        // Lógica do Token (Sessão vs Permanente)
-        if (lembrar) {
-            localStorage.setItem('tokenLogin', data.session.access_token);
-            // Limpa session para não confundir
-            sessionStorage.removeItem('tokenLogin');
-        } else {
-            // Nota: Se o seu userMenu.js só olha o localStorage, 
-            // talvez você precise salvar no localStorage aqui também,
-            // ou atualizar o userMenu para olhar o sessionStorage.
-            // Por segurança do código atual, vou salvar no localStorage também:
-            localStorage.setItem('tokenLogin', data.session.access_token);
+        if (!window.supabase && !supabase) {
+                setTexto("Erro!"); 
+                setSubTexto("Erro interno: Supabase não carregou.");
+                erroAnim();
+                return;
         }
-        // -----------------------
-
-        setTexto("Bem-vindo!");
-        setSubTexto("Entrando no sistema...");
         
-        setTimeout(() => {
-            window.location.href = "index.html"; 
-        }, 1000);
+        const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
+    
+        // Tenta fazer o login
+        const { data, error } = await sbClient.auth.signInWithPassword({
+            email: email,
+            password: senha
+        });
+    
+        if (error) {
+            console.error("Erro login Supabase:", error);
+            setTexto("Acesso Negado");
+            if (error.message.includes("Invalid login")) {
+                setSubTexto("E-mail ou senha incorretos.");
+            } else {
+                setSubTexto(error.message);
+            }
+            erroAnim();
+        } else {
+    
+            console.log("Login feito com Supabase:", data);
+            
+            const meta = data.user.user_metadata || {};
+            const nomeParaSalvar = meta.full_name || meta.nome || data.user.email.split('@')[0];
+    
+            localStorage.setItem('nomeUsuario', nomeParaSalvar);
+            
+          
+            if (lembrar) {
+               
+                localStorage.setItem('userEmailLembrete', email);
+                
+               
+                localStorage.setItem('tokenLogin', data.session.access_token);
+                sessionStorage.removeItem('tokenLogin'); 
+            } else {
+               
+                localStorage.removeItem('userEmailLembrete');
+                
+                
+                sessionStorage.setItem('tokenLogin', data.session.access_token);
+                localStorage.removeItem('tokenLogin'); 
+            }
+           
+    
+            setTexto("Bem-vindo!");
+            setSubTexto("Entrando no sistema...");
+            
+            setTimeout(() => {
+                window.location.href = "index.html"; 
+            }, 1000);
+        }
     }
-}
 
-    // Substitua a função validarCadastro antiga por esta:
+    
 
 async function validarCadastro() {
     iniciaAnim();
@@ -200,15 +202,13 @@ async function validarCadastro() {
         setSubTexto(error.message);
         erroAnim();
     } else {
-        // SUCESSO!
+       
         console.log("Cadastro automático:", data);
         
         setTexto("Conta Criada!");
         setSubTexto("Redirecionando para login...");
 
-        // Opcional: Se quiser já logar a pessoa direto sem ir pra tela de login,
-        // você pode salvar o token aqui igual faz no login.
-        // Mas por padrão, vamos mandar ela fazer o login:
+     
         
         setTimeout(() => {
             window.location.href = "login.html"; 
