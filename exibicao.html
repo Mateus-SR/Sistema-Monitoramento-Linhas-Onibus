@@ -72,21 +72,25 @@
       </div>
 
       <!-- Campo de pesquisa -->
-      <div class="mb-4 flex flex-col sm:flex-row justify-center items-center gap-4 w-full px-4 z-100">
+     <div class="mb-4 relative flex flex-col sm:flex-row justify-center items-center w-full z-10 gap-3">
+        
         <input 
           type="text" 
           id="barraPesquisa" 
           placeholder="Pesquisar linha"
-          class="w-full sm:w-80 max-w-lg px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans text-base"
+          class="w-full sm:w-96 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans text-base text-center sm:text-left"
         />
 
-        <select 
-          id="filtroOrdenacao" 
-          class="w-full sm:w-auto px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans text-base bg-white text-gray-700 cursor-pointer">
-          <option value="padrao">Ordem Padrão</option>
-          <option value="nome">Nome (A-Z)</option>
-          <option value="tempo">Horário (Mais cedo)</option>
-        </select>
+        <div class="w-full sm:w-96 sm:absolute sm:right-0">
+          <select 
+            id="filtroOrdenacao" 
+            class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans text-sm bg-white text-gray-700 cursor-pointer font-bold text-center">
+            <option value="padrao">Ordenar: Padrão</option>
+            <option value="nome">Nome (A-Z)</option>
+            <option value="tempo">Horário </option>
+          </select>
+        </div>
+
       </div>
 
       <!-- Tabela -->
