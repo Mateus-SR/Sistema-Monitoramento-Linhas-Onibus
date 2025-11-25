@@ -7,20 +7,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Estilos -->
   <link rel="stylesheet" type="text/css" href="css/styles.css" />
   <link href="src/output.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/userMenu.css"> <!-- CSS do menu do usuário -->
-
-  <!-- Fontes -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="css/userMenu.css"> <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
     rel="stylesheet"
   >
 
-  <!-- Ícones -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
@@ -35,11 +30,10 @@
 
 <body>
   
-  <!-- Topbar -->
   <div id="hideElement1" class="transition-transform duration-700 ease-in-out z-50">
+    
     {% include header.html %}
 
-    <!-- Botões overlay -->
     <section class="flex absolute items-start flex-col z-40">
       <div id="hideBtn1" class="hideBtn relative
             bg-sptrans text-white font-extrabold
@@ -63,49 +57,57 @@
     </section>
   </div>
 
-  <!-- Área das linhas em exibição -->
   <section id="linhas" class="max-w-full px-4 lg:px-10">
     <div class="bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
-     <div class="mb-2 flex flex-col place-self-center items-center">
+      <div class="mb-2 flex flex-col place-self-center items-center">
 
   <div class="flex items-center gap-3">
-    <!-- Título -->
-    <span class="text-xl font-bold" id="textoTitulo">Título</span>
+    <span class="text-xl font-bold" id="textoTitulo" style="display: none;">Favoritar Exibição</span>
 
-    <!-- Estrela Favorito -->
     <i id="favStar"
-       class="far fa-star text-yellow-400 text-2xl cursor-pointer transition-transform duration-300">
+       class="far fa-star text-yellow-400 text-2xl cursor-pointer transition-transform duration-300"
+       style="display: none;">
     </i>
 
-    <!-- NOTIFICAÇÃO INLINE (ao lado da estrela) -->
     <div id="favInline"
          class="ml-2 px-3 py-1 rounded-lg text-sm text-white font-semibold shadow-lg
                 opacity-0 pointer-events-none transition-opacity duration-300 hidden">
-      <!-- texto preenchido pelo JS -->
-    </div>
+      </div>
   </div>
 
-  <!-- Código -->
   <span class="text-sm font-normal font-roboto-mono italic" id="textoCodigo">Código:</span>
 </div>
 
 <script>
   (function() {
     const star = document.getElementById("favStar");
+    const titulo = document.getElementById("textoTitulo");
     const inline = document.getElementById("favInline");
     const NOTIF_DURATION = 1800;
     let hideTimeout = null;
 
-    if (!star || !inline) return;
+    if (!star || !inline || !titulo) return;
 
-    // garante que a cor amarela esteja presente e não seja removida
+    // --- VERIFICAÇÃO DE LOGIN ---
+    // Verifica se existe o token salvo no navegador
+    const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
+    
+    if (token) {
+        // LOGADO: Remove o bloqueio visual (display: none)
+        star.style.display = "";
+        titulo.style.display = "";
+    } else {
+        // NÃO LOGADO: Não faz nada (eles continuam invisíveis pelo HTML)
+        return; 
+    }
+    // ----------------------------
+
+    // RESTO DO CÓDIGO DA ESTRELA
     star.classList.add("text-yellow-400");
 
     star.addEventListener("click", () => {
-      // determinar novo estado (será favoritado se não tiver 'fas')
       const willBeFav = !star.classList.contains("fas");
 
-      // alterna apenas as classes do FA (sem sobrescrever text-yellow-400)
       if (willBeFav) {
         star.classList.remove("far");
         star.classList.add("fas");
@@ -114,47 +116,39 @@
         star.classList.add("far");
       }
 
-      // garante cor amarela (caso outra coisa remova)
       star.classList.add("text-yellow-400");
 
-      // animação pop (inline, rápida)
       star.style.transition = "transform 120ms ease";
       star.style.transform = "scale(1.25)";
       setTimeout(() => { star.style.transform = "scale(1)"; }, 120);
 
-      // mostra notificação inline ao lado da estrela
       if (willBeFav) {
-        showInline("Linha adicionada aos favoritos", "bg-green-600");
+        showInline("Exibição adicionada aos favoritos", "bg-green-600");
+        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE SALVAR NO SUPABASE
       } else {
-        showInline("Linha removida dos favoritos", "bg-red-600");
+        showInline("Exibição removida dos favoritos", "bg-red-600");
+        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE REMOVER NO SUPABASE
       }
     });
 
     function showInline(text, bgClass) {
-      // limpa timeout anterior
       if (hideTimeout) {
         clearTimeout(hideTimeout);
         hideTimeout = null;
       }
-
-      // limpar cores antigas e classes de visibilidade sem apagar outras classes
       inline.classList.remove("bg-green-600", "bg-red-600", "hidden", "opacity-0");
       inline.textContent = text;
       inline.classList.add(bgClass, "opacity-100");
       inline.style.pointerEvents = "auto";
-
-      // forçar reflow para garantir transição
       void inline.offsetWidth;
 
-      // esconde depois do tempo
       hideTimeout = setTimeout(() => {
         inline.classList.remove("opacity-100");
         inline.classList.add("opacity-0");
         inline.style.pointerEvents = "none";
-
         setTimeout(() => {
           inline.classList.add("hidden");
-        }, 300); // tempo da transição
+        }, 300);
         hideTimeout = null;
       }, NOTIF_DURATION);
     }
@@ -162,8 +156,7 @@
 </script>
 
 
-      <!-- Campo de pesquisa -->
-     <div class="mb-4 relative flex flex-col sm:flex-row justify-center items-center w-full z-10 gap-3">
+      <div class="mb-4 relative flex flex-col sm:flex-row justify-center items-center w-full z-10 gap-3">
         
         <input 
           type="text" 
@@ -184,7 +177,6 @@
 
       </div>
 
-      <!-- Tabela -->
       <table class="min-w-full border-collapse mx-auto table-auto lg:text-3xl">
         <thead>
           <tr class="bg-gray-100 font-extrabold">
@@ -213,15 +205,12 @@
     </div>
   </section>
 
-  <!-- Rodapé -->
   <section class="fixed w-full bottom-0 bg-sptrans z-50 py-1 px-2.5 text-white font-medium font-roboto-mono flex items-start justify-between text-[12px]">
     <div><p>Desenvolvido por Geppetto Company Ltda.</p></div>
     <div><p>Status da API: ---</p></div>
   </section>
 
-  <!-- Scripts -->
   <script type="module" src="js/exibicao.js"></script>
   <script src="js/mobile-navbar.js"></script>
-  <script src="js/userMenu.js"></script> <!-- JS do menu -->
-</body>
+  <script src="js/userMenu.js"></script> </body>
 </html>
