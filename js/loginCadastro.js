@@ -74,83 +74,85 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    async function validarLogin() {
-        iniciaAnim();
-        setTexto("Validando...");
+    // Substitua a função validarLogin inteira por esta:
 
-        // Pega os valores
-        const email = document.getElementById("email").value.trim();
-        const senha = document.getElementById("password").value.trim();
-        // [NOVO] Pega o estado do checkbox
-        const lembrar = document.getElementById("lembreMe").checked;
+async function validarLogin() {
+    iniciaAnim();
+    setTexto("Validando...");
 
-        if (!email || !senha) {
-            setTexto("Campos vazios!");
-            setSubTexto("Preencha e-mail e senha.");
+    // Pega os valores
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("password").value.trim();
+    const lembrar = document.getElementById("lembreMe").checked;
+
+    if (!email || !senha) {
+        setTexto("Campos vazios!");
+        setSubTexto("Preencha e-mail e senha.");
+        erroAnim();
+        return;
+    }
+
+    setTexto("Verificando...");
+    
+    if (!window.supabase && !supabase) {
+            setTexto("Erro!"); 
+            setSubTexto("Erro interno: Supabase não carregou.");
             erroAnim();
             return;
-        }
-
-        setTexto("Verificando...");
-        
-        // Garante que o supabase existe
-        if (!window.supabase && !supabase) {
-             setTexto("Erro!"); 
-             setSubTexto("Erro interno: Supabase não carregou.");
-             erroAnim();
-             return;
-        }
-        
-        // O cliente pode estar na janela (window) ou na variável local
-        const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
-
-        // Tenta fazer o login
-        const { data, error } = await sbClient.auth.signInWithPassword({
-            email: email,
-            password: senha
-        });
-
-        if (error) {
-            console.error("Erro login Supabase:", error);
-            setTexto("Acesso Negado");
-            if (error.message.includes("Invalid login")) {
-                setSubTexto("E-mail ou senha incorretos.");
-            } else {
-                setSubTexto(error.message);
-            }
-            erroAnim();
-        } else {
-    
-            console.log("Login feito com Supabase:", data);
-            
-            // --- [MUDANÇA AQUI: LÓGICA DO LEMBRE DE MIM] ---
-            if (lembrar) {
-                // Se marcou "Lembre de mim": Salva no LocalStorage (Permanente)
-                localStorage.setItem('tokenLogin', data.session.access_token);
-                localStorage.setItem('userData', JSON.stringify(data.user));
-                
-                // Limpa o sessionStorage para evitar duplicidade
-                sessionStorage.removeItem('tokenLogin');
-                sessionStorage.removeItem('userData');
-            } else {
-                // Se NÃO marcou: Salva no SessionStorage (Temporário - some ao fechar navegador)
-                sessionStorage.setItem('tokenLogin', data.session.access_token);
-                sessionStorage.setItem('userData', JSON.stringify(data.user));
-
-                // Garante que não ficou nada antigo no LocalStorage
-                localStorage.removeItem('tokenLogin');
-                localStorage.removeItem('userData');
-            }
-            // -----------------------------------------------
-
-            setTexto("Bem-vindo!");
-            setSubTexto("Entrando no sistema...");
-            
-            setTimeout(() => {
-                window.location.href = "index.html"; 
-            }, 1000);
-        }
     }
+    
+    const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
+
+    // Tenta fazer o login
+    const { data, error } = await sbClient.auth.signInWithPassword({
+        email: email,
+        password: senha
+    });
+
+    if (error) {
+        console.error("Erro login Supabase:", error);
+        setTexto("Acesso Negado");
+        if (error.message.includes("Invalid login")) {
+            setSubTexto("E-mail ou senha incorretos.");
+        } else {
+            setSubTexto(error.message);
+        }
+        erroAnim();
+    } else {
+
+        console.log("Login feito com Supabase:", data);
+        
+        // --- [CORREÇÃO AQUI] ---
+        // Pegamos o nome que foi salvo no cadastro (full_name)
+        // Se não tiver nome, usamos o começo do e-mail
+        const meta = data.user.user_metadata || {};
+        const nomeParaSalvar = meta.full_name || meta.nome || data.user.email.split('@')[0];
+
+        // Salvamos o NOME no localStorage (sempre no local, pro userMenu achar fácil)
+        localStorage.setItem('nomeUsuario', nomeParaSalvar);
+
+        // Lógica do Token (Sessão vs Permanente)
+        if (lembrar) {
+            localStorage.setItem('tokenLogin', data.session.access_token);
+            // Limpa session para não confundir
+            sessionStorage.removeItem('tokenLogin');
+        } else {
+            // Nota: Se o seu userMenu.js só olha o localStorage, 
+            // talvez você precise salvar no localStorage aqui também,
+            // ou atualizar o userMenu para olhar o sessionStorage.
+            // Por segurança do código atual, vou salvar no localStorage também:
+            localStorage.setItem('tokenLogin', data.session.access_token);
+        }
+        // -----------------------
+
+        setTexto("Bem-vindo!");
+        setSubTexto("Entrando no sistema...");
+        
+        setTimeout(() => {
+            window.location.href = "index.html"; 
+        }, 1000);
+    }
+}
 
     // Substitua a função validarCadastro antiga por esta:
 
