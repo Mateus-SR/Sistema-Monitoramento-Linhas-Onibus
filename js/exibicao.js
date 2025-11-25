@@ -325,6 +325,7 @@ Seção da API, node, vercel, e afins
 
         }
 
+
         // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
         catch (error) {
             erroAnim();
@@ -408,6 +409,7 @@ Seção da API, node, vercel, e afins
                 onibus.classList.remove('animate-fadeOut');
             }
         }
+        ordenarTabela();
     }
 
     // A função que chamamos lá em cima para construir a tabela, recebendo as informações que vamos usar
@@ -519,6 +521,43 @@ Seção da API, node, vercel, e afins
             </span>
         </td>`
     }
+
+    // === NOVA FUNÇÃO DE ORDENAÇÃO ===
+    function ordenarTabela() {
+        const criterio = document.getElementById('filtroOrdenacao').value;
+        const tabelaBody = document.getElementById('tabelaBody');
+        // Transforma a lista de linhas (HTMLCollection) em um Array real para podermos usar .sort()
+        const linhas = Array.from(tabelaBody.getElementsByTagName('tr'));
+
+        // Se for padrão, não fazemos nada (ou poderíamos reordenar por ID se necessário)
+        if (criterio === 'padrao') return;
+
+        linhas.sort((a, b) => {
+            // Célula 1 = Nome/Sentido | Célula 2 = Previsão
+            // .innerText pega o texto visível e .trim() remove espaços em branco extras
+            
+            if (criterio === 'nome') {
+                const nomeA = a.cells[1].innerText.trim();
+                const nomeB = b.cells[1].innerText.trim();
+                // localeCompare é ótimo para ordenar strings com acentos
+                return nomeA.localeCompare(nomeB);
+            } 
+            else if (criterio === 'tempo') {
+                const tempoA = a.cells[2].innerText.trim();
+                const tempoB = b.cells[2].innerText.trim();
+                // Ordena strings de tempo (ex: "14:30" vem antes de "15:00")
+                return tempoA.localeCompare(tempoB);
+            }
+            return 0;
+        });
+
+        // Reinsere as linhas na tabela na nova ordem
+        // O appendChild move o elemento se ele já existir, não duplica
+        linhas.forEach(linha => tabelaBody.appendChild(linha));
+    }
+
+    // Adiciona o evento para quando o usuário mudar a opção no select
+    document.getElementById('filtroOrdenacao').addEventListener('change', ordenarTabela);
 
     // Função para quebrar horarios e transformar eles totalmente em minutos
     function converteHoraMinuto(horaMinuto) {
