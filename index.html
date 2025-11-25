@@ -68,6 +68,33 @@
   <script type="module" src="js/inicial.js"></script>
   <script src="js/userMenu.js"></script> <!-- novo arquivo -->
 </body>
+
+<script>
+    // Função para verificar se está logado (você já deve ter colocado essa antes)
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
+        if (!token) {
+            window.location.href = "login.html";
+        }
+    });
+
+    // --- FUNÇÃO DO BOTÃO SAIR ---
+    async function fazerLogout() {
+        // 1. Avisa o Supabase para encerrar a sessão no servidor
+        const supabase = window.supabase.createClient("SUA_URL_SUPABASE", "SUA_KEY_SUPABASE"); // Use suas vars ou global
+        await supabase.auth.signOut();
+
+        // 2. Limpa o navegador
+        localStorage.removeItem('tokenLogin');
+        localStorage.removeItem('userData');
+        sessionStorage.removeItem('tokenLogin');
+        sessionStorage.removeItem('userData');
+
+        // 3. Manda pro login
+        window.location.href = "login.html";
+    }
+</script>
+
 </html>
 
 

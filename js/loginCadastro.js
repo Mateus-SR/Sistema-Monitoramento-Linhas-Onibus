@@ -152,19 +152,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function validarCadastro() {
-        iniciaAnim();
-        setTexto("Validando...");
+    // Substitua a função validarCadastro antiga por esta:
 
-        const nome = document.getElementById("text").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const senha = document.getElementById("password").value.trim();
-        const dados = {nome, email, senha};
+async function validarCadastro() {
+    iniciaAnim();
+    setTexto("Criando conta...");
 
-        if (validarCampos(dados, 'cadastro')) {
-            enviarUsuarioParaServidor(dados, 'cadastro');
-        }
+    const nomeInput = document.getElementById("text"); // Verifique se o ID é esse mesmo
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("password");
+
+    const nome = nomeInput ? nomeInput.value.trim() : "";
+    const email = emailInput ? emailInput.value.trim() : "";
+    const senha = senhaInput ? senhaInput.value.trim() : "";
+
+    if (!email || !senha) {
+        setTexto("Campos vazios!");
+        setSubTexto("Preencha todos os dados.");
+        erroAnim();
+        return;
     }
+
+    if (senha.length < 6) {
+        setTexto("Senha fraca!");
+        setSubTexto("Mínimo de 6 caracteres.");
+        erroAnim();
+        return;
+    }
+
+    // Conexão Supabase
+    const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
+
+    // Criação da Conta
+    const { data, error } = await sbClient.auth.signUp({
+        email: email,
+        password: senha,
+        options: {
+            data: { full_name: nome }
+        }
+    });
+
+    if (error) {
+        console.error("Erro no cadastro:", error);
+        setTexto("Erro ao criar");
+        setSubTexto(error.message);
+        erroAnim();
+    } else {
+        // SUCESSO!
+        console.log("Cadastro automático:", data);
+        
+        setTexto("Conta Criada!");
+        setSubTexto("Redirecionando para login...");
+
+        // Opcional: Se quiser já logar a pessoa direto sem ir pra tela de login,
+        // você pode salvar o token aqui igual faz no login.
+        // Mas por padrão, vamos mandar ela fazer o login:
+        
+        setTimeout(() => {
+            window.location.href = "login.html"; 
+        }, 1500);
+    }
+}
 
     async function enviarUsuarioParaServidor(dados, tipo) {
         setTexto("Enviando dados...");
