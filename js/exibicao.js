@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error("Não foi possível encontrar a exibição.");
             }
 
+            carregarBackupLocal(codigoExibicao); 
+
             const exibicao = await getCodigos(codigoExibicao);
 
             if (!exibicao || !exibicao.paradas || exibicao.paradas.length === 0) {
@@ -222,6 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
             preparaTabela(onibusAtivos);
+
+        
+            // 1. Pegamos o código da exibição atual da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const codigoAtual = urlParams.get('codigo');
+            
+            // 2. Chamamos a função de salvar (se tiver código)
+            if (codigoAtual) {
+                salvarBackupLocal(codigoAtual);
+            }
+            // ==================================
+
             fechaAnim();
 
         } catch (error) {
@@ -400,6 +414,46 @@ document.addEventListener('DOMContentLoaded', () => {
         linhas.forEach(linha => tabelaBody.appendChild(linha));
     }
 
-   
+   // === NOVAS FUNÇÕES DE BACKUP (LOCALSTORAGE) ===
+
+    // Salva o estado atual dos ônibus no navegador
+    function salvarBackupLocal(codigoExibicao) {
+        // O localStorage não aceita "Map", então convertemos para um Array de Arrays
+        const dadosArray = Array.from(registroOnibus.entries());
+        
+        const backup = {
+            codigoExibicao: codigoExibicao, // Salva qual é a tela atual (pra não carregar dados da linha errada)
+            timestamp: Date.now(), // Salva a hora que guardou
+            dados: dadosArray
+        };
+
+        localStorage.setItem('backupOnibus', JSON.stringify(backup));
+    }
+
+    // Tenta recuperar os dados assim que a página abre
+    function carregarBackupLocal(codigoExibicaoAtual) {
+        const backupString = localStorage.getItem('backupOnibus');
+        
+        if (backupString) {
+            const backup = JSON.parse(backupString);
+
+            // Só carregamos se o backup for DA MESMA EXIBIÇÃO que estamos agora
+            // (Para evitar mostrar ônibus de Itaquera na tela de Pinheiros)
+            if (backup.codigoExibicao === codigoExibicaoAtual) {
+                
+                // Reconstrói o Map a partir do Array salvo
+                backup.dados.forEach(([key, value]) => {
+                    registroOnibus.set(key, value);
+                });
+
+                console.log("Backup recuperado do LocalStorage!", registroOnibus);
+
+                // Força a tabela a ser desenhada com esses dados antigos enquanto a API nova não chega
+                // Criamos um Set com todas as chaves para simular o "onibusAtivos"
+                const chavesRecuperadas = new Set(registroOnibus.keys());
+                preparaTabela(chavesRecuperadas);
+            }
+        }
+    }
 
 });
