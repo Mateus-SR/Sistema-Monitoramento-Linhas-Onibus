@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redefinir Senha</title>
+  <link href="src/output.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="relative min-h-screen flex items-center justify-center font-inter">
+
+  <!-- Fundo -->
+  <div class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
+       style="background-image: url('img/Onibus.jpg'); filter: blur(4px)">
+  </div>
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <!-- Caixa de redefinição -->
+  <div class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-md shadow-2xl shadow-black/60 z-20">
+
+    <!-- Botão Voltar -->
+    <div class="absolute top-4 left-0 -ml-4">
+      <a href="login.html"
+         class="text-black py-2 px-4 rounded-md text-sm font-inter hover:bg-gray-200 transition flex items-center">
+         <i class="fas fa-arrow-left text-lg mr-1"></i>
+      </a>
+    </div>
+
+    <h2 class="text-3xl font-bold text-center mb-8 text-black">Redefinir Senha</h2>
+
+    <div class="mb-6">
+      <label for="novaSenha" class="block text-sm font-medium text-gray-700 mb-2">Nova senha</label>
+      <input type="password" id="novaSenha" placeholder="Digite sua nova senha"
+             class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg"
+             autocomplete="new-password" value="">
+    </div>
+
+    <div class="mb-6">
+      <label for="confNovaSenha" class="block text-sm font-medium text-gray-700 mb-2">Confirmar senha</label>
+      <input type="password" id="confNovaSenha" placeholder="Confirme sua nova senha"
+             class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg"
+             autocomplete="new-password" value="">
+    </div>
+
+    <button id="resetSenhaBtn" class="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 transition text-lg font-semibold">
+      Redefinir Senha
+    </button>
+
+    <p id="mensagem" class="text-center mt-4 text-sm text-black"></p>
+  </div>
+
+  <script type="module">
+    import { createClient } from '@supabase/supabase-js'
+
+    const supabaseUrl = 'https://SEU-SUPABASE-URL.supabase.co'  // substitua pelo seu URL do Supabase
+    const supabaseKey = 'SUA-CHAVE-PUBLICA'                     // substitua pela sua chave pública
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    const urlParams = new URLSearchParams(window.location.search)
+    const access_token = urlParams.get('access_token') // token enviado pelo Supabase
+
+    const novaSenhaInput = document.getElementById('novaSenha')
+    const confNovaSenhaInput = document.getElementById('confNovaSenha')
+    const resetBtn = document.getElementById('resetSenhaBtn')
+    const mensagem = document.getElementById('mensagem')
+
+    resetBtn.addEventListener('click', async () => {
+      const novaSenha = novaSenhaInput.value.trim()
+      const confNovaSenha = confNovaSenhaInput.value.trim()
+
+      // Verifica campos preenchidos
+      if (!novaSenha || !confNovaSenha) {
+        mensagem.textContent = 'Por favor, preencha todos os campos.'
+        return
+      }
+
+      // Verifica se coincidem
+      if (novaSenha !== confNovaSenha) {
+        mensagem.textContent = 'As senhas não coincidem.'
+        return
+      }
+
+      // Validação mínima: 6 caracteres + pelo menos 1 letra ou número
+      const senhaRegex = /^(?=.*[A-Za-z0-9]).{6,}$/
+      if (!senhaRegex.test(novaSenha)) {
+        mensagem.textContent = 'Senha inválida! Deve ter pelo menos 6 caracteres e incluir letras ou números.'
+        return
+      }
+
+      // Atualiza senha no Supabase
+      try {
+        const { data, error } = await supabase.auth.updateUser(
+          { password: novaSenha },
+          { accessToken: access_token }
+        )
+
+        if (error) {
+          mensagem.textContent = 'Erro: ' + error.message
+        } else {
+          mensagem.textContent = 'Senha redefinida com sucesso! Redirecionando para login...'
+          setTimeout(() => {
+            window.location.href = 'login.html'
+          }, 2000)
+        }
+      } catch (err) {
+        mensagem.textContent = 'Erro ao redefinir senha: ' + err.message
+      }
+    })
+  </script>
+
+</body>
+</html>
+

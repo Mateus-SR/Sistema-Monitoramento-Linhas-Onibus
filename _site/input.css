@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --color-sptrans: oklch(0.6284 0.257 28.22);
+    --font-roboto-mono: "Roboto Mono", monospace;
+
+    --animate-fadeOut: fadeOut 2.5s ease-in-out normal;
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 100%;
+        }
+
+        100% {
+            opacity: 0%;
+            /*transform: translate(100%);*/
+        }
+    }
+
+    --animate-fadeOutHold: fadeOutHold 2.5s ease-in-out normal;
+
+    @keyframes fadeOutHold {
+        0%, 50% {
+            opacity: 100%;
+        }
+
+        100% {
+            opacity: 0%;
+            /*transform: translate(100%);*/
+        }
+    }
+
+    --animate-shrink: shrink 0.5s ease-in-out normal;
+    @keyframes shrink {
+        0% {
+          transform: scale(100%);
+          animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+        }
+
+        8% {
+          transform: scale(102%);
+          animation-timing-function: cubic-bezier(0.5, 0, 1.6, 1);
+        }
+
+        100% {
+          transform: scale(0%);
+          animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
+        }
+    }
+
+    --animate-fadeIn: fadeIn 2.5s ease-in-out normal;
+    @keyframes fadeIn {
+        0% {
+            opacity: 0%;
+        }
+
+        100% {
+            opacity: 100%;
+            /*transform: translate(100%);*/
+        }
+    }
+
+    --animate-busJiggle: busJiggle 1.5s ease-in-out infinite;
+    @keyframes busJiggle {
+      0%, 30%, 50%, 60%, 80%, 100% {
+        transform: translateY(0);
+      }
+    
+      40% {
+        transform: translateY(-1px);
+      }
+    
+      70% {
+        transform: translateY(1px);
+      }
+    }
+  
+    --animate-fullRightLeft: fullRightLeft 3s linear 2;
+    @keyframes fullRightLeft {
+      0% {
+          transform: translateX(300%);
+          opacity: 0%;
+      }
+  
+      25%, 75% {
+          opacity: 80%;
+      }
+  
+      100% {
+          transform: translateX(-300%);
+          opacity: 0%;
+      }
+    }
+
+/*Left to Right Fade-In*/
+    --animate-LTRfadeIn: LTRfadeIn 0.2s ease-in-out normal;
+    @keyframes LTRfadeIn {
+        0% {
+          transform: translateX(-150%);
+          opacity: 0%;
+        }
+
+        100% {
+          transform: translateX(0%);
+          opacity: 100%;
+        }
+    }
+
+/*Left to Right Fade-Out*/
+    --animate-LTRfadeOut: LTRfadeOut 0.2s ease-in-out forwards;
+
+    @keyframes LTRfadeOut {
+        0% {
+          transform: translateX(0%);
+          opacity: 100%;
+        }
+
+        100% {
+          transform: translateX(150%);
+          opacity: 0%;
+        }
+    }
+  }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100  text-green-700 font-semibold text-sm
+    lg:text-2xl">
+    <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm
+    lg:text-2xl">
+    <span class="inline-flex cursor-not-allowed items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm
+    lg:text-2xl">
+    <span class="relative flex w-2 h-2 mr-2">
+      <span
+        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span
+        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+        <span
+        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 mx-10 bg-blue-600"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 mx-5 bg-yellow-600 max-w-md"></span>
+    </span>Normal</span></td>
+
+    <div class="fixed backdrop-blur-xs border-2 mt-10 border-sptrans  bg-black/50 top-0 left-0 w-full h-full flex items-center justify-center font-roboto-mono z-[800] overflow-hidden"></div>
+        <div id="loadingBox" class="relative overflow-hidden bg-white border border-gray-800 rounded-xl py-40 aspect-square shadow-2xl shadow-black/60 flex flex-col items-center justify-center">
+            <img class="size-24 z-[1000] animate-busJiggle" src="img/bus-svgrepo-com-256.png">
+            <p class="text-2xl font-extrabold text-black animate-pulse">Carregando...</p>
+            <p class="text-md font-bold animate-shrink text-black/60 italic">Por favor, aguarde.</p>
+            <i id="zoomPopUp" class="fixed top-0 left-50 fas fa-search-minus z-[1000] cursor-pointer text-gray-400 font-roboto-mono" style='font-size:28px'>${zoomValor}%</i>
+            <div class="text-3xl fixed top-4 left-1/2 -translate-x-1/2 z-[1000] py-[10px] px-[14px] mt-[32px] text-center font-roboto-mono animate-fadeOutHold bg-white text-sptrans font-bold shadow-xl rounded-2xl border-2 border-gray-400"></div>
+        </div>
+</body>
+</html>
