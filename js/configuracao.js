@@ -240,54 +240,93 @@ async function salvarExibicao() {
         //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
     };
 
-          document.addEventListener("DOMContentLoaded", () => {
-
-  // limite por campo específico
-  const LIMITES = {
-    tempoAtraso: { min: 1, max: 5 },
-    tempoAdiantado: { min: 1, max: 5 },
-    qtdOnibus: { min: 1, max: 8 }
-  };
-
-  document.querySelectorAll(".setaUp").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.target;
-      const campo = document.getElementById(id);
-      if (!campo) return;
-
-      const limite = LIMITES[id];
-      const valor = parseInt(campo.value) || limite.min;
-
-      if (valor < limite.max) {
-        campo.value = valor + 1;
-      } else {
-        campo.value = limite.max;
-      }
-    });
-  });
-
-  document.querySelectorAll(".setaDown").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.target;
-      const campo = document.getElementById(id);
-      if (!campo) return;
-
-      const limite = LIMITES[id];
-      const valor = parseInt(campo.value) || limite.min;
-
-      if (valor > limite.min) {
-        campo.value = valor - 1;
-      } else {
-        campo.value = limite.min;
-      }
-    });
-  });
-
-});
-
+             
 
 
 };
+             const LIMITES = {
+  tempoAtraso: { min: 1, max: 5 },
+  tempoAdiantado: { min: 1, max: 5 },
+  qtdOnibus: { min: 1, max: 8 }
+};
+
+// Impede letras, "e", símbolos e números gigantes
+document.querySelectorAll("input[type='number']").forEach(campo => {
+
+  campo.addEventListener("keydown", (e) => {
+    const permitido = [
+      "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"
+    ];
+
+    // permite teclas básicas
+    if (permitido.includes(e.key)) return;
+
+    // BLOQUEIA: e, E, +, -, ., ,
+    if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
+      e.preventDefault();
+      return;
+    }
+
+    // só permite 0–9
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+    }
+  });
+
+  // bloquear colar texto inválido
+  campo.addEventListener("paste", (e) => {
+    const texto = e.clipboardData.getData("text");
+
+    if (!/^\d+$/.test(texto)) {
+      e.preventDefault();
+    }
+  });
+
+  // corrigir valor enquanto digita
+  campo.addEventListener("input", () => {
+    const limite = LIMITES[campo.id];
+    if (!limite) return;
+
+    let val = campo.value;
+
+    // remove qualquer coisa que não seja número
+    val = val.replace(/\D/g, "");
+
+    let n = parseInt(val);
+
+    if (isNaN(n)) n = limite.min;
+    if (n > limite.max) n = limite.max;
+    if (n < limite.min) n = limite.min;
+
+    campo.value = n;
+  });
+});
+
+// seta para cima
+document.querySelectorAll(".setaUp").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const campo = document.getElementById(btn.dataset.target);
+    if (!campo) return;
+
+    const { min, max } = LIMITES[campo.id];
+    const v = parseInt(campo.value) || min;
+
+    campo.value = Math.min(v + 1, max);
+  });
+});
+
+// seta para baixo
+document.querySelectorAll(".setaDown").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const campo = document.getElementById(btn.dataset.target);
+    if (!campo) return;
+
+    const { min, max } = LIMITES[campo.id];
+    const v = parseInt(campo.value) || min;
+
+    campo.value = Math.max(v - 1, min);
+  });
+});
 
 
 });
