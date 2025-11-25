@@ -682,6 +682,9 @@
   .flex-grow {
     flex-grow: 1;
   }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   .table-auto {
     table-layout: auto;
@@ -984,7 +987,10 @@
     padding: calc(var(--spacing) * 10);
   }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   .px-0 {
     padding-inline: calc(var(--spacing) * 0);
   }
@@ -1053,7 +1059,10 @@
     padding-block: 10px;
   }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
   .pt-0 {
     padding-top: calc(var(--spacing) * 0);
   }
