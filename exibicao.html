@@ -66,10 +66,101 @@
   <!-- Área das linhas em exibição -->
   <section id="linhas" class="max-w-full px-4 lg:px-10">
     <div class="bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
-      <div class="mb-2 flex flex-col place-self-center items-center">
-        <span class="text-xl font-bold" id="textoTitulo">Título</span>
-        <span class="text-sm font-normal font-roboto-mono italic" id="textoCodigo">Código:</span>  
-      </div>
+     <div class="mb-2 flex flex-col place-self-center items-center">
+
+  <div class="flex items-center gap-3">
+    <!-- Título -->
+    <span class="text-xl font-bold" id="textoTitulo">Título</span>
+
+    <!-- Estrela Favorito -->
+    <i id="favStar"
+       class="far fa-star text-yellow-400 text-2xl cursor-pointer transition-transform duration-300">
+    </i>
+
+    <!-- NOTIFICAÇÃO INLINE (ao lado da estrela) -->
+    <div id="favInline"
+         class="ml-2 px-3 py-1 rounded-lg text-sm text-white font-semibold shadow-lg
+                opacity-0 pointer-events-none transition-opacity duration-300 hidden">
+      <!-- texto preenchido pelo JS -->
+    </div>
+  </div>
+
+  <!-- Código -->
+  <span class="text-sm font-normal font-roboto-mono italic" id="textoCodigo">Código:</span>
+</div>
+
+<script>
+  (function() {
+    const star = document.getElementById("favStar");
+    const inline = document.getElementById("favInline");
+    const NOTIF_DURATION = 1800;
+    let hideTimeout = null;
+
+    if (!star || !inline) return;
+
+    // garante que a cor amarela esteja presente e não seja removida
+    star.classList.add("text-yellow-400");
+
+    star.addEventListener("click", () => {
+      // determinar novo estado (será favoritado se não tiver 'fas')
+      const willBeFav = !star.classList.contains("fas");
+
+      // alterna apenas as classes do FA (sem sobrescrever text-yellow-400)
+      if (willBeFav) {
+        star.classList.remove("far");
+        star.classList.add("fas");
+      } else {
+        star.classList.remove("fas");
+        star.classList.add("far");
+      }
+
+      // garante cor amarela (caso outra coisa remova)
+      star.classList.add("text-yellow-400");
+
+      // animação pop (inline, rápida)
+      star.style.transition = "transform 120ms ease";
+      star.style.transform = "scale(1.25)";
+      setTimeout(() => { star.style.transform = "scale(1)"; }, 120);
+
+      // mostra notificação inline ao lado da estrela
+      if (willBeFav) {
+        showInline("Linha adicionada aos favoritos", "bg-green-600");
+      } else {
+        showInline("Linha removida dos favoritos", "bg-red-600");
+      }
+    });
+
+    function showInline(text, bgClass) {
+      // limpa timeout anterior
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+
+      // limpar cores antigas e classes de visibilidade sem apagar outras classes
+      inline.classList.remove("bg-green-600", "bg-red-600", "hidden", "opacity-0");
+      inline.textContent = text;
+      inline.classList.add(bgClass, "opacity-100");
+      inline.style.pointerEvents = "auto";
+
+      // forçar reflow para garantir transição
+      void inline.offsetWidth;
+
+      // esconde depois do tempo
+      hideTimeout = setTimeout(() => {
+        inline.classList.remove("opacity-100");
+        inline.classList.add("opacity-0");
+        inline.style.pointerEvents = "none";
+
+        setTimeout(() => {
+          inline.classList.add("hidden");
+        }, 300); // tempo da transição
+        hideTimeout = null;
+      }, NOTIF_DURATION);
+    }
+  })();
+</script>
+
 
       <!-- Campo de pesquisa -->
      <div class="mb-4 relative flex flex-col sm:flex-row justify-center items-center w-full z-10 gap-3">
