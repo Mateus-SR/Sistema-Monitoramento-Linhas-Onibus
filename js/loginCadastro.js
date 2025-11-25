@@ -81,6 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Pega os valores
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
+        // [NOVO] Pega o estado do checkbox
+        const lembrar = document.getElementById("lembreMe").checked;
 
         if (!email || !senha) {
             setTexto("Campos vazios!");
@@ -102,17 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // O cliente pode estar na janela (window) ou na variável local
         const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
 
-        // Tenta fazer o login direto no Supabase com a NOVA SENHA
+        // Tenta fazer o login
         const { data, error } = await sbClient.auth.signInWithPassword({
             email: email,
             password: senha
         });
 
         if (error) {
-            // Se der erro (ex: senha incorreta)
             console.error("Erro login Supabase:", error);
             setTexto("Acesso Negado");
-            // Traduzindo msg de erro comum
             if (error.message.includes("Invalid login")) {
                 setSubTexto("E-mail ou senha incorretos.");
             } else {
@@ -123,10 +123,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
             console.log("Login feito com Supabase:", data);
             
-            // Salva o token do Supabase para usar nas outras páginas
-            localStorage.setItem('tokenLogin', data.session.access_token);
-            // Salva o objeto do usuário se precisar
-            localStorage.setItem('userData', JSON.stringify(data.user));
+            // --- [MUDANÇA AQUI: LÓGICA DO LEMBRE DE MIM] ---
+            if (lembrar) {
+                // Se marcou "Lembre de mim": Salva no LocalStorage (Permanente)
+                localStorage.setItem('tokenLogin', data.session.access_token);
+                localStorage.setItem('userData', JSON.stringify(data.user));
+                
+                // Limpa o sessionStorage para evitar duplicidade
+                sessionStorage.removeItem('tokenLogin');
+                sessionStorage.removeItem('userData');
+            } else {
+                // Se NÃO marcou: Salva no SessionStorage (Temporário - some ao fechar navegador)
+                sessionStorage.setItem('tokenLogin', data.session.access_token);
+                sessionStorage.setItem('userData', JSON.stringify(data.user));
+
+                // Garante que não ficou nada antigo no LocalStorage
+                localStorage.removeItem('tokenLogin');
+                localStorage.removeItem('userData');
+            }
+            // -----------------------------------------------
 
             setTexto("Bem-vindo!");
             setSubTexto("Entrando no sistema...");
