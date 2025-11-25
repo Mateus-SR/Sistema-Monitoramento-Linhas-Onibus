@@ -179,72 +179,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    async function radarOnibus(codigosParada) { 
-        const timestamp = Date.now();
-        const onibusAtivos = new Set();
+    // Substitua a função inteira 'radarOnibus' por esta versão atualizada:
 
-        try {
-            console.log(`${timestamp}: rodando bloco try.`);
-            const resposta = await fetch(`${vercel}/parada-radar?codigos=${codigosParada}`, {
-                method: 'GET', 
-                headers: { 'Content-Type': 'application/json' },
-            });
+async function radarOnibus(codigosParada) { 
+    const timestamp = Date.now();
+    const onibusAtivos = new Set();
+    
+    // --- NOVO: Array para guardar dados que vão para o mapa ---
+    const listaParaMapa = []; 
 
-            if (!resposta.ok) {
-                let errorMsg = `Erro ${resposta.status} do servidor.`;
-                try {
-                    const errorData = await resposta.json();
-                    errorMsg = errorData.error || errorMsg; 
-                } catch (e) {}
-                throw new Error(errorMsg); 
-            }
+    try {
+        console.log(`${timestamp}: rodando bloco try.`);
+        const resposta = await fetch(`${vercel}/parada-radar?codigos=${codigosParada}`, {
+            method: 'GET', 
+            headers: { 'Content-Type': 'application/json' },
+        });
 
-            const dados = await resposta.json();
-            console.log('Dados recebidos do backend:', dados);
-            
-            dados.forEach(resumoParada => {
-                const horaRequest = resumoParada.horaRequest;
-                resumoParada.linhas.forEach(linha => {
-                    if (linha.proximoOnibus) {
-                        const codigoLetreiro = linha.codigoLetreiro;
-                        const sentidoLinha = linha.sentidoLinha;
-                        const quantidadeOnibus = linha.quantidadeOnibus;
-                        const proximoOnibusCodigo = linha.proximoOnibus.proximoOnibusCodigo;
-                        const proximoOnibusPrevisao = linha.proximoOnibus.proximoOnibusPrevisao;
-                        
-                        escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
-                        onibusAtivos.add(proximoOnibusCodigo);
-                    }
-                });
-            });
-
-            // Limpa ônibus antigos
-            registroOnibus.forEach(function(value, key){
-                if (!onibusAtivos.has(key)) registroOnibus.delete(key);
-            })
-
-            preparaTabela(onibusAtivos);
-
-        
-            // 1. Pegamos o código da exibição atual da URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const codigoAtual = urlParams.get('codigo');
-            
-            // 2. Chamamos a função de salvar (se tiver código)
-            if (codigoAtual) {
-                salvarBackupLocal(codigoAtual);
-            }
-            // ==================================
-
-            fechaAnim();
-
-        } catch (error) {
-            erroAnim();
-            setTexto("Oops! Erro!!");
-            setSubTexto(`Um erro (${error}) ocorreu.`)
-            console.error(`${timestamp}: erro (${error}) ao rodar bloco try.`);
+        if (!resposta.ok) {
+            let errorMsg = `Erro ${resposta.status} do servidor.`;
+            try {
+                const errorData = await resposta.json();
+                errorMsg = errorData.error || errorMsg; 
+            } catch (e) {}
+            throw new Error(errorMsg); 
         }
+
+        const dados = await resposta.json();
+        // console.log('Dados recebidos do backend:', dados); // Opcional: descomente para debug
+        
+        dados.forEach(resumoParada => {
+            const horaRequest = resumoParada.horaRequest;
+            resumoParada.linhas.forEach(linha => {
+                if (linha.proximoOnibus) {
+                    const codigoLetreiro = linha.codigoLetreiro;
+                    const sentidoLinha = linha.sentidoLinha;
+                    const quantidadeOnibus = linha.quantidadeOnibus;
+                    
+                    // Dados do Veículo
+                    const proximoOnibusObj = linha.proximoOnibus;
+                    const proximoOnibusCodigo = proximoOnibusObj.proximoOnibusCodigo;
+                    const proximoOnibusPrevisao = proximoOnibusObj.proximoOnibusPrevisao;
+
+                    // --- NOVO: Captura as coordenadas para o mapa ---
+                    // Tenta pegar py/px (padrão SPTrans) ou latitude/longitude
+                    const lat = proximoOnibusObj.py || proximoOnibusObj.latitude;
+                    const lng = proximoOnibusObj.px || proximoOnibusObj.longitude;
+
+                    // Só adiciona na lista do mapa se tiver coordenada válida
+                    if (lat && lng) {
+                        listaParaMapa.push({
+                            prefixo: proximoOnibusCodigo,
+                            latitude: lat,
+                            longitude: lng,
+                            linha: codigoLetreiro
+                        });
+                    }
+                    // ------------------------------------------------
+
+                    escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest);
+                    onibusAtivos.add(proximoOnibusCodigo);
+                }
+            });
+        });
+
+        // Limpa ônibus antigos da memória local
+        registroOnibus.forEach(function(value, key){
+            if (!onibusAtivos.has(key)) registroOnibus.delete(key);
+        })
+
+        preparaTabela(onibusAtivos);
+
+        // --- NOVO: Envia a lista processada para o mapa.js ---
+        if (window.atualizarMapa) {
+            window.atualizarMapa(listaParaMapa);
+        }
+        // -----------------------------------------------------
+
+        // Lógica de Backup (mantive igual ao seu original)
+        const urlParams = new URLSearchParams(window.location.search);
+        const codigoAtual = urlParams.get('codigo');
+        if (codigoAtual) {
+            salvarBackupLocal(codigoAtual);
+        }
+
+        fechaAnim();
+
+    } catch (error) {
+        erroAnim();
+        setTexto("Oops! Erro!!");
+        setSubTexto(`Um erro (${error}) ocorreu.`)
+        console.error(`${timestamp}: erro (${error}) ao rodar bloco try.`);
     }
+ }
 
     function escreveOnibus(proximoOnibusCodigo, codigoLetreiro, sentidoLinha, quantidadeOnibus, proximoOnibusPrevisao, horaRequest) {
         const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
