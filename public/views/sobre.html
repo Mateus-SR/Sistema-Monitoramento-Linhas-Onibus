@@ -1,3 +1,5 @@
+---
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
     <title>Document</title>
     <!-- Estilos -->
   <link rel="stylesheet" type="text/css" href="css/styles.css" />
-  <link href="src/output.css" rel="stylesheet">
+  <link href="/css/output.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="css/userMenu.css" />
 
   <!-- Fontes -->
@@ -19,7 +21,7 @@
     integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="../favicon.ico">
 <style>
     /* Força o header a estar acima de tudo */
     header.topbar {
@@ -55,54 +57,7 @@
 
     <!-- Topbar -->
     <div class="relative z-10">
-      <header class="topbar" role="banner">
-    <div class="container topbar-inner mx-auto">
-      <a class="brand" href="index.html" aria-label="Página inicial VigiBus">
-        <span class="brand-strong">Sem nome Bus</span><br> Monitoramento
-      </a>
-
-      <nav aria-label="Navegação principal">
-        <div class="mobile-menu">
-          <div class="line1"></div>
-          <div class="line2"></div>
-          <div class="line3"></div>
-        </div>
-
-        <ul class="nav-list">
-          <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
-          <li><a class="nav-link" href="index.html">Mapa</a></li>
-          <li><a class="nav-link" href="exibicao.html">Linhas</a></li>
-          <li><a class="nav-link" href="favoritos.html">Minhas Linhas</a></li>
-          <li><a class="nav-link" href="sobre.html">Sobre</a></li>
-        </ul>
-      </nav>
-
-      <div class="actions">
-        <div id="botaoAntesLogin" class="hidden">
-          <a href="login.html" class="btn btn-outline botoesConta">Entrar</a>
-          <a href="cadastro.html" class="btn btn-primary botoesConta">Criar conta</a>
-        </div>
-
-        <!-- Menu do usuário (só aparece quando logado) -->
-        <div id="botaoDepoisLogin" class="hidden">
-        <div id="botaoAcessaConta" class="relative text-center cursor-pointer">
-            <button id="userButton" class="btn btn-primary flex items-center gap-2">
-              <i class="fas fa-user-circle"></i>
-              <span>Olá, <span id="nomeUsuario">Visitante</span>!</span>
-              <i class="fas fa-caret-down"></i>
-            </button>
-          
-
-          <ul id="userDropdown" class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-300 rounded-xl shadow-lg text-left z-50">
-            <li><a href="exibicao.html" class="block px-4 py-2 hover:bg-gray-100">Minhas exibições</a></li>
-            <li><a href="configuracao.html" class="block px-4 py-2 hover:bg-gray-100">Configurações</a></li>
-            <li><button id="logoutBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">Sair da conta</button></li>
-          </ul>
-        </div>
-      </div>
-      </div>
-    </div>
-  </header>
+      {% include header.html %}
     </div>
     
     <!-- Caixa do Sobre -->

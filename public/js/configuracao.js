@@ -218,10 +218,11 @@ async function salvarExibicao() {
             setSubTexto("Gostaria de acessá-la agora?")
 
             const codigoCriado = dadosResposta.codigo_exib;
-
+            
             const confirma = await setSimNao("Acessar", "Depois");
             if (confirma) {
-                window.location.href = `/Sistema-Monitoramento-Linhas-Onibus/exibicao.html?codigo=${codigoCriado}`;
+                const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+                window.location.href = `${siteUrl}public/views/exibicao.html?codigo=${codigoCriado}`;
             } else {
                 console.log("Função ainda não implementada...")
             }

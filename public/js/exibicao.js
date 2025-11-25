@@ -457,7 +457,7 @@ Seção da API, node, vercel, e afins
         tabelaBody.appendChild(novaLinha);
     };
 
-    function constroiStatus(value) {
+    function constroiStatus(value, proximoOnibusCodigo) {
         // Recebemos as informações do "dicionario" (lista de Registros)
         //const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
 
@@ -483,12 +483,14 @@ Seção da API, node, vercel, e afins
         if (diferencaPrevisoes >= 2) {
             statusCor = "yellow";
             statusTexto = "Atrasado"; 
+            registrarIncidente(value.Letreiro, proximoOnibusCodigo, "Atrasado", diferencaPrevisoes);
         // Sendo a diferença entre a promessa e a previsao MENOR OU IGUAL a 2 minutos NEGATIVOS, estamos adiantados
         // (Previsão 22:38 (1358), Promessa: 22:40 (1360) = Adiantado)
         // (1358 - 1360 = -2)
         } else if (diferencaPrevisoes <= -2) {
             statusCor = "blue";
             statusTexto = "Adiantado"; 
+            registrarIncidente(value.Letreiro, proximoOnibusCodigo, "Adiantado", diferencaPrevisoes);
         }
         
         /* DEBUG Apenas para verificar as informações que estamos guardando
@@ -537,6 +539,31 @@ Seção da API, node, vercel, e afins
         return resultado;
     }
 
+    async function registrarIncidente(nome, proximoOnibusCodigo, status, diferenca) {
+        const token = localStorage.getItem('tokenLogin');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+    
+        if (token) {
+            headers['X-Access-Token'] = `Bearer ${token}`;
+        }
+    
+        try {
+            await fetch('https://sistema-monitoramento-linhas-onibus.vercel.app/registrar-status', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    nome_onibus: nome,
+                    status: status,
+                    diferenca_minutos: diferenca,
+                    id_onibus: proximoOnibusCodigo
+                })
+            });
+        } catch (e) {
+            console.error("Falha ao registrar incidente", e);
+        }
+    }
     
 });
 

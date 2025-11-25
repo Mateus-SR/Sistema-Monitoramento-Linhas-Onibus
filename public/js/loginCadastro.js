@@ -1,174 +1,230 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
-// Pra ter certeza que vai acontecer quando tudo carregou
+// Configuração do Supabase (Usando a biblioteca global carregada no HTML ou importada)
+const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+
+// Tenta pegar do window (CDN) ou importa se necessário
+const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
+
 document.addEventListener('DOMContentLoaded', () => {
     
-    // o "?" diz pra pegar o elemento caso ele exista.
-    // Caso não, sem problemas: não da erro e nem faz nada
     const botaoCadastrar = document?.getElementById('botaoCadastrar');
     const botaoLogar = document?.getElementById('botaoLogar');
-
     const instituicaoField = document?.getElementById('instituicao');
     const semInstituicaoBotao = document?.getElementById('semInstituicao');
-
     const esqueciSenha = document?.getElementById('esqueciSenha');
-    // Configurando para os botôes funcionarem
+
+    // --- LÓGICA DO ESQUECI A SENHA ---
+    esqueciSenha?.addEventListener('click', async (e) => {
+        e.preventDefault(); 
+        
+        const email = prompt('Digite seu e-mail cadastrado:');
+        if (!email) return;
+
+        // IMPORTANTE: Primeiro inicia a animação (cria os elementos na tela)
+        iniciaAnim();
+        // SÓ DEPOIS define o texto (agora os elementos existem)
+        setTexto("Enviando email...");
+        setSubTexto("Aguarde um momento...");
+
+        // Pega a URL base atual (funciona no localhost e no github)
+        const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const urlFinal = siteUrl + 'public/views/reset-senha.html';
+
+        if (!supabase) {
+            setTexto("Erro Interno");
+            setSubTexto("Biblioteca Supabase não carregada.");
+            erroAnim();
+            return;
+        }
+
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: urlFinal
+        });
+
+        if (error) {
+            setTexto("Oops! Erro ao enviar.");
+            setSubTexto(error.message); // Exibe o erro real do Supabase
+            erroAnim();
+        } else {
+            setTexto("Email enviado!");
+            setSubTexto("Verifique sua caixa de entrada.");
+            setTimeout(() => {
+                fechaAnim();
+            }, 3000);
+        }
+    });
+
+    // --- LÓGICA DOS BOTÕES ---
     botaoCadastrar?.addEventListener('click', (e) => {
-
-        // Evita que o formulario seja enviado da forma que foi criado
         e.preventDefault();
-
-        // Chama a validação
         validarCadastro();
     })
+    
     botaoLogar?.addEventListener('click', (e) => {
-
-        // Evita que o formulario seja enviado da forma que foi criado
         e.preventDefault();
-
-        // Chama a validação
         validarLogin();
     })
+    
     semInstituicaoBotao?.addEventListener('click', () => {
-        instituicaoField.toggleAttribute('disabled');
-        instituicaoField.value = 0;
-    });
-    esqueciSenha?.addEventListener('click', () => {
-        alert('Oops! Essa é uma mensagem temporária.\nÉ uma pena que você tenha esquecido sua senha...\n\nMas não se preocupe!\nEnviaremos em seu email um link para que você possa alterar sua senha!')
+        if(instituicaoField) {
+             instituicaoField.toggleAttribute('disabled');
+             instituicaoField.value = 0;
+        }
     });
 
-
-    function validarLogin() {
+    async function validarLogin() {
         iniciaAnim();
+        setTexto("Validando...");
 
-        // Pega os valores (value) dos elementos
+        // Pega os valores
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
 
-        // Junta os dois em uma variavel
-        const dados = {email, senha};
+        if (!email || !senha) {
+            setTexto("Campos vazios!");
+            setSubTexto("Preencha e-mail e senha.");
+            erroAnim();
+            return;
+        }
 
-        // Envia os dois dados + a informação de qual tipo de validação estamos usando
-        if (validarCampos(dados, 'login')) {
+        setTexto("Verificando...");
+        
+        // Garante que o supabase existe
+        if (!window.supabase && !supabase) {
+             setTexto("Erro!"); 
+             setSubTexto("Erro interno: Supabase não carregou.");
+             erroAnim();
+             return;
+        }
+        
+        // O cliente pode estar na janela (window) ou na variável local
+        const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
 
-            // Se o codigo retornar verdadeiro (true), redireciona
-            enviarUsuarioParaServidor(dados, 'login');
-        };
+        // Tenta fazer o login direto no Supabase com a NOVA SENHA
+        const { data, error } = await sbClient.auth.signInWithPassword({
+            email: email,
+            password: senha
+        });
+
+        if (error) {
+            // Se der erro (ex: senha incorreta)
+            console.error("Erro login Supabase:", error);
+            setTexto("Acesso Negado");
+            // Traduzindo msg de erro comum
+            if (error.message.includes("Invalid login")) {
+                setSubTexto("E-mail ou senha incorretos.");
+            } else {
+                setSubTexto(error.message);
+            }
+            erroAnim();
+        } else {
+    
+            console.log("Login feito com Supabase:", data);
+            
+            // Salva o token do Supabase para usar nas outras páginas
+            localStorage.setItem('tokenLogin', data.session.access_token);
+            // Salva o objeto do usuário se precisar
+            localStorage.setItem('userData', JSON.stringify(data.user));
+
+            setTexto("Bem-vindo!");
+            setSubTexto("Entrando no sistema...");
+            
+            setTimeout(() => {
+                window.location.href = "index.html"; 
+            }, 1000);
+        }
     }
 
     function validarCadastro() {
         iniciaAnim();
+        setTexto("Validando...");
 
-        // Pega os valores (value, checked) dos elementos
         const nome = document.getElementById("text").value.trim();
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
-        //const instituicao = document.getElementById("instituicao").value;
-        //const semInstituicao = document.getElementById("semInstituicao").checked;
+        const dados = {nome, email, senha};
 
-        // Junta os quatro em uma variavel
-        const dados = {nome, email, senha, /*instituicao, semInstituicao*/};
-
-        // Envia os quatro dados + a informação de qual tipo de validação estamos usando
         if (validarCampos(dados, 'cadastro')) {
-
-            // Se o codigo retornar verdadeiro (true), redireciona
             enviarUsuarioParaServidor(dados, 'cadastro');
         }
     }
 
     async function enviarUsuarioParaServidor(dados, tipo) {
         setTexto("Enviando dados...");
-        // Aqui, usamos ${tipo} como variavel dinamica:
-        // Se o codigo for do cadastro, a variavel "tipo" vai ser "cadastro", e aí o vercel chama a rota "cadastro-usuario".
-        // Se o codigo for do login, a variavel "tipo" vai ser "login", e aí o vercel chama a rota "login-usuario".
         const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/${tipo}-usuario`;
 
         try {
-            // Manda pra url ali de cima o post com os dados inseridos no formulario
             const resposta = await fetch(url, {
                 method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dados), 
             });
 
-            setTexto("Recebendo dados...");
-
-            // Transforma a resposta em um json
+            setTexto("Processando...");
             const dadosResposta = await resposta.json();
 
-            // Se tudo estiver ok e for do tipo cadastro...
-            if (resposta.ok && tipo === 'cadastro') { // ('ok' significa status 200-299 (sucesso)) 
-
+            if (resposta.ok && tipo === 'cadastro') {
                 console.log(dadosResposta.message);
-                window.location.href = "login.html"; // ... então redireciona pra pagina de login
+                setTexto("Sucesso!");
+                setSubTexto("Redirecionando para login...");
+                setTimeout(() => window.location.href = "login.html", 1500);
             
-            // Se tudo estiver ok e for do tipo login...
-            } else if (resposta.ok && tipo === 'login') { // ('ok' significa status 200-299 (sucesso)) 
+            } else if (resposta.ok && tipo === 'login') { 
                 const tokenLogin = dadosResposta.tokenLogin;
                 localStorage.setItem('tokenLogin', tokenLogin);
                 
                 console.log(dadosResposta.message);
-                window.location.href = "index.html"; // ... então redireciona pra pagina de personalização/configuração/perfil
+                setTexto("Bem-vindo!");
+                setTimeout(() => window.location.href = "index.html", 1000);
             
-            // E se for qualquer outra coisa, dá erro
             } else {
                 const erroMsg = dadosResposta.error;
-
                 setTexto("Oops! Erro!!");
-                setSubTexto(erroMsg)
+                setSubTexto(erroMsg);
                 erroAnim();
             }
 
         } catch (error) {
-            setTexto("Oops! Erro!!");
-            setSubTexto(`Falha ao conectar com o servidor: ${error}`);
+            setTexto("Erro de Conexão");
+            setSubTexto(`Falha ao conectar: ${error}`);
             erroAnim();
-            //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
         }
     };
 
     function validarCampos(dados, tipo) {
-        setTexto("Validando campos")
-        // Se email "não for" ou senha "não for", manda alert e retorna false (nesse caso, "falha")
-        // Caso email e senha sejam válidos, passa reto por esse if e vai pro próximo
-        // (OBS: Login sempre passa por esse, mas nunca pelo próximo)
+        // Como iniciaAnim já foi chamado antes, aqui só atualizamos o texto se der erro
         if (!dados.email || !dados.senha) {
-            setTexto("Oops!");
-            setSubTexto("Por favor, preencha todos os campos.");
+            setTexto("Campos vazios!");
+            setSubTexto("Por favor, preencha tudo.");
             erroAnim();
             return false;
         }
 
-        /*
-        // Se estamos lidando com um cadastro...
-        if (tipo === 'cadastro') {
-            // Verifica na função validarInstituicao marcamos que não somos de instituição ou se não selecionamos alguma
-            // 
-            if (!validarInstituicao(dados.semInstituicao, dados.instituicao)) {
-                return false;
-            }
-        }
-            */
-
-        // Caso tenhamos passado por todas as verificações
-        return true;
-    }
-
-    function validarInstituicao(semInstituicao, instituicao) {
-        // Caso a caixa "sem instituição" não estiver marcada E ao mesmo tempo não selecionamos alguma... erro!
-        if (!semInstituicao && instituicao === "0") {
-            setTexto("Oops!");
-            setSubTexto("Por favor, selecione uma instituição.");
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(dados.email)) {
+            setTexto("Email inválido!");
+            setSubTexto("Verifique o endereço digitado.");
             erroAnim();
             return false;
         }
 
-        // Caso estejamos com a caixa "sem instituição" marcada, sucesso. Passamos no teste
+        const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+        if (!senhaRegex.test(dados.senha)) {
+            setTexto("Senha fraca!");
+            setSubTexto("Mínimo 6 caracteres, letras e números.");
+            erroAnim();
+            return false;
+        }
+
+        if (tipo === 'cadastro' && (!dados.nome || dados.nome.length < 3)) {
+            setTexto("Nome inválido!");
+            setSubTexto("Digite seu nome completo.");
+            erroAnim();
+            return false;
+        }
+
         return true;
     }
-
-
-    });
+});

@@ -16,9 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    
     botaoAcessar.addEventListener('click', () => { 
         const codigo = campoCodigo.value;
-        window.location.href = `/Sistema-Monitoramento-Linhas-Onibus/exibicao.html?codigo=${encodeURIComponent(codigo)}`;
+        const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        window.location.href = `${siteUrl}public/views/exibicao.html?codigo=${encodeURIComponent(codigo)}`;
     })
 
     campoCodigo.addEventListener('input', (e) => {

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Redefinir Senha</title>
-  <link href="src/output.css" rel="stylesheet">
+  <link href="/css/output.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -16,16 +16,13 @@
 
 <body class="relative min-h-screen flex items-center justify-center font-inter">
 
-  <!-- Fundo -->
   <div class="absolute inset-0 bg-cover bg-center filter opacity-60 z-0"
        style="background-image: url('img/Onibus.jpg'); filter: blur(4px)">
   </div>
   <div class="absolute inset-0 bg-black/40"></div>
 
-  <!-- Caixa de redefinição -->
   <div class="relative bg-white border border-gray-300 rounded-xl p-10 w-full max-w-md shadow-2xl shadow-black/60 z-20">
 
-    <!-- Botão Voltar -->
     <div class="absolute top-4 left-0 -ml-4">
       <a href="login.html"
          class="text-black py-2 px-4 rounded-md text-sm font-inter hover:bg-gray-200 transition flex items-center">
@@ -53,68 +50,100 @@
       Redefinir Senha
     </button>
 
-    <p id="mensagem" class="text-center mt-4 text-sm text-black"></p>
+    <p id="mensagem" class="text-center mt-4 text-sm font-bold text-black"></p>
   </div>
 
   <script type="module">
-    import { createClient } from '@supabase/supabase-js'
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const supabaseUrl = 'https://SEU-SUPABASE-URL.supabase.co'  // substitua pelo seu URL do Supabase
-    const supabaseKey = 'SUA-CHAVE-PUBLICA'                     // substitua pela sua chave pública
+    // SUAS CHAVES
+    const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
     const supabase = createClient(supabaseUrl, supabaseKey)
-
-    const urlParams = new URLSearchParams(window.location.search)
-    const access_token = urlParams.get('access_token') // token enviado pelo Supabase
 
     const novaSenhaInput = document.getElementById('novaSenha')
     const confNovaSenhaInput = document.getElementById('confNovaSenha')
     const resetBtn = document.getElementById('resetSenhaBtn')
     const mensagem = document.getElementById('mensagem')
 
+    // Variável de controle
+    let sessionUser = null;
+
+    // 1. Verifica se o usuário veio pelo link correto
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+            sessionUser = session.user;
+            mensagem.style.color = 'blue';
+            // Mostra pro usuário que deu certo
+            mensagem.innerHTML = `Olá! Defina sua nova senha.`;
+            resetBtn.disabled = false;
+        } else {
+            mensagem.style.color = 'red';
+            mensagem.textContent = 'Link expirado ou inválido. Peça um novo no login.';
+            resetBtn.disabled = true;
+        }
+    })
+
     resetBtn.addEventListener('click', async () => {
       const novaSenha = novaSenhaInput.value.trim()
       const confNovaSenha = confNovaSenhaInput.value.trim()
 
-      // Verifica campos preenchidos
+      mensagem.style.color = 'black'; // Reseta cor
+
+      // --- VALIDAÇÕES IGUAIS AO CADASTRO ---
+      
+      // 1. Campos vazios
       if (!novaSenha || !confNovaSenha) {
         mensagem.textContent = 'Por favor, preencha todos os campos.'
+        mensagem.style.color = 'red'
         return
       }
 
-      // Verifica se coincidem
+      // 2. Senhas iguais
       if (novaSenha !== confNovaSenha) {
         mensagem.textContent = 'As senhas não coincidem.'
+        mensagem.style.color = 'red'
         return
       }
 
-      // Validação mínima: 6 caracteres + pelo menos 1 letra ou número
-      const senhaRegex = /^(?=.*[A-Za-z0-9]).{6,}$/
+      // 3. Regra de Ouro (Letras + Números + 6 caracteres)
+      // Essa regex exige: Pelo menos uma letra, pelo menos um número e mínimo 6 dígitos
+      const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+      
       if (!senhaRegex.test(novaSenha)) {
-        mensagem.textContent = 'Senha inválida! Deve ter pelo menos 6 caracteres e incluir letras ou números.'
-        return
+        mensagem.textContent = 'A senha precisa ter letras e números, e no mínimo 6 caracteres.'
+        mensagem.style.color = 'red'
+        return // Para aqui se a senha for fraca
+      }
+      // -------------------------------------
+
+      if (!sessionUser) {
+          mensagem.textContent = 'Sessão perdida. Recarregue a página.';
+          return;
       }
 
-      // Atualiza senha no Supabase
-      try {
-        const { data, error } = await supabase.auth.updateUser(
-          { password: novaSenha },
-          { accessToken: access_token }
-        )
+      mensagem.textContent = 'Atualizando...'
+      mensagem.style.color = 'orange'
 
-        if (error) {
-          mensagem.textContent = 'Erro: ' + error.message
-        } else {
-          mensagem.textContent = 'Senha redefinida com sucesso! Redirecionando para login...'
-          setTimeout(() => {
-            window.location.href = 'login.html'
-          }, 2000)
-        }
-      } catch (err) {
-        mensagem.textContent = 'Erro ao redefinir senha: ' + err.message
+      const { data, error } = await supabase.auth.updateUser({
+        password: novaSenha
+      })
+
+      if (error) {
+        mensagem.textContent = 'Erro: ' + error.message
+        mensagem.style.color = 'red'
+      } else {
+        mensagem.textContent = 'Senha alterada com sucesso! Redirecionando...'
+        mensagem.style.color = 'green'
+        
+        await supabase.auth.signOut(); // Desloga para segurança
+
+        setTimeout(() => {
+           window.location.href = 'login.html'
+        }, 2500)
       }
     })
   </script>
 
 </body>
 </html>
-
