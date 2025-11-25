@@ -240,6 +240,53 @@ async function salvarExibicao() {
         //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
     };
 
+          document.addEventListener("DOMContentLoaded", () => {
+
+  // limite por campo específico
+  const LIMITES = {
+    tempoAtraso: { min: 1, max: 5 },
+    tempoAdiantado: { min: 1, max: 5 },
+    qtdOnibus: { min: 1, max: 8 }
+  };
+
+  document.querySelectorAll(".setaUp").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.target;
+      const campo = document.getElementById(id);
+      if (!campo) return;
+
+      const limite = LIMITES[id];
+      const valor = parseInt(campo.value) || limite.min;
+
+      if (valor < limite.max) {
+        campo.value = valor + 1;
+      } else {
+        campo.value = limite.max;
+      }
+    });
+  });
+
+  document.querySelectorAll(".setaDown").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.target;
+      const campo = document.getElementById(id);
+      if (!campo) return;
+
+      const limite = LIMITES[id];
+      const valor = parseInt(campo.value) || limite.min;
+
+      if (valor > limite.min) {
+        campo.value = valor - 1;
+      } else {
+        campo.value = limite.min;
+      }
+    });
+  });
+
+});
+
+
+
 };
 
 
