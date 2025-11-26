@@ -36,7 +36,7 @@ function criaBaseAnim() {
 
     const baseAnim = `
         <div id="loadingBox" class="relative overflow-hidden bg-white border border-gray-800 rounded-xl py-40 max-w-md aspect-square shadow-2xl shadow-black/60 flex flex-col items-center justify-center">
-            <img id="campoImg" class="size-24 z-1000 animate-busJiggle" src="img/bus-svgrepo-com-256.png">
+            <img id="campoImg" class="size-24 z-1000 animate-busJiggle" src="../img/bus-svgrepo-com-256.png">
             <p id="campoTextoStatus" class="text-2xl font-extrabold text-black animate-pulse text-center mx-5">Carregando...</p>
             <p id="campoSubTexto" class="text-md text-center font-bold text-black/60 italic mx-10">Por favor, aguarde.</p>
         </div>
@@ -54,7 +54,7 @@ function criaNuvemAnim() {
     let tamanho = random(50, 75);
     let topBottom = random(60, 75);
 
-    nuvem.src = "img/cloud-svgrepo-com-1-256.png";
+    nuvem.src = "../img/cloud-svgrepo-com-1-256.png";
     nuvem.className = `absolute z-[999] animate-fullRightLeft`;
 
     let duracaoMs = random(2500, 3000);

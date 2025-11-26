@@ -222,7 +222,7 @@ async function salvarExibicao() {
             const confirma = await setSimNao("Acessar", "Depois");
             if (confirma) {
                 const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-                window.location.href = `${siteUrl}public/views/exibicao.html?codigo=${codigoCriado}`;
+                window.location.href = `${siteUrl}exibicao.html?codigo=${codigoCriado}`;
             } else {
                 console.log("Função ainda não implementada...")
             }

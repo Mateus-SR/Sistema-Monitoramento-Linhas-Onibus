@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     botaoAcessar.addEventListener('click', () => { 
         const codigo = campoCodigo.value;
         const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        window.location.href = `${siteUrl}public/views/exibicao.html?codigo=${encodeURIComponent(codigo)}`;
+        window.location.href = `${siteUrl}exibicao.html?codigo=${encodeURIComponent(codigo)}`;
     })
 
     campoCodigo.addEventListener('input', (e) => {
