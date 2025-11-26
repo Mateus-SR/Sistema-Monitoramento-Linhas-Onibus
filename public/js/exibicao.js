@@ -414,16 +414,15 @@ async function radarOnibus(codigosParada) {
         }
     }
 
-    // === FUNÇÃO DE ORDENAÇÃO (Agora só existe uma vez aqui) ===
     function ordenarTabela() {
-        const criterio = filtroSelect.value;
-        // Pega as linhas atuais da tabela
-        const linhas = Array.from(tabelaBody.getElementsByTagName('tr'));
-
+        const criterio = filtroSelect ? filtroSelect.value : 'padrao';
         if (criterio === 'padrao') return;
 
-        linhas.sort((a, b) => {
-            // Célula 1 = Nome, Célula 2 = Previsão
+        // Pega as linhas atuais
+        const linhasAtuais = Array.from(tabelaBody.getElementsByTagName('tr'));
+        
+        // Cria uma cópia para ordenar (para não mexer no DOM ainda)
+        const linhasOrdenadas = [...linhasAtuais].sort((a, b) => {
             if (criterio === 'nome') {
                 const nomeA = a.cells[1].innerText.trim();
                 const nomeB = b.cells[1].innerText.trim();
@@ -437,7 +436,18 @@ async function radarOnibus(codigosParada) {
             return 0;
         });
 
-        linhas.forEach(linha => tabelaBody.appendChild(linha));
+        // Só mexe no DOM se a ordem visual for diferente da ordem calculada
+        let precisaReordenar = false;
+        for (let i = 0; i < linhasAtuais.length; i++) {
+            if (linhasAtuais[i] !== linhasOrdenadas[i]) {
+                precisaReordenar = true;
+                break;
+            }
+        }
+
+        if (precisaReordenar) {
+            linhasOrdenadas.forEach(linha => tabelaBody.appendChild(linha));
+        }
     }
 
    // === NOVAS FUNÇÕES DE BACKUP (LOCALSTORAGE) ===
