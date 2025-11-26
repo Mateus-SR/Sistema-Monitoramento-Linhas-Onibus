@@ -69,15 +69,18 @@ model usuario {
 }
 
 model exibicao {
-  id_exib       String            @id @default(uuid())
-  id_usu        Int
-  codigo_exib   String            @unique
-  nome_exibicao String?
-  created_at    DateTime          @default(now()) @db.Timestamp(6)
-  last_update   DateTime          @default(now()) @db.Timestamp(6)
-  usuario       usuario           @relation(fields: [id_usu], references: [id_usu])
-  paradas       exibicao_parada[]
-  favoritos     favoritos[]
+  id_exib           String            @id @default(uuid())
+  id_usu            Int
+  codigo_exib       String            @unique
+  nome_exibicao     String?
+  created_at        DateTime          @default(now()) @db.Timestamp(6)
+  last_update       DateTime          @default(now()) @db.Timestamp(6)
+  tempo_atraso      Int               @default(2)
+  tempo_adiantado   Int               @default(2)
+  quantidade_onibus Int               @default(1)
+  usuario           usuario           @relation(fields: [id_usu], references: [id_usu])
+  paradas           exibicao_parada[]
+  favoritos         favoritos[]
 
   @@schema("public")
 }
@@ -507,7 +510,7 @@ model estatisticas_diarias {
   data           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
   nome_onibus    String?
   qtd_atrasos    Int?      @default(0)
-  id_onibus      Int?
+  id_onibus      String?
   qtd_adiantados Int?      @default(0)
 
   @@unique([data, nome_onibus])
