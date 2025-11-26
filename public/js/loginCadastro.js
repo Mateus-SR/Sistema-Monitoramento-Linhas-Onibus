@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Pega a URL base atual (funciona no localhost e no github)
         const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        const urlFinal = siteUrl + 'public/views/reset-senha.html';
+        const urlFinal = siteUrl + 'reset-senha.html';
 
         if (!supabase) {
             setTexto("Erro Interno");
@@ -74,45 +74,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    async function validarLogin() {
+   
+
+async function validarLogin() {
         iniciaAnim();
         setTexto("Validando...");
-
+    
         // Pega os valores
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("password").value.trim();
-
+        // Verifica se a checkbox existe antes de pegar o checked
+        const checkbox = document.getElementById("lembreMe");
+        const lembrar = checkbox ? checkbox.checked : false;
+    
         if (!email || !senha) {
             setTexto("Campos vazios!");
             setSubTexto("Preencha e-mail e senha.");
             erroAnim();
             return;
         }
-
+    
         setTexto("Verificando...");
         
-        // Garante que o supabase existe
         if (!window.supabase && !supabase) {
-             setTexto("Erro!"); 
-             setSubTexto("Erro interno: Supabase não carregou.");
-             erroAnim();
-             return;
+                setTexto("Erro!"); 
+                setSubTexto("Erro interno: Supabase não carregou.");
+                erroAnim();
+                return;
         }
         
-        // O cliente pode estar na janela (window) ou na variável local
         const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
-
-        // Tenta fazer o login direto no Supabase com a NOVA SENHA
+    
+        // Tenta fazer o login
         const { data, error } = await sbClient.auth.signInWithPassword({
             email: email,
             password: senha
         });
-
+    
         if (error) {
-            // Se der erro (ex: senha incorreta)
             console.error("Erro login Supabase:", error);
             setTexto("Acesso Negado");
-            // Traduzindo msg de erro comum
             if (error.message.includes("Invalid login")) {
                 setSubTexto("E-mail ou senha incorretos.");
             } else {
@@ -123,11 +124,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
             console.log("Login feito com Supabase:", data);
             
-            // Salva o token do Supabase para usar nas outras páginas
-            localStorage.setItem('tokenLogin', data.session.access_token);
-            // Salva o objeto do usuário se precisar
-            localStorage.setItem('userData', JSON.stringify(data.user));
-
+            const meta = data.user.user_metadata || {};
+            const nomeParaSalvar = meta.full_name || meta.nome || data.user.email.split('@')[0];
+    
+            localStorage.setItem('nomeUsuario', nomeParaSalvar);
+            
+          
+            if (lembrar) {
+               
+                localStorage.setItem('userEmailLembrete', email);
+                
+               
+                localStorage.setItem('tokenLogin', data.session.access_token);
+                sessionStorage.removeItem('tokenLogin'); 
+            } else {
+               
+                localStorage.removeItem('userEmailLembrete');
+                
+                
+                sessionStorage.setItem('tokenLogin', data.session.access_token);
+                localStorage.removeItem('tokenLogin'); 
+            }
+           
+    
             setTexto("Bem-vindo!");
             setSubTexto("Entrando no sistema...");
             
@@ -137,19 +156,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function validarCadastro() {
-        iniciaAnim();
-        setTexto("Validando...");
+    
 
-        const nome = document.getElementById("text").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const senha = document.getElementById("password").value.trim();
-        const dados = {nome, email, senha};
+async function validarCadastro() {
+    iniciaAnim();
+    setTexto("Criando conta...");
 
-        if (validarCampos(dados, 'cadastro')) {
-            enviarUsuarioParaServidor(dados, 'cadastro');
-        }
+    const nomeInput = document.getElementById("text"); // Verifique se o ID é esse mesmo
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("password");
+
+    const nome = nomeInput ? nomeInput.value.trim() : "";
+    const email = emailInput ? emailInput.value.trim() : "";
+    const senha = senhaInput ? senhaInput.value.trim() : "";
+
+    if (!email || !senha) {
+        setTexto("Campos vazios!");
+        setSubTexto("Preencha todos os dados.");
+        erroAnim();
+        return;
     }
+
+    if (senha.length < 6) {
+        setTexto("Senha fraca!");
+        setSubTexto("Mínimo de 6 caracteres.");
+        erroAnim();
+        return;
+    }
+
+    // Conexão Supabase
+    const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
+
+    // Criação da Conta
+    const { data, error } = await sbClient.auth.signUp({
+        email: email,
+        password: senha,
+        options: {
+            data: { full_name: nome }
+        }
+    });
+
+    if (error) {
+        console.error("Erro no cadastro:", error);
+        setTexto("Erro ao criar");
+        setSubTexto(error.message);
+        erroAnim();
+    } else {
+       
+        console.log("Cadastro automático:", data);
+        
+        setTexto("Conta Criada!");
+        setSubTexto("Redirecionando para login...");
+
+     
+        
+        setTimeout(() => {
+            window.location.href = "login.html"; 
+        }, 1500);
+    }
+}
 
     async function enviarUsuarioParaServidor(dados, tipo) {
         setTexto("Enviando dados...");
