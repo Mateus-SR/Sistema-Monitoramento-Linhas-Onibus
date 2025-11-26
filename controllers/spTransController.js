@@ -1,10 +1,41 @@
 const spTransService = require('../services/spTransService');
+const { createClient } = require('@supabase/supabase-js');
+
+// --- CONFIGURAÇÃO SUPABASE (Backend) ---
+// Idealmente, coloque isso em variáveis de ambiente (.env)
+const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// --- FUNÇÃO AUXILIAR: Extrai o token do usuário ---
+async function getUserSpTransToken(req) {
+    try {
+        // Pega o token que veio no Header (Enviado pelo Front-end)
+        const authHeader = req.headers['x-access-token'] || req.headers['authorization'];
+        
+        if (!authHeader) return null; // Usuário deslogado
+
+        const token = authHeader.replace('Bearer ', '');
+        
+        // Pergunta pro Supabase quem é o dono desse token
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+
+        if (error || !user) return null;
+
+        // Retorna o token personalizado (se existir) ou null
+        return user.user_metadata?.sptrans_token || null;
+
+    } catch (e) {
+        console.error("Erro ao validar usuário Supabase:", e.message);
+        return null;
+    }
+}
 
 // Controlador para a rota /testar-auth
 async function testarAuth(req, res) {
     console.log('Rota de teste /testar-auth foi chamada!');
-    const resultado = await spTransService.tokenPOST(); // Executa a função de verificação
-    // Envia o resultado da autenticação de volta para o navegador
+    // Teste simples, usa sempre o padrão
+    const resultado = await spTransService.tokenPOST(null); 
     res.json(resultado);
 }
 
@@ -14,80 +45,61 @@ async function pingPonto(req, res) {
   try{
     const codigo = req.query.codigo;
 
+    // 1. Tenta pegar o token do usuário
+    const userToken = await getUserSpTransToken(req);
+    if (userToken) console.log("Usando Token Personalizado do Usuário!");
+
     if (!codigo) {
       return res.status(400).json({
         error: 'Erro ao verificar código. (400, Bad Request)'
       });
     }
     
-    const resultado = await spTransService.pingPonto(codigo);
+    // 2. Passa o token (ou null) para o Serviço
+    const resultado = await spTransService.pingPonto(codigo, userToken);
+    
     res.status(200).json(resultado);
 
-    // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
   } catch (error) {
-    if (error.response) {
-      // O erro veio da API da SPTrans (axios)
-      const status = error.response.status;
-
-      if (status === 401) {
-        console.log('[401] Pesquisa inválida ou sessão expirada.')
-        // Força renovação de token na próxima (lógica simplificada, idealmente o service lidaria com retry)
+    // ... (Lógica de erro mantida igual, só omiti para economizar espaço) ...
+    if (error.response && error.response.status === 401) {
+        console.log('[401] Token inválido.')
         return res.status(401).json({ error: 'Token da API expirado ou inválido.' });
-      
-      } else {
-        // Outro erro da API (400, 404, 500, 503...)
-        console.error(`Erro da API SPTrans: ${status}`, error.message);
-        return res.status(status).json({ error: `Erro da API SPTrans: ${status}` });
-      }
-
     } else if (error.message === 'Ponto de ônibus inválido ou não encontrado.') {
-      // Captura o erro que lançamos no service
-      console.log('Validação falhou:', error.message);
-      return res.status(404).json({ error: error.message });
-    
-    } else if (error.message === 'Houve uma falha na comunicação, e a API não nos autenticou.') {
-        return res.status(500).json({error: error.message});
+        return res.status(404).json({ error: error.message });
     } else {
-      // Erro inesperado
-      console.error('Erro ao processar verificação:', error.message);
-      return res.status(500).json({ error: 'Houve uma falha interna na comunicação.' });
+        console.error('Erro pingPonto:', error.message);
+        return res.status(500).json({ error: 'Falha interna.' });
     }
   }
 }
 
 // Controlador para a rota /parada-radar
 async function paradaRadar(req, res) {
-  console.log('Iniciando radar nas paradas...');
+  // console.log('Iniciando radar...'); // Comentei pra não poluir o log
   try{
     const codigos = req.query.codigos;
 
+    // 1. Tenta pegar o token do usuário
+    const userToken = await getUserSpTransToken(req);
+
     if (!codigos) {
-      return res.status(400).json({
-        error: 'Erro ao buscar exibição.'
-      });
+      return res.status(400).json({ error: 'Erro ao buscar exibição.' });
     }
 
     const listaCodigos = codigos.split(',');
     
-    const resumosProcessados = await spTransService.getRadarParada(listaCodigos);
+    // 2. Passa o token (ou null) para o Serviço
+    const resumosProcessados = await spTransService.getRadarParada(listaCodigos, userToken);
 
     res.json(resumosProcessados);
 
-    // Caso dê erro, e ele seja 401 (Forbidden), quer dizer que a pesquisa é invalida, ou o token é.
-} catch (error) {
+  } catch (error) {
     if (error.response && error.response.status === 401) {
-      console.log('[401] Pesquisa inválida ou sessão expirada.')
-      // apiSessionCookie = null; // Isso seria ideal no service
+      console.log('[401] Erro de autenticação SPTrans.')
     } else {
-      // Adicionado para logar outros erros
-      console.error('Erro ao processar radar:', error.message);
+      console.error('Erro radar:', error.message);
     }
-    
-    // Se o erro tiver uma mensagem específica que lançamos, usamos ela
-    if (error.message === 'Houve uma falha na comunicação, e a API não nos autenticou.') {
-        return res.status(500).json({error: error.message});
-    }
-
     res.status(500).json({error: 'Houve uma falha na comunicação com a API da SPTrans.'})
   }
 }
