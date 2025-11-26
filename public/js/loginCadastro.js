@@ -1,30 +1,23 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
-// Configuração do Supabase (Usando a biblioteca global carregada no HTML ou importada)
-const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
-
-// Tenta pegar do window (CDN) ou importa se necessário
-const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
-
+// Pra ter certeza que vai acontecer quando tudo carregou
 document.addEventListener('DOMContentLoaded', () => {
     
+    // o "?" diz pra pegar o elemento caso ele exista.
+    // Caso não, sem problemas: não da erro e nem faz nada
     const botaoCadastrar = document?.getElementById('botaoCadastrar');
     const botaoLogar = document?.getElementById('botaoLogar');
     const instituicaoField = document?.getElementById('instituicao');
     const semInstituicaoBotao = document?.getElementById('semInstituicao');
     const esqueciSenha = document?.getElementById('esqueciSenha');
 
-    // --- LÓGICA DO ESQUECI A SENHA ---
     esqueciSenha?.addEventListener('click', async (e) => {
         e.preventDefault(); 
         
         const email = prompt('Digite seu e-mail cadastrado:');
         if (!email) return;
 
-        // IMPORTANTE: Primeiro inicia a animação (cria os elementos na tela)
         iniciaAnim();
-        // SÓ DEPOIS define o texto (agora os elementos existem)
         setTexto("Enviando email...");
         setSubTexto("Aguarde um momento...");
 
@@ -34,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!supabase) {
             setTexto("Erro Interno");
-            setSubTexto("Biblioteca Supabase não carregada.");
+            setSubTexto("Função ainda não implementada.");
             erroAnim();
             return;
         }
@@ -56,14 +49,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- LÓGICA DOS BOTÕES ---
+    // Configurando para os botões funcionarem
     botaoCadastrar?.addEventListener('click', (e) => {
+        // Evita que o formulario seja enviado da forma que foi criado
         e.preventDefault();
+
+        // Chama a validação
         validarCadastro();
     })
     
     botaoLogar?.addEventListener('click', (e) => {
+        // Evita que o formulario seja enviado da forma que foi criado
         e.preventDefault();
+
+        // Chama a validação
         validarLogin();
     })
     
@@ -87,140 +86,48 @@ async function validarLogin() {
         const checkbox = document.getElementById("lembreMe");
         const lembrar = checkbox ? checkbox.checked : false;
     
-        if (!email || !senha) {
-            setTexto("Campos vazios!");
-            setSubTexto("Preencha e-mail e senha.");
-            erroAnim();
-            return;
-        }
-    
         setTexto("Verificando...");
         
-        if (!window.supabase && !supabase) {
-                setTexto("Erro!"); 
-                setSubTexto("Erro interno: Supabase não carregou.");
-                erroAnim();
-                return;
-        }
-        
-        const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
-    
-        // Tenta fazer o login
-        const { data, error } = await sbClient.auth.signInWithPassword({
-            email: email,
-            password: senha
-        });
-    
-        if (error) {
-            console.error("Erro login Supabase:", error);
-            setTexto("Acesso Negado");
-            if (error.message.includes("Invalid login")) {
-                setSubTexto("E-mail ou senha incorretos.");
-            } else {
-                setSubTexto(error.message);
-            }
-            erroAnim();
-        } else {
-    
-            console.log("Login feito com Supabase:", data);
-            
-            const meta = data.user.user_metadata || {};
-            const nomeParaSalvar = meta.full_name || meta.nome || data.user.email.split('@')[0];
-    
-            localStorage.setItem('nomeUsuario', nomeParaSalvar);
-            
-          
-            if (lembrar) {
-               
-                localStorage.setItem('userEmailLembrete', email);
-                
-               
-                localStorage.setItem('tokenLogin', data.session.access_token);
-                sessionStorage.removeItem('tokenLogin'); 
-            } else {
-               
-                localStorage.removeItem('userEmailLembrete');
-                
-                
-                sessionStorage.setItem('tokenLogin', data.session.access_token);
-                localStorage.removeItem('tokenLogin'); 
-            }
-           
-    
-            setTexto("Bem-vindo!");
-            setSubTexto("Entrando no sistema...");
-            
-            setTimeout(() => {
-                window.location.href = "index.html"; 
-            }, 1000);
+        // Junta os dois em uma variavel
+        const dados = {email, senha};
+
+        // Envia os dois dados + a informação de qual tipo de validação estamos usando
+        if (validarCampos(dados, 'login')) {
+
+            // Se o codigo retornar verdadeiro (true, ou seja, os campos são válidos), redireciona (já está dentro da função)
+            enviarUsuarioParaServidor(dados, 'login', lembrar);
+        };        
+    }
+
+    function validarCadastro() {
+        iniciaAnim();
+
+        // Pega os valores (value, checked) dos elementos
+        const nome = document.getElementById("text").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("password").value.trim();
+
+        // Junta em uma objeto
+        const dados = {nome, email, senha};
+
+        // Envia os dados + a informação de qual tipo de validação estamos usando
+        // Como não temos "lembrarMe" no cadastro, enviamos um "false" no lugar dele por precaução
+        if (validarCampos(dados, 'cadastro', false)) {
+
+            // Se o codigo retornar verdadeiro (true, ou seja, os campos são válidos), redireciona (já está dentro da função)
+            enviarUsuarioParaServidor(dados, 'cadastro');
         }
     }
 
-    
-
-async function validarCadastro() {
-    iniciaAnim();
-    setTexto("Criando conta...");
-
-    const nomeInput = document.getElementById("text"); // Verifique se o ID é esse mesmo
-    const emailInput = document.getElementById("email");
-    const senhaInput = document.getElementById("password");
-
-    const nome = nomeInput ? nomeInput.value.trim() : "";
-    const email = emailInput ? emailInput.value.trim() : "";
-    const senha = senhaInput ? senhaInput.value.trim() : "";
-
-    if (!email || !senha) {
-        setTexto("Campos vazios!");
-        setSubTexto("Preencha todos os dados.");
-        erroAnim();
-        return;
-    }
-
-    if (senha.length < 6) {
-        setTexto("Senha fraca!");
-        setSubTexto("Mínimo de 6 caracteres.");
-        erroAnim();
-        return;
-    }
-
-    // Conexão Supabase
-    const sbClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : supabase;
-
-    // Criação da Conta
-    const { data, error } = await sbClient.auth.signUp({
-        email: email,
-        password: senha,
-        options: {
-            data: { full_name: nome }
-        }
-    });
-
-    if (error) {
-        console.error("Erro no cadastro:", error);
-        setTexto("Erro ao criar");
-        setSubTexto(error.message);
-        erroAnim();
-    } else {
-       
-        console.log("Cadastro automático:", data);
-        
-        setTexto("Conta Criada!");
-        setSubTexto("Redirecionando para login...");
-
-     
-        
-        setTimeout(() => {
-            window.location.href = "login.html"; 
-        }, 1500);
-    }
-}
-
-    async function enviarUsuarioParaServidor(dados, tipo) {
+    async function enviarUsuarioParaServidor(dados, tipo, lembrar) {
         setTexto("Enviando dados...");
+        // Aqui, usamos ${tipo} como variavel dinamica:
+        // Se o codigo for do cadastro, a variavel "tipo" vai ser "cadastro", e aí o vercel chama a rota "cadastro-usuario".
+        // Se o codigo for do login, a variavel "tipo" vai ser "login", e aí o vercel chama a rota "login-usuario".
         const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/${tipo}-usuario`;
 
         try {
+            // Manda pra url ali de cima o post com os dados inseridos no formulario
             const resposta = await fetch(url, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
@@ -228,32 +135,46 @@ async function validarCadastro() {
             });
 
             setTexto("Processando...");
+
+            // Transforma a resposta em um json
             const dadosResposta = await resposta.json();
 
-            if (resposta.ok && tipo === 'cadastro') {
+            // Se tudo estiver ok e for do tipo cadastro...
+            if (resposta.ok && tipo === 'cadastro') { // Se tudo estiver ok e for do tipo cadastro...
                 console.log(dadosResposta.message);
                 setTexto("Sucesso!");
                 setSubTexto("Redirecionando para login...");
-                setTimeout(() => window.location.href = "login.html", 1500);
+                setTimeout(() => window.location.href = "login.html", 2500); // ... então redireciona pra pagina de login
             
-            } else if (resposta.ok && tipo === 'login') { 
+            // Se tudo estiver ok e for do tipo login...
+            } else if (resposta.ok && tipo === 'login') { // ('ok' significa status 200-299 (sucesso)) 
                 const tokenLogin = dadosResposta.tokenLogin;
-                localStorage.setItem('tokenLogin', tokenLogin);
                 
+                if (lembrar) {
+                    // Caso o "lembre de mim" esteja ativo, salva o token no navegador...
+                    localStorage.setItem('tokenLogin', tokenLogin);
+                    sessionStorage.removeItem('tokenLogin'); 
+                } else {
+                    // ... mas caso contrário, salva na sessão temporária (fechou o navegador, apagou o token)
+                    sessionStorage.setItem('tokenLogin', tokenLogin);
+                    localStorage.removeItem('tokenLogin'); 
+                };
+
                 console.log(dadosResposta.message);
                 setTexto("Bem-vindo!");
-                setTimeout(() => window.location.href = "index.html", 1000);
+                setTimeout(() => window.location.href = "index.html", 2500); // ... então redireciona pra pagina inicial
             
+            // ... E se for qualquer outra coisa, dá erro
             } else {
                 const erroMsg = dadosResposta.error;
                 setTexto("Oops! Erro!!");
-                setSubTexto(erroMsg);
+                setSubTexto(`Ocorreu um erro.\nInforme este erro à nossa equipe: ${erroMsg}`);
                 erroAnim();
             }
 
         } catch (error) {
             setTexto("Erro de Conexão");
-            setSubTexto(`Falha ao conectar: ${error}`);
+            setSubTexto(`Falha ao conectar.\nInforme este erro à nossa equipe: ${error}`);
             erroAnim();
         }
     };
@@ -262,7 +183,7 @@ async function validarCadastro() {
         // Como iniciaAnim já foi chamado antes, aqui só atualizamos o texto se der erro
         if (!dados.email || !dados.senha) {
             setTexto("Campos vazios!");
-            setSubTexto("Por favor, preencha tudo.");
+            setSubTexto("Por favor, preencha todos os campos.");
             erroAnim();
             return false;
         }
@@ -275,10 +196,10 @@ async function validarCadastro() {
             return false;
         }
 
-        const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+        const senhaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/;
         if (!senhaRegex.test(dados.senha)) {
             setTexto("Senha fraca!");
-            setSubTexto("Mínimo 6 caracteres, letras e números.");
+            setSubTexto("Mínimo 6 caracteres, com letras, números ou caracteres especiais.");
             erroAnim();
             return false;
         }
