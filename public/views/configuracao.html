@@ -2,6 +2,7 @@
 ---
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,108 +45,68 @@
               class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
           </div>
 
-              <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-             Tempo de atraso (1–5 min)
-         </label>
 
-  <div class="relative w-32">
-    <input
-      id="tempoAtraso"
-      type="number"
-      value="1"
-      min="1"
-      max="5"
-      class="w-full border border-gray-300 rounded-md py-2 px-3 text-lg text-center focus:ring-2 focus:ring-red-500"
-    />
+          <div class="flex flex-col md:flex-row justify-center items-center gap-3.5 flex-wrap">
+          <div class="mb-6 flex flex-col justify-center items-center w-56">
+            <label class="block text-sm font-medium text-center text-gray-700 mb-2">
+              Tolerância atraso (1–5 min)
+            </label>
 
-    <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-center">
-      <button
-        type="button"
-        data-target="tempoAtraso"
-        class="setaUp text-gray-700 hover:text-red-500"
-      >
-        
-      </button>
-      <button
-        type="button"
-        data-target="tempoAtraso"
-        class="setaDown text-gray-700 hover:text-red-500"
-      >
-        
-      </button>
-    </div>
-  </div>
-</div>
+            <div class="relative w-72 md:w-32">
+              <input id="tempoAtraso" type="number" value="1" min="1" max="5"
+                class="w-full border border-gray-300 rounded-md py-2 px-3 text-lg text-center focus:ring-2 focus:ring-red-500" />
 
-              <div class="mb-6">
-  <label class="block text-sm font-medium text-gray-700 mb-2">
-    Tempo adiantado (1–5 min)
-  </label>
+              <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-center">
+                <button type="button" data-target="tempoAtraso" class="setaUp text-gray-700 hover:text-red-500">
 
-  <div class="relative w-32">
-    <input
-      id="tempoAdiantado"
-      type="number"
-      value="1"
-      min="1"
-      max="5"
-      class="w-full border border-gray-300 rounded-md py-2 px-3 text-lg text-center focus:ring-2 focus:ring-red-500"
-    />
+                </button>
+                <button type="button" data-target="tempoAtraso" class="setaDown text-gray-700 hover:text-red-500">
 
-    <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-center">
-      <button
-        type="button"
-        data-target="tempoAdiantado"
-        class="setaUp text-gray-700 hover:text-red-500"
-      >
-        
-      </button>
-      <button
-        type="button"
-        data-target="tempoAdiantado"
-        class="setaDown text-gray-700 hover:text-red-500"
-      >
-        
-              </button>
+                </button>
               </div>
             </div>
-      </div>
+          </div>
 
-      <div class="mb-6">
-  <label class="block text-sm font-medium text-gray-700 mb-2">
-    Quantidade de ônibus
-  </label>
+          <div class="mb-6 flex flex-col justify-center items-center w-56">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Tolerância adiantado (1–5 min)
+            </label>
 
-  <div class="relative w-32">
-    <input
-      id="qtdOnibus"
-      type="number"
-      value="1"
-      min="1"
-      max="8"
-      class="w-full border border-gray-300 rounded-md py-2 px-3 text-lg text-center focus:ring-2 focus:ring-red-500"
-    />
+            <div class="relative w-72 md:w-32">
+              <input id="tempoAdiantado" type="number" value="1" min="1" max="5"
+                class="w-full border border-gray-300 rounded-md py-2 px-3 text-lg text-center focus:ring-2 focus:ring-red-500" />
 
-    <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-center">
-      <button
-        type="button"
-        data-target="qtdOnibus"
-        class="setaUp text-gray-700 hover:text-red-500"
-      >
-        
-      </button>
-      <button
-        type="button"
-        data-target="qtdOnibus"
-        class="setaDown text-gray-700 hover:text-red-500"
-      >
-        
-      </button>
-    </div>
-  </div>
-</div>
+              <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-center">
+                <button type="button" data-target="tempoAdiantado" class="setaUp text-gray-700 hover:text-red-500">
 
+                </button>
+                <button type="button" data-target="tempoAdiantado" class="setaDown text-gray-700 hover:text-red-500">
+
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-6 flex flex-col justify-center items-center w-56">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Distância mínima (5-60 min)
+            </label>
+
+            <div class="relative w-72 md:w-32">
+              <input id="distanciaMinOnibus" type="number" value="1" min="1" max="8"
+                class="w-full border border-gray-300 rounded-md py-2 px-3 text-lg text-center focus:ring-2 focus:ring-red-500" />
+
+              <div class="absolute right-1 top-0 bottom-0 flex flex-col justify-center">
+                <button type="button" data-target="distanciaMinOnibus" class="setaUp text-gray-700 hover:text-red-500">
+
+                </button>
+                <button type="button" data-target="distanciaMinOnibus" class="setaDown text-gray-700 hover:text-red-500">
+
+                </button>
+              </div>
+            </div>
+          </div>
+          </div>
 
 
 
@@ -183,8 +144,8 @@
           <div id="botaoSalvar"
             class="text-end cursor-pointer! text-black hover:text-sptrans transition-all duration-300 ease-out">
             <i class="far fa-save z-[1000]" style='font-size:28px; vertical-align: middle;'></i>
-            <input type="submit" value="Salvar" id="botaoSalvar"
-              class="cursor-pointer! italic font-roboto-mono" style="vertical-align: middle;">
+            <input type="submit" value="Salvar" id="botaoSalvar" class="cursor-pointer! italic font-roboto-mono"
+              style="vertical-align: middle;">
           </div>
         </div>
       </div>
@@ -197,4 +158,5 @@
   <script src="../js/postLogin.js"></script>
   <script src="../js/mobile-navbar.js"></script>
 </body>
+
 </html>

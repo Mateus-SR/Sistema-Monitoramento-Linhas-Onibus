@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     // Se o servidor retornou NULL (token inválido), aí sim deslogamos
                     // Mas apenas se for certeza que o token é ruim, não erro de rede
-                    console.warn("Servidor recusou o token.");
+                    console.warn("Token de usuário nulo ou inválido.");
+                    localStorage.removeItem('nomeUsuario');
                 }
             } catch (err) {
                 console.log("Erro de conexão com API (mas mantendo logado localmente):", err);

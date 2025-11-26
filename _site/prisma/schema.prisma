@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -39,7 +38,7 @@ model relatorio {
   adiantado_rel   Int
   mediaespera_rel String   @db.Char(4)
   usu_id          Int?
-  id_onibus       Int?
+  id_onibus       String?
   created_at      DateTime @default(now()) @db.Timestamptz(6)
   usuario         usuario? @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
 
@@ -69,15 +68,18 @@ model usuario {
 }
 
 model exibicao {
-  id_exib       String            @id @default(uuid())
-  id_usu        Int
-  codigo_exib   String            @unique
-  nome_exibicao String?
-  created_at    DateTime          @default(now()) @db.Timestamp(6)
-  last_update   DateTime          @default(now()) @db.Timestamp(6)
-  usuario       usuario           @relation(fields: [id_usu], references: [id_usu])
-  paradas       exibicao_parada[]
-  favoritos     favoritos[]
+  id_exib           String            @id @default(uuid())
+  id_usu            Int
+  codigo_exib       String            @unique
+  nome_exibicao     String?
+  created_at        DateTime          @default(now()) @db.Timestamp(6)
+  last_update       DateTime          @default(now()) @db.Timestamp(6)
+  tempo_atraso      Int               @default(2)
+  tempo_adiantado   Int               @default(2)
+  quantidade_onibus Int               @default(1)
+  usuario           usuario           @relation(fields: [id_usu], references: [id_usu])
+  paradas           exibicao_parada[]
+  favoritos         favoritos[]
 
   @@schema("public")
 }
@@ -254,6 +256,7 @@ model oauth_authorizations {
   created_at            DateTime                   @default(now()) @db.Timestamptz(6)
   expires_at            DateTime                   @default(dbgenerated("(now() + '00:03:00'::interval)")) @db.Timestamptz(6)
   approved_at           DateTime?                  @db.Timestamptz(6)
+  nonce                 String?
   oauth_clients         oauth_clients              @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users                 users?                     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
@@ -403,6 +406,7 @@ model sessions {
   oauth_client_id        String?          @db.Uuid
   refresh_token_hmac_key String?
   refresh_token_counter  BigInt?
+  scopes                 String?
   mfa_amr_claims         mfa_amr_claims[]
   refresh_tokens         refresh_tokens[]
   oauth_clients          oauth_clients?   @relation(fields: [oauth_client_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -507,7 +511,7 @@ model estatisticas_diarias {
   data           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
   nome_onibus    String?
   qtd_atrasos    Int?      @default(0)
-  id_onibus      Int?
+  id_onibus      String?
   qtd_adiantados Int?      @default(0)
 
   @@unique([data, nome_onibus])
