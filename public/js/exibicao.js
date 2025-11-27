@@ -420,7 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         const codigoLetreiro = linha.codigoLetreiro;
                         const sentidoLinha = linha.sentidoLinha;
                         const quantidadeOnibus = linha.quantidadeOnibus;
+
                         const proximoOnibusCodigo = linha.proximoOnibus.proximoOnibusCodigo;
+                        const proximoOnibusPrevisao = linha.proximoOnibus.proximoOnibusPrevisao;
+                        
                         // Calcula quanto tempo falta para o ônibus chegar
                         const tempoPrevisto = converteHoraMinuto(proximoOnibusPrevisao);
                         const tempoPedido = converteHoraMinuto(horaRequest);
@@ -430,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          return; // Pula para o próximo (não mostra na tela)
                          }
 
-                        const proximoOnibusPrevisao = linha.proximoOnibus.proximoOnibusPrevisao;
+                        
 
                         const lat = linha.proximoOnibus.proximoOnibusPosicaoY;
                         const lng = linha.proximoOnibus.proximoOnibusPosicaoX;
