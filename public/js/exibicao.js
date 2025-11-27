@@ -773,4 +773,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function checarSeEstaFavoritado(codigoExibicao) {
+        // Se não tiver token, nem tenta verificar (visitante não favorita)
+        if (!token) return; 
+
+        try {
+            const resposta = await fetch(`${vercel}/verificar-favorito?codigo=${codigoExibicao}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Token': `Bearer ${token}`
+                }
+            });
+
+            if (resposta.ok) {
+                const dados = await resposta.json();
+                
+                // Se for verdadeiro, preenche a estrela
+                if (dados.favoritado) {
+                    star.classList.remove("far"); // Remove contorno
+                    star.classList.add("fas");    // Adiciona preenchido
+                    star.classList.add("text-yellow-400");
+                } else {
+                    // Garante que está vazia
+                    star.classList.remove("fas");
+                    star.classList.add("far");
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao verificar favorito inicial:", error);
+        }
+    }
+
 });
