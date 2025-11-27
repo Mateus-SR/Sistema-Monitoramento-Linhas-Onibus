@@ -2,9 +2,10 @@
   "scripts": {
     "dev": "npx @tailwindcss/cli -i ./public/css/input.css -o ./public/css/output.css --watch",
     "postinstall": "prisma generate"
-  }, 
+  },
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "@supabase/supabase-js": "^2.86.0",
     "@tailwindcss/cli": "^4.1.13",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
