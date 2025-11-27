@@ -83,24 +83,32 @@
 
       </div>
 
-    <div id="view-mobile" class="flex flex-col gap-4 lg:hidden">
-    </div>
-
-    <div id="view-desktop" class="hidden lg:block bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
-      <table class="min-w-full border-collapse mx-auto table-auto text-xl">
+      <table class="min-w-full border-collapse mx-auto table-auto lg:text-3xl">
         <thead>
-          <tr class="bg-gray-100 font-extrabold text-gray-700">
+          <tr class="bg-gray-100 font-extrabold">
             <th class="text-center py-3 px-6">Código</th>
-            <th class="text-center py-3 px-6">Nome / Sentido</th>
+            <th class="text-center py-3 px-6">Nome</th>
             <th class="text-center py-3 px-6">Previsão</th>
             <th class="text-center py-3 px-6">Status</th>
           </tr>
         </thead>
-        <tbody id="tabelaDesktop">
+        <tbody id="tabelaBody">
+          <tr class="border-b hover:bg-gray-50">
+            <td class="text-center py-3 px-6 font-extrabold">273D-10</td>
+            <td class="text-center py-3 px-6 ">Arthur Alvin</td>
+            <td class="text-center py-3 px-6">11:21</td>
+            <td class="text-center py-3 px-6">
+              <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm lg:text-2xl">
+                <span class="relative flex w-2 h-2 mr-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+                </span>Normal
+              </span>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
-
   </section>
 
   <section class="fixed w-full bottom-0 bg-sptrans z-50 py-1 px-2.5 text-white font-medium font-roboto-mono flex items-start justify-between text-[12px]">
