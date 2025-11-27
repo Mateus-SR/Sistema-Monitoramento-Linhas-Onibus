@@ -52,30 +52,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // RESTO DO CÓDIGO DA ESTRELA
     star.classList.add("text-yellow-400");
 
-    star.addEventListener("click", () => {
+    star.addEventListener("click", async () => {
+      // 1. Pega o código da exibição atual da URL (ex: ?codigo=UpilXc)
+      const urlParams = new URLSearchParams(window.location.search);
+      const codigoExibicao = urlParams.get('codigo');
+
+      if (!codigoExibicao) return console.error("Código da exibição não encontrado.");
+
       const willBeFav = !star.classList.contains("fas");
 
+      // --- EFEITOS VISUAIS (Mantidos) ---
       if (willBeFav) {
         star.classList.remove("far");
         star.classList.add("fas");
-
       } else {
         star.classList.remove("fas");
         star.classList.add("far");
       }
 
       star.classList.add("text-yellow-400");
-
       star.style.transition = "transform 120ms ease";
       star.style.transform = "scale(1.25)";
       setTimeout(() => { star.style.transform = "scale(1)"; }, 120);
 
-      if (willBeFav) {
-        showInline("Exibição adicionada aos favoritos", "bg-green-600");
-        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE SALVAR NO SUPABASE
-      } else {
-        showInline("Exibição removida dos favoritos", "bg-red-600");
-        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE REMOVER NO SUPABASE
+      // --- REQUISIÇÃO AO SERVIDOR ---
+      
+      const endpoint = willBeFav ? '/favoritar' : '/desfavoritar';
+      const mensagemSucesso = willBeFav ? "Exibição adicionada aos favoritos" : "Exibição removida dos favoritos";
+      const corSucesso = willBeFav ? "bg-green-600" : "bg-red-600";
+
+      try {
+        const resposta = await fetch(`${vercel}${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Access-Token': `Bearer ${token}` // Usa o token salvo no início do arquivo
+            },
+            body: JSON.stringify({ codigo_exib: codigoExibicao })
+        });
+
+        if (resposta.ok) {
+            // Sucesso: Mostra a notificação visual
+            showInline(mensagemSucesso, corSucesso);
+        } else {
+            // Erro: Reverte a estrela visualmente se o servidor falhar
+            console.error("Erro no servidor ao alterar favorito");
+            star.classList.toggle("fas");
+            star.classList.toggle("far");
+            showInline("Erro ao atualizar favorito", "bg-red-600");
+        }
+
+      } catch (error) {
+        console.error("Erro de rede:", error);
+        // Reverte a estrela visualmente em caso de erro de rede
+        star.classList.toggle("fas");
+        star.classList.toggle("far");
+        showInline("Erro de conexão", "bg-red-600");
       }
     });
 
