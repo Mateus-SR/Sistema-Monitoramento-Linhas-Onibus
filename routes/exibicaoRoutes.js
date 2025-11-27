@@ -20,4 +20,6 @@ router.get('/get-usuario-exibicoes',
     exibicaoController.getExibicoesUsuario
 );
 
+router.post('/favoritar', exibicaoController.favoritar);
+
 module.exports = router;

@@ -29,6 +29,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isHidden = false;
 
+    const star = document.getElementById("favStar");
+    const inline = document.getElementById("favInline");
+    const NOTIF_DURATION = 1800;
+    let hideTimeout = null;
+
+    if (!star || !inline || !textoTitulo) return;
+
+    // --- VERIFICAÇÃO DE LOGIN ---
+    // Verifica se existe o token salvo no navegador
+    const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
+    
+    if (token) {
+        // LOGADO: Remove o bloqueio visual (display: none)
+        star.style.display = "";
+    } else {
+        // NÃO LOGADO: Não faz nada (eles continuam invisíveis pelo HTML)
+        return; 
+    }
+    // ----------------------------
+
+    // RESTO DO CÓDIGO DA ESTRELA
+    star.classList.add("text-yellow-400");
+
+    star.addEventListener("click", () => {
+      const willBeFav = !star.classList.contains("fas");
+
+      if (willBeFav) {
+        star.classList.remove("far");
+        star.classList.add("fas");
+
+      } else {
+        star.classList.remove("fas");
+        star.classList.add("far");
+      }
+
+      star.classList.add("text-yellow-400");
+
+      star.style.transition = "transform 120ms ease";
+      star.style.transform = "scale(1.25)";
+      setTimeout(() => { star.style.transform = "scale(1)"; }, 120);
+
+      if (willBeFav) {
+        showInline("Exibição adicionada aos favoritos", "bg-green-600");
+        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE SALVAR NO SUPABASE
+      } else {
+        showInline("Exibição removida dos favoritos", "bg-red-600");
+        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE REMOVER NO SUPABASE
+      }
+    });
+
+    function showInline(text, bgClass) {
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+      inline.classList.remove("bg-green-600", "bg-red-600", "hidden", "opacity-0");
+      inline.textContent = text;
+      inline.classList.add(bgClass, "opacity-100");
+      inline.style.pointerEvents = "auto";
+      void inline.offsetWidth;
+
+      hideTimeout = setTimeout(() => {
+        inline.classList.remove("opacity-100");
+        inline.classList.add("opacity-0");
+        inline.style.pointerEvents = "none";
+        setTimeout(() => {
+          inline.classList.add("hidden");
+        }, 300);
+        hideTimeout = null;
+      }, NOTIF_DURATION);
+    }
+
+
+
     // --- INICIALIZAÇÃO DO SISTEMA ---
     iniciaSistema();
 
@@ -165,6 +239,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÕES DA API E TABELA ---
 
+    async function favoritar(params) {
+        // arruma
+        try {
+            const dados = { 
+                nome_exibicao: nome,
+                codigos_parada: arrayCodigos
+            };
+    
+            // Manda pra url ali de cima o post com os dados inseridos no formulario
+            const resposta = await fetch(`${vercel}/cria-exibicao`, {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Token': `Bearer ${tokenLogin}`
+                },
+                body: JSON.stringify(dados), 
+            });
+    
+            setTexto("Enviando dados...");
+    
+            const dadosResposta = await resposta.json();
+            // Se tudo estiver ok...
+            if (resposta.ok) { // ('ok' significa status 200-299 (sucesso)) 
+    
+                setTexto("Exibição criada com sucesso!")
+                setSubTexto("Gostaria de acessá-la agora?")
+    
+                const codigoCriado = dadosResposta.codigo_exib;
+    
+                const confirma = await setSimNao("Acessar", "Depois");
+                if (confirma) {
+                    const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+                    window.location.href = `${siteUrl}exibicao.html?codigo=${codigoCriado}`;
+                } else {
+                    console.log("Função ainda não implementada...")
+                }
+            
+            // E se for qualquer outra coisa, dá erro
+            } else {
+                const erroMsg = dadosResposta.error;
+                setTexto("Oops! Erro!!");
+                setSubTexto(erroMsg)
+                erroAnim();
+            }
+        } catch (error) {
+            setTexto("Oops! Erro!!");
+            setSubTexto(`Falha ao conectar com o servidor: ${error}`);
+            erroAnim();
+            //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
+        };
+    }
+
     async function setTituloCodigo(exibicao) {
         if (!exibicao.nome_exibicao) textoTitulo.innerText = "Exibição";
         else textoTitulo.innerText = exibicao.nome_exibicao;
@@ -175,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const codigosUrl = `${vercel}/exibicao/${codigoExibicao}`
             const resposta = await fetch(codigosUrl);
+
 
             if (!resposta.ok) {
                 if (resposta.status === 404) throw new Error("Essa exibição não existe. O código está certo?");

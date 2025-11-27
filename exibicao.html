@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="css/styles.css" />
   <link href="src/output.css" rel="stylesheet">
   <link rel="stylesheet" href="css/userMenu.css">
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -98,7 +98,7 @@
   </div>
 
   <section id="linhas" class="max-w-7xl mx-auto px-4 lg:px-10 pb-20 pt-10">
-    
+
     <div class="mb-6 flex flex-col place-self-center items-center">
       <div class="flex items-center gap-3">
         <span class="text-xl font-bold" id="textoTitulo" style="display: none;">Favoritar Exibição</span>
@@ -124,21 +124,21 @@
     </div>
 
     <div id="view-mobile" class="flex flex-col gap-4 lg:hidden">
-       </div>
+    </div>
 
     <div id="view-desktop" class="hidden lg:block bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
-        <table class="min-w-full border-collapse mx-auto table-auto text-xl">
-            <thead>
-              <tr class="bg-gray-100 font-extrabold text-gray-700">
-                <th class="text-center py-3 px-6">Código</th>
-                <th class="text-center py-3 px-6">Nome / Sentido</th>
-                <th class="text-center py-3 px-6">Previsão</th>
-                <th class="text-center py-3 px-6">Status</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaDesktop">
-            </tbody>
-        </table>
+      <table class="min-w-full border-collapse mx-auto table-auto text-xl">
+        <thead>
+          <tr class="bg-gray-100 font-extrabold text-gray-700">
+            <th class="text-center py-3 px-6">Código</th>
+            <th class="text-center py-3 px-6">Nome / Sentido</th>
+            <th class="text-center py-3 px-6">Previsão</th>
+            <th class="text-center py-3 px-6">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaDesktop">
+        </tbody>
+      </table>
     </div>
 
   </section>
@@ -188,7 +188,9 @@
         star.classList.add("text-yellow-400");
         star.style.transition = "transform 120ms ease";
         star.style.transform = "scale(1.25)";
-        setTimeout(() => { star.style.transform = "scale(1)"; }, 120);
+        setTimeout(() => {
+          star.style.transform = "scale(1)";
+        }, 120);
 
         if (willBeFav) {
           showInline("Exibição adicionada aos favoritos", "bg-green-600");

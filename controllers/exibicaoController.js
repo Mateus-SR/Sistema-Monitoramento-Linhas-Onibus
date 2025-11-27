@@ -54,6 +54,37 @@ async function criarExibicao(req, res) {
   }
 }
 
+async function favoritar(req, res) {
+  const id_usuario = req.id_usuario_logado;
+  const id_exibicao = req.id_exibicao;
+
+  try {
+  
+    // Salva no banco de dados
+    const novoFavorito = await prisma.favoritos.create({
+      data: {
+        usu_id: id_usuario,
+        exib_id: id_exibicao
+      }
+    });
+
+    res.status(201).json({
+      message: "Sucesso ao favoritar!",
+      dados: novoFavorito
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: 'Erro ao favoritar.'
+    });
+  }
+}
+
+async function desfavoritar(req, res) {
+  // fazer
+}
+
 // Busca uma exibição pelo código público (6 dígitos)
 async function getExibicao(req, res) {
   const codigo_exib = req.params.codigo_exib;
@@ -118,5 +149,6 @@ async function getExibicoesUsuario(req, res) {
 module.exports = {
     criarExibicao,
     getExibicao,
-    getExibicoesUsuario
+    getExibicoesUsuario,
+    favoritar
 };

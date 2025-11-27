@@ -47,7 +47,7 @@
       <div class="mb-2 flex flex-col place-self-center items-center">
 
   <div class="flex items-center gap-3">
-    <span class="text-xl font-bold" id="textoTitulo" style="display: none;">Favoritar Exibição</span>
+    <span class="text-xl font-bold" id="textoTitulo">Favoritar Exibição</span>
 
     <i id="favStar"
        class="far fa-star text-yellow-400 text-2xl cursor-pointer transition-transform duration-300"
@@ -63,92 +63,13 @@
   <span class="text-sm font-normal font-roboto-mono italic" id="textoCodigo">Código:</span>
 </div>
 
-<script>
-  (function() {
-    const star = document.getElementById("favStar");
-    const titulo = document.getElementById("textoTitulo");
-    const inline = document.getElementById("favInline");
-    const NOTIF_DURATION = 1800;
-    let hideTimeout = null;
-
-    if (!star || !inline || !titulo) return;
-
-    // --- VERIFICAÇÃO DE LOGIN ---
-    // Verifica se existe o token salvo no navegador
-    const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
-    
-    if (token) {
-        // LOGADO: Remove o bloqueio visual (display: none)
-        star.style.display = "";
-        titulo.style.display = "";
-    } else {
-        // NÃO LOGADO: Não faz nada (eles continuam invisíveis pelo HTML)
-        return; 
-    }
-    // ----------------------------
-
-    // RESTO DO CÓDIGO DA ESTRELA
-    star.classList.add("text-yellow-400");
-
-    star.addEventListener("click", () => {
-      const willBeFav = !star.classList.contains("fas");
-
-      if (willBeFav) {
-        star.classList.remove("far");
-        star.classList.add("fas");
-      } else {
-        star.classList.remove("fas");
-        star.classList.add("far");
-      }
-
-      star.classList.add("text-yellow-400");
-
-      star.style.transition = "transform 120ms ease";
-      star.style.transform = "scale(1.25)";
-      setTimeout(() => { star.style.transform = "scale(1)"; }, 120);
-
-      if (willBeFav) {
-        showInline("Exibição adicionada aos favoritos", "bg-green-600");
-        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE SALVAR NO SUPABASE
-      } else {
-        showInline("Exibição removida dos favoritos", "bg-red-600");
-        // AQUI VOCÊ PODE CHAMAR SUA FUNÇÃO DE REMOVER NO SUPABASE
-      }
-    });
-
-    function showInline(text, bgClass) {
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
-        hideTimeout = null;
-      }
-      inline.classList.remove("bg-green-600", "bg-red-600", "hidden", "opacity-0");
-      inline.textContent = text;
-      inline.classList.add(bgClass, "opacity-100");
-      inline.style.pointerEvents = "auto";
-      void inline.offsetWidth;
-
-      hideTimeout = setTimeout(() => {
-        inline.classList.remove("opacity-100");
-        inline.classList.add("opacity-0");
-        inline.style.pointerEvents = "none";
-        setTimeout(() => {
-          inline.classList.add("hidden");
-        }, 300);
-        hideTimeout = null;
-      }, NOTIF_DURATION);
-    }
-  })();
-</script>
-
-
       <div class="mb-4 relative flex flex-col sm:flex-row justify-center items-center w-full z-10 gap-3">
         
         <input 
           type="text" 
           id="barraPesquisa" 
           placeholder="Pesquisar linha"
-          class="w-full sm:w-96 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans text-base text-center sm:text-left"
-        />
+          class="w-full sm:w-96 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sptrans text-base text-center sm:text-left"/>
 
         <div class="w-full sm:w-96 sm:absolute sm:right-0">
           <select 
