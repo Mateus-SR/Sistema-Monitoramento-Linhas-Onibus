@@ -52,6 +52,7 @@ app.get('/sobre.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'views', 'sobre.html'));
 });
 
+// teste
 
 const autenticacaoRoutes = require('./routes/autenticacaoRoutes');
 const exibicaoRoutes = require('./routes/exibicaoRoutes');
