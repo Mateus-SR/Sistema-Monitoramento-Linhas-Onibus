@@ -231,11 +231,34 @@ async function verificarFavorito(req, res) {
     }
 }
 
+  // Lista todos os favoritos do usuário logado
+async function listarFavoritos(req, res) {
+    const id_usuario = req.id_usuario_logado;
+
+    try {
+        const favoritos = await prisma.favoritos.findMany({
+            where: {
+                usu_id: id_usuario
+            },
+            include: {
+                exibicao: true // Isso traz o nome e o código da exibição associada!
+            }
+        });
+
+        res.status(200).json(favoritos);
+
+    } catch (error) {
+        console.error("Erro ao listar favoritos:", error);
+        res.status(500).json({ error: 'Erro interno ao buscar favoritos.' });
+    }
+}
+
 module.exports = {
     criarExibicao,
     getExibicao,
     getExibicoesUsuario,
     favoritar,
     desfavoritar,
-    verificarFavorito
+    verificarFavorito,
+    listarFavoritos
 };

@@ -35,5 +35,10 @@ router.get('/verificar-favorito',
     exibicaoController.verificarFavorito
 );
 
+router.get('/meus-favoritos', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.listarFavoritos
+);
+
 
 module.exports = router;
