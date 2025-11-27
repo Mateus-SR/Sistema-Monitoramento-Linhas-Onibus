@@ -17,7 +17,7 @@
   "name": "sistema-monitoramento-linhas-onibus",
   "version": "1.0.0",
   "description": "[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL",
-  "main": "server.js",
+  "main": "app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus.git"
