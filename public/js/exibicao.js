@@ -146,6 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!codigoExibicao) {
                 throw new Error("Não foi possível encontrar a exibição.");
             }
+            
+            checarSeEstaFavoritado(codigoExibicao);
 
             //carregarBackupLocal(codigoExibicao); 
 
