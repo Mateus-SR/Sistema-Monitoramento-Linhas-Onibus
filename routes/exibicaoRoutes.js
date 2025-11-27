@@ -30,5 +30,10 @@ router.post('/desfavoritar',
     exibicaoController.desfavoritar
 );
 
+router.get('/verificar-favorito', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.verificarFavorito
+);
+
 
 module.exports = router;
