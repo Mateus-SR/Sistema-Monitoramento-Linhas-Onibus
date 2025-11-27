@@ -203,5 +203,6 @@ module.exports = {
     criarExibicao,
     getExibicao,
     getExibicoesUsuario,
-    favoritar
+    favoritar,
+    desfavoritar
 };
