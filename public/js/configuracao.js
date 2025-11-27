@@ -248,7 +248,7 @@ async function salvarExibicao() {
              const LIMITES = {
   tempoAtraso: { min: 1, max: 5 },
   tempoAdiantado: { min: 1, max: 5 },
-  distanciaMinOnibus: { min: 1, max: 8 }
+  distanciaMinOnibus: { min: 5, max: 60 }
 };
 
 // Impede letras, "e", símbolos e números gigantes
