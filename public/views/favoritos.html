@@ -13,10 +13,8 @@
 </head>
 
 <body>
-  <!-- Topbar -->
   {% include header.html %}
 
-  <!-- Campo de pesquisa -->
   <div class="flex justify-center my-6">
     <input 
       type="text" 
@@ -26,31 +24,24 @@
     />
   </div>
 
-  <!-- Tabela de linhas favoritas -->
   <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6 overflow-x-auto">
     <table class="min-w-full table-auto border-collapse">
       <thead>
-        <tr class="bg-gray-100 font-bold">
-          <th class="py-3 px-6 text-center">Código</th>
-          <th class="py-3 px-6 text-center">Nome</th>
-          
+        <tr class="bg-gray-100 font-bold text-gray-700">
+          <th class="py-3 px-6 text-center w-1/3">Código</th>
+          <th class="py-3 px-6 text-center w-2/3">Nome / Sentido</th>
         </tr>
-      
       </thead>
       
-      
-  
       <tbody id="tabelaFavoritos">
-        <!-- JS vai inserir aqui -->
-      </tbody>
+        </tbody>
     </table>
     
   </div>
 
-
-  <!-- Scripts -->
   <script src="../js/userMenu.js"></script>
   <script src="../js/mobile-navbar.js"></script>
+  <script type="module" src="../js/favoritos.js"></script> 
 
 </body>
 </html>
