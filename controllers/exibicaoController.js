@@ -4,12 +4,13 @@ const { nanoid } = require('nanoid');
 // Cria uma nova exibição
 async function criarExibicao(req, res) {
   const usuarioLogado = req.id_usuario_logado;
-  // Desestrutura o config que vem do frontend
+  
+  // --- [MUDANÇA 1] Recebe o 'config' do corpo da requisição ---
   const { nome_exibicao, codigos_parada, config } = req.body; 
   
   if (!codigos_parada || !Array.isArray(codigos_parada) || codigos_parada.length === 0 || codigos_parada.length > 5) {
     return res.status(400).json({ 
-      error: 'Há um problema com codigos_parada. Verifique se adicionou os pontos.' 
+      error: 'Há um problema com codigos_parada. (Não é nulo? É um array? Igual a 0? Maior que 5?).' 
     });
   }
 
@@ -25,26 +26,26 @@ async function criarExibicao(req, res) {
       existe = !!exibicaoExistente;
     }
   
-    // --- LÓGICA DE CONFIGURAÇÃO ---
-    // Valores padrão caso não venha nada
+    // --- [MUDANÇA 2] Processa as configurações ---
+    // Usa valores padrão se o usuário não enviou nada
     const tempoAtraso = config?.tempo_atraso || 2;
     const tempoAdiantado = config?.tempo_adiantado || 2;
-    
-    // Mapeamento: O valor 'distanciaMinOnibus' enviado pelo front será salvo
-    // na coluna 'quantidade_onibus' do banco de dados para evitar migration agora.
-    const distanciaMinima = config?.distanciaMinOnibus || 5; 
+    // Mapeia 'distanciaMinOnibus' do front para a variável que vai pro banco
+    const distanciaMinima = config?.distanciaMinOnibus || 20; 
 
+    // Salva no banco de dados
     const novaExibicao = await prisma.exibicao.create({
       data: {
         id_usu: usuarioLogado,
         codigo_exib: codigo_exib,
         nome_exibicao: nome_exibicao,
         
-        // Salvando no banco
+        // --- [MUDANÇA 3] Grava nas colunas corretas ---
         tempo_atraso: tempoAtraso,
         tempo_adiantado: tempoAdiantado,
-        quantidade_onibus: distanciaMinima, // <--- Salvamos a distância aqui!
-
+        // Salvamos a distância no campo 'quantidade_onibus' (reaproveitamento do banco)
+        quantidade_onibus: distanciaMinima, 
+        
         paradas: {
           create: codigos_parada.map( cadaCodigo => ({
             codigo_parada: cadaCodigo
@@ -56,7 +57,7 @@ async function criarExibicao(req, res) {
     res.status(201).json({
       message: "Sucesso ao criar exibição!",
       codigo_exib: codigo_exib,
-      dados: novaExibicao 
+      dados: novaExibicao
     });
 
   } catch (error) {
