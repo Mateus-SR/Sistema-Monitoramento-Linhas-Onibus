@@ -43,9 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (token) {
         // LOGADO: Remove o bloqueio visual (display: none)
         star.style.display = "";
-    } else {
-        // NÃO LOGADO: Não faz nada (eles continuam invisíveis pelo HTML)
-        return; 
     }
     // ----------------------------
 
@@ -407,8 +404,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         const proximoOnibusCodigo = linha.proximoOnibus.proximoOnibusCodigo;
                         const proximoOnibusPrevisao = linha.proximoOnibus.proximoOnibusPrevisao;
 
-                        const lat = linha.proximoOnibus.proximoOnibusPosicaoX;
-                        const lng = linha.proximoOnibus.proximoOnibusPosicaoY;
+                        const lat = linha.proximoOnibus.proximoOnibusPosicaoY;
+                        const lng = linha.proximoOnibus.proximoOnibusPosicaoX;
                         // Observação: restaurei essa parte para o modo antigo de pegar o X e Y porque ".latitude" ou ".longitude" não existem na api da Sptrans, apenas "px" e "py".
                         // Backend manda eles como proximoOnibusPosicaoX e proximoOnibusPosicaoY 
 
