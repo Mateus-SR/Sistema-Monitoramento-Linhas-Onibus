@@ -4,11 +4,12 @@ const { nanoid } = require('nanoid');
 // Cria uma nova exibição
 async function criarExibicao(req, res) {
   const usuarioLogado = req.id_usuario_logado;
-  const { nome_exibicao, codigos_parada } = req.body;
+  // Desestrutura o config que vem do frontend
+  const { nome_exibicao, codigos_parada, config } = req.body; 
   
   if (!codigos_parada || !Array.isArray(codigos_parada) || codigos_parada.length === 0 || codigos_parada.length > 5) {
     return res.status(400).json({ 
-      error: 'Há um problema com codigos_parada. (Não é nulo? É um array? Igual a 0? Maior que 5?).' 
+      error: 'Há um problema com codigos_parada. Verifique se adicionou os pontos.' 
     });
   }
 
@@ -16,7 +17,6 @@ async function criarExibicao(req, res) {
     let codigo_exib;
     let existe = true;
 
-    // Gera um código único de 6 caracteres
     while (existe) {
       codigo_exib = nanoid(6);
       const exibicaoExistente = await prisma.exibicao.findUnique({
@@ -25,13 +25,26 @@ async function criarExibicao(req, res) {
       existe = !!exibicaoExistente;
     }
   
-    // Salva no banco de dados
+    // --- LÓGICA DE CONFIGURAÇÃO ---
+    // Valores padrão caso não venha nada
+    const tempoAtraso = config?.tempo_atraso || 2;
+    const tempoAdiantado = config?.tempo_adiantado || 2;
+    
+    // Mapeamento: O valor 'distanciaMinOnibus' enviado pelo front será salvo
+    // na coluna 'quantidade_onibus' do banco de dados para evitar migration agora.
+    const distanciaMinima = config?.distanciaMinOnibus || 5; 
+
     const novaExibicao = await prisma.exibicao.create({
       data: {
         id_usu: usuarioLogado,
         codigo_exib: codigo_exib,
         nome_exibicao: nome_exibicao,
         
+        // Salvando no banco
+        tempo_atraso: tempoAtraso,
+        tempo_adiantado: tempoAdiantado,
+        quantidade_onibus: distanciaMinima, // <--- Salvamos a distância aqui!
+
         paradas: {
           create: codigos_parada.map( cadaCodigo => ({
             codigo_parada: cadaCodigo
@@ -43,7 +56,7 @@ async function criarExibicao(req, res) {
     res.status(201).json({
       message: "Sucesso ao criar exibição!",
       codigo_exib: codigo_exib,
-      dados: novaExibicao // Envia o objeto completo recém-criado
+      dados: novaExibicao 
     });
 
   } catch (error) {

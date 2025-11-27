@@ -133,7 +133,7 @@ function verificaEstado() {
 
 async function salvarExibicao() {
     iniciaAnim();
-    setTexto("Validando dados...");
+    setTexto("Salvando configurações...");
 
     const tokenLogin = localStorage.getItem('tokenLogin');
 
@@ -146,59 +146,40 @@ async function salvarExibicao() {
 
     const nome = document?.getElementById('nomeExib').value;
     const todosCodigos = document.querySelectorAll('.campoCodParada');
+    
+    // --- CORREÇÃO AQUI ---
+    // Pegamos os valores corretos do HTML atual
+    const tempoAtrasoInput = document.getElementById('tempoAtraso');
+    const tempoAdiantadoInput = document.getElementById('tempoAdiantado');
+    const distanciaMinInput = document.getElementById('distanciaMinOnibus'); // Agora usamos este ID!
 
-    const promessasDeValidacao = Array.from(todosCodigos).map(cadaCampo => {
-        const codigoDoPonto = cadaCampo.value;
+    // Define valores padrão caso algo falhe na leitura (fallback)
+    const tempoAtraso = tempoAtrasoInput ? parseInt(tempoAtrasoInput.value) : 2;
+    const tempoAdiantado = tempoAdiantadoInput ? parseInt(tempoAdiantadoInput.value) : 2;
+    const distanciaMinima = distanciaMinInput ? parseInt(distanciaMinInput.value) : 5;
+    // ---------------------
 
-        return fetch(`${vercel}/ping-ponto?codigo=${codigoDoPonto}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Access-Token': `Bearer ${tokenLogin}`
-            }
-        })
-        .then(resposta => {
-            //
-            if (resposta.ok) { // 'ok' = status 200-299
-                campoCodCorreto(cadaCampo); // Presumindo que você tenha essa função
-                return true;
-            } else { // 'ok' = false = status 404 (Inválido), 401 (Token), 500 (Server)
-                campoCodErro(cadaCampo); // Presumindo que você tenha essa função
-                return false;
-            }
-        })
-        .catch(err => {
-            // Erro de rede, etc.
-            console.error("Erro na validação fetch:", err);
-            campoCodErro(cadaCampo);
-            return false;
-        });
-    });
+    const arrayCodigos = Array.from(todosCodigos).map(cadaUm => cadaUm.value).filter(v => v !== "");
 
-    // Espera TODAS as validações em paralelo terminarem
-    const resultados = await Promise.all(promessasDeValidacao);
-
-    // Checa se TODOS os resultados no array são 'true'
-    const formularioValido = resultados.every(resultado => resultado === true);
-
-    if (!formularioValido) {
+    if (arrayCodigos.length === 0) {
         erroAnim();
-        setTexto("Oops! Erro!!");
-        // Mensagem de erro mais útil
-        setSubTexto("Um ou mais códigos são inválidos. Verifique os campos em vermelho.");
+        setTexto("Vazio!");
+        setSubTexto("Adicione pelo menos um ponto de ônibus.");
         return;
     }
-
-
-    const arrayCodigos = Array.from(todosCodigos).map(cadaUm => cadaUm.value);
 
     try {
         const dados = { 
             nome_exibicao: nome,
-            codigos_parada: arrayCodigos
+            codigos_parada: arrayCodigos,
+            // Enviamos a configuração correta para o Backend
+            config: {
+                tempo_atraso: tempoAtraso,
+                tempo_adiantado: tempoAdiantado,
+                distanciaMinOnibus: distanciaMinima 
+            }
         };
 
-        // Manda pra url ali de cima o post com os dados inseridos no formulario
         const resposta = await fetch(`${vercel}/cria-exibicao`, {
             method: 'POST', 
             headers: {
@@ -208,42 +189,32 @@ async function salvarExibicao() {
             body: JSON.stringify(dados), 
         });
 
-        setTexto("Enviando dados...");
-
         const dadosResposta = await resposta.json();
-        // Se tudo estiver ok...
-        if (resposta.ok) { // ('ok' significa status 200-299 (sucesso)) 
 
-            setTexto("Exibição criada com sucesso!")
-            setSubTexto("Gostaria de acessá-la agora?")
+        if (resposta.ok) { 
+            setTexto("Sucesso!");
+            setSubTexto("Configuração salva!");
 
             const codigoCriado = dadosResposta.codigo_exib;
-
-            const confirma = await setSimNao("Acessar", "Depois");
+            const confirma = await setSimNao("Acessar", "Configurar Mais");
+            
             if (confirma) {
                 const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
                 window.location.href = `${siteUrl}exibicao.html?codigo=${codigoCriado}`;
             } else {
-                console.log("Função ainda não implementada...")
+                location.reload();
             }
-        
-        // E se for qualquer outra coisa, dá erro
         } else {
             const erroMsg = dadosResposta.error;
-            setTexto("Oops! Erro!!");
-            setSubTexto(erroMsg)
+            setTexto("Erro no servidor");
+            setSubTexto(erroMsg);
             erroAnim();
         }
     } catch (error) {
-        setTexto("Oops! Erro!!");
-        setSubTexto(`Falha ao conectar com o servidor: ${error}`);
+        setTexto("Erro de Conexão");
+        setSubTexto(`${error}`);
         erroAnim();
-        //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
     };
-
-             
-
-
 };
              const LIMITES = {
   tempoAtraso: { min: 1, max: 5 },

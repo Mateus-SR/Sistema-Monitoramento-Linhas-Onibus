@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
     const htmlElement = document.documentElement;
     const registroOnibus = new Map();
+    // Variáveis globais para guardar a configuração que virá do banco
+    let configUsuario = {
+        atraso: 2,      // Padrão: 2 min
+        adiantado: 2,   // Padrão: 2 min
+        distancia: 20   // Padrão: 60 min (Filtro de tempo)
+    };
 
     // --- ELEMENTOS DO DOM ---
     const HideBtn = document.getElementById("hideBtn1");
@@ -146,6 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!codigoExibicao) {
                 throw new Error("Não foi possível encontrar a exibição.");
             }
+
+
             
             checarSeEstaFavoritado(codigoExibicao);
 
@@ -156,6 +164,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!exibicao || !exibicao.paradas || exibicao.paradas.length === 0) {
                 throw new Error("Exibição encontrada, mas não contém pontos de parada.");
             }
+
+        // Atualiza as configurações com o que veio do banco de dados
+        if (exibicao.tempo_atraso) configUsuario.atraso = exibicao.tempo_atraso;
+        if (exibicao.tempo_adiantado) configUsuario.adiantado = exibicao.tempo_adiantado;
+        
+        // Lembra que salvamos a distância no campo 'quantidade_onibus'? Lemos ele aqui:
+        if (exibicao.quantidade_onibus) configUsuario.distancia = exibicao.quantidade_onibus;
+
+        console.log("Configurações carregadas:", configUsuario);
 
             const codigosParada = exibicao.paradas.map(p => p.codigo_parada).join(',');
 
@@ -404,6 +421,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         const sentidoLinha = linha.sentidoLinha;
                         const quantidadeOnibus = linha.quantidadeOnibus;
                         const proximoOnibusCodigo = linha.proximoOnibus.proximoOnibusCodigo;
+                        // Calcula quanto tempo falta para o ônibus chegar
+                        const tempoPrevisto = converteHoraMinuto(proximoOnibusPrevisao);
+                        const tempoPedido = converteHoraMinuto(horaRequest);
+                        const minutosAteChegar = tempoPrevisto - tempoPedido;
+                        // Se faltar mais tempo que o permitido na configuração, ignora este ônibus
+                         if (minutosAteChegar > configUsuario.distancia) {
+                         return; // Pula para o próximo (não mostra na tela)
+                         }
+
                         const proximoOnibusPrevisao = linha.proximoOnibus.proximoOnibusPrevisao;
 
                         const lat = linha.proximoOnibus.proximoOnibusPosicaoY;
@@ -617,14 +643,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Sendo a diferença entre a promessa e a previsao MAIOR OU IGUAL a 2 minutos, estamos atrasados
         // (Previsão 22:42 (1362), Promessa: 22:40 (1360) = Atrasado)
         // (1362 - 1360 = 2)
-        if (diferencaPrevisoes >= 2) {
+       if (diferencaPrevisoes >= configUsuario.atraso) {
             statusCor = "yellow";
             statusTexto = "Atrasado"; 
             registrarIncidente(value.Letreiro, proximoOnibusCodigo, "Atrasado", diferencaPrevisoes);
         // Sendo a diferença entre a promessa e a previsao MENOR OU IGUAL a 2 minutos NEGATIVOS, estamos adiantados
         // (Previsão 22:38 (1358), Promessa: 22:40 (1360) = Adiantado)
         // (1358 - 1360 = -2)
-        } else if (diferencaPrevisoes <= -2) {
+        } else if (diferencaPrevisoes <= -configUsuario.adiantado) {
             statusCor = "blue";
             statusTexto = "Adiantado"; 
             registrarIncidente(value.Letreiro, proximoOnibusCodigo, "Adiantado", diferencaPrevisoes);
