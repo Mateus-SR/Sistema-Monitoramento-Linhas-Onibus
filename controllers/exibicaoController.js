@@ -199,10 +199,43 @@ async function getExibicoesUsuario(req, res) {
   }
 }
 
+   // Verifica se o usuário já favoritou a exibição
+async function verificarFavorito(req, res) {
+    const id_usuario = req.id_usuario_logado;
+    const codigo_exib = req.query.codigo; // Vamos receber via Query Params
+
+    try {
+        // 1. Busca o ID interno da exibição
+        const exibicao = await prisma.exibicao.findUnique({
+            where: { codigo_exib: codigo_exib }
+        });
+
+        if (!exibicao) {
+            return res.status(404).json({ favoritado: false });
+        }
+
+        // 2. Busca se existe o favorito
+        const favorito = await prisma.favoritos.findFirst({
+            where: {
+                usu_id: id_usuario,
+                exib_id: exibicao.id_exib
+            }
+        });
+
+        // Retorna true se achou, false se não achou
+        res.status(200).json({ favoritado: !!favorito });
+
+    } catch (error) {
+        console.error("Erro ao verificar favorito:", error);
+        res.status(500).json({ error: 'Erro interno.' });
+    }
+}
+
 module.exports = {
     criarExibicao,
     getExibicao,
     getExibicoesUsuario,
     favoritar,
-    desfavoritar
+    desfavoritar,
+    verificarFavorito
 };
