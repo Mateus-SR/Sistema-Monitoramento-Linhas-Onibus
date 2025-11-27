@@ -20,6 +20,15 @@ router.get('/get-usuario-exibicoes',
     exibicaoController.getExibicoesUsuario
 );
 
-router.post('/favoritar', exibicaoController.favoritar);
+router.post('/favoritar', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.favoritar
+);
+
+router.post('/desfavoritar', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.desfavoritar
+);
+
 
 module.exports = router;

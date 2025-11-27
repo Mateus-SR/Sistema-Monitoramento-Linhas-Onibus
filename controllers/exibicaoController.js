@@ -54,17 +54,38 @@ async function criarExibicao(req, res) {
   }
 }
 
+// Favoritar uma exibição
 async function favoritar(req, res) {
-  const id_usuario = req.id_usuario_logado;
-  const id_exibicao = req.id_exibicao;
+  const id_usuario = req.id_usuario_logado; // Vem do Middleware de autenticação
+  const { codigo_exib } = req.body; // O frontend deve enviar { "codigo_exib": "XXXXXX" }
 
   try {
+    // 1. Precisamos achar o ID interno (UUID) da exibição baseada no código público
+    const exibicao = await prisma.exibicao.findUnique({
+        where: { codigo_exib: codigo_exib }
+    });
+
+    if (!exibicao) {
+        return res.status(404).json({ error: 'Exibição não encontrada para favoritar.' });
+    }
+
+    // 2. Verifica se já está favoritado para não duplicar
+    const jaFavorito = await prisma.favoritos.findFirst({
+        where: {
+            usu_id: id_usuario,
+            exib_id: exibicao.id_exib // Usa o UUID interno
+        }
+    });
+
+    if (jaFavorito) {
+        return res.status(200).json({ message: "Esta exibição já está nos seus favoritos." });
+    }
   
-    // Salva no banco de dados
+    // 3. Salva no banco de dados
     const novoFavorito = await prisma.favoritos.create({
       data: {
         usu_id: id_usuario,
-        exib_id: id_exibicao
+        exib_id: exibicao.id_exib
       }
     });
 
@@ -81,8 +102,40 @@ async function favoritar(req, res) {
   }
 }
 
+// Remover dos favoritos
 async function desfavoritar(req, res) {
-  // fazer
+    const id_usuario = req.id_usuario_logado;
+    const { codigo_exib } = req.body;
+  
+    try {
+      // 1. Busca a exibição pelo código para pegar o ID interno
+      const exibicao = await prisma.exibicao.findUnique({
+          where: { codigo_exib: codigo_exib }
+      });
+  
+      if (!exibicao) {
+          return res.status(404).json({ error: 'Exibição não encontrada.' });
+      }
+  
+      // 2. Remove o registro da tabela de favoritos
+      // Usamos deleteMany para garantir que removemos apenas o vínculo deste usuário com esta exibição
+      await prisma.favoritos.deleteMany({
+        where: {
+          usu_id: id_usuario,
+          exib_id: exibicao.id_exib
+        }
+      });
+  
+      res.status(200).json({
+        message: "Removido dos favoritos com sucesso!"
+      });
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: 'Erro ao desfavoritar.'
+      });
+    }
 }
 
 // Busca uma exibição pelo código público (6 dígitos)
