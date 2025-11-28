@@ -102,81 +102,68 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 🔹 Exibe cada linha
+    // 🔹 Exibe cada linha (SUBSTITUA ESTE BLOCO FOREACH)
     listaDados.forEach((item, i) => {
-        // IMPORTANTE:
-        // Se for favoritos, o dado está em 'item.exibicao'.
-        // Se for exibições criadas, o dado é o próprio 'item'.
         const dadosExibicao = item.exibicao || item; 
 
         const tr = document.createElement('tr');
         tr.classList.add('border-b', 'linha-clicavel', 'fade-in');
         tr.style.animationDelay = `${i * 0.05}s`; 
 
-        // Cria o HTML base da linha
+        // Cria o HTML das colunas de dados
         let htmlLinha = `
-        <td class="text-center py-3 px-6 font-bold text-lg hover:text-sptrans transition-all duration-300 ease-in-out">${dadosExibicao.codigo_exib}</td>
+        <td class="text-center py-3 px-6 font-bold text-lg hover:text-sptrans transition-all">${dadosExibicao.codigo_exib}</td>
         <td class="text-center py-3 px-6 font-medium text-gray-700">${dadosExibicao.nome_exibicao || 'Sem Nome'}</td>
         `;
 
-        // Se for página de favoritos, adiciona a célula do botão de excluir
-        if (tipoPagina === 'favoritos') {
+        // Lógica para decidir quais botões mostrar na 3ª coluna
+        if (tipoPagina === 'exibicoes') {
+            // Se for a página de Exibições Criadas: Mostra Editar e Excluir
+            htmlLinha += `
+            <td class="text-center py-3 px-6 flex justify-center gap-4">
+                <a href="configuracao.html?editar=${dadosExibicao.codigo_exib}" 
+                   class="text-blue-600 hover:text-blue-800 transition-all p-2" 
+                   title="Editar">
+                   <i class="fas fa-pen text-xl"></i>
+                </a>
+                <button class="btn-deletar text-red-600 hover:text-red-800 transition-all p-2" 
+                        title="Excluir">
+                   <i class="fas fa-trash-alt text-xl"></i>
+                </button>
+            </td>`;
+        } else {
+            // Se for Favoritos: Mostra botão de desfavoritar (ou vazio)
             htmlLinha += `
             <td class="text-center py-3 px-6">
-                <button class="btn-delete text-gray-400 transition-all duration-200 p-2" title="Remover dos favoritos">
-                    <i class="fas fa-trash-alt text-xl"></i>
-                </button>
-            </td>
-            `;
+               <button class="text-gray-400 hover:text-red-500 transition p-2 btn-deletar" title="Remover favorito">
+                 <i class="fas fa-times text-xl"></i>
+               </button>
+            </td>`;
         }
 
         tr.innerHTML = htmlLinha;
 
-        // 🔹 Redirecionar ao clicar na LINHA
-        tr.addEventListener('click', () => {
-            window.location.href = `exibicao.html?codigo=${dadosExibicao.codigo_exib}`;
+        // Adiciona o clique para abrir a exibição (apenas nas células de texto)
+        const celulasTexto = tr.querySelectorAll('td:not(:last-child)');
+        celulasTexto.forEach(td => {
+            td.addEventListener('click', () => {
+                window.location.href = `exibicao.html?codigo=${dadosExibicao.codigo_exib}`;
+            });
         });
 
-        // 🔹 Lógica do botão de excluir (Somente se for favoritos)
-        if (tipoPagina === 'favoritos') {
-            const btnDelete = tr.querySelector('.btn-delete');
-            btnDelete.addEventListener('click', async (e) => {
-                e.stopPropagation(); // 🛑 Impede que o clique na lixeira abra a exibição
-
-                if(!confirm(`Deseja remover "${dadosExibicao.nome_exibicao || dadosExibicao.codigo_exib}" dos favoritos?`)) {
-                    return;
-                }
-
-                iniciaAnim();
-                setTexto("Removendo...");
-
-                try {
-                    const resp = await fetch(`${vercel}/desfavoritar`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Access-Token': `Bearer ${usuarioLogado}`
-                        },
-                        body: JSON.stringify({ codigo_exib: dadosExibicao.codigo_exib })
-                    });
-
-                    if (resp.ok) {
-                        // Remove visualmente a linha com uma animação
-                        tr.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                        tr.style.opacity = '0';
-                        tr.style.transform = 'translateX(20px)';
-                        setTimeout(() => tr.remove(), 300);
-                        
-                        setTexto("Removido!");
-                        setTimeout(fechaAnim, 800);
-                    } else {
-                        throw new Error("Erro ao remover");
+        // Adiciona evento ao botão de deletar (para não abrir a exibição ao clicar)
+        const btnDelete = tr.querySelector('.btn-deletar');
+        if (btnDelete) {
+            btnDelete.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                if (tipoPagina === 'exibicoes') {
+                    alert("A exclusão será implementada em breve.");
+                } else {
+                    // Lógica para remover favorito (se quiser implementar agora)
+                    if(confirm("Remover dos favoritos?")) {
+                        // Chamar função de remover favorito aqui
+                        console.log("Remover favorito: " + dadosExibicao.codigo_exib);
                     }
-                } catch (error) {
-                    erroAnim();
-                    setTexto("Erro!");
-                    setSubTexto("Não foi possível remover o favorito.");
-                    console.error(error);
                 }
             });
         }
