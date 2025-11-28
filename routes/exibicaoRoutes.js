@@ -40,5 +40,10 @@ router.get('/meus-favoritos',
     exibicaoController.listarFavoritos
 );
 
+router.delete('/deletar-exibicao', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.deletarExibicao
+);
+
 
 module.exports = router;

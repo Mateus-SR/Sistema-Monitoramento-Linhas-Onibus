@@ -265,6 +265,48 @@ async function listarFavoritos(req, res) {
         console.error("Erro ao listar favoritos:", error);
         res.status(500).json({ error: 'Erro interno ao buscar favoritos.' });
     }
+
+  async function deletarExibicao(req, res) {
+  const usuarioLogado = req.id_usuario_logado;
+  const { codigo_exib } = req.body;
+
+  try {
+    // 1. Verifica se a exibição existe
+    const exibicao = await prisma.exibicao.findUnique({
+      where: { codigo_exib: codigo_exib }
+    });
+
+    if (!exibicao) return res.status(404).json({ error: "Exibição não encontrada." });
+    
+    // 2. Verifica permissão (apenas o dono pode excluir)
+    if (exibicao.id_usu !== usuarioLogado) {
+      return res.status(403).json({ error: "Sem permissão para excluir." });
+    }
+
+    // 3. Deleta tudo relacionado (Transação)
+    await prisma.$transaction([
+      // Remove dos favoritos de quem salvou
+      prisma.favoritos.deleteMany({
+        where: { exib_id: exibicao.id_exib } // Usa o UUID
+      }),
+      // Remove os pontos de parada
+      prisma.exibicao_parada.deleteMany({
+        where: { id_exib: codigo_exib } // Usa o Código Público
+      }),
+      // Remove a exibição em si
+      prisma.exibicao.delete({
+        where: { codigo_exib: codigo_exib }
+      })
+    ]);
+
+    res.status(200).json({ message: "Exibição excluída com sucesso!" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao excluir." });
+  }
+}
+    
 }
 
 module.exports = {
@@ -274,5 +316,6 @@ module.exports = {
     favoritar,
     desfavoritar,
     verificarFavorito,
-    listarFavoritos
+    listarFavoritos,
+    deletarExibicao
 };
