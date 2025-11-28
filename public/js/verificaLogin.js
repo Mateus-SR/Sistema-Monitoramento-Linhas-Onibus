@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Access-Token': `Bearer ${token}`
+                'X-Access-Token': `Bearer ${usuarioLogado}`
             }
         });
 
@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error("Token expirado ou inválido.");
         }
 
-        console.log("Token validado com êxito.")
+        console.log("Token validado com êxito.");
+        fechaAnim();
     } catch (error) {
         console.error("Erro na validação:", error)
         localStorage.removeItem('tokenLogin');
