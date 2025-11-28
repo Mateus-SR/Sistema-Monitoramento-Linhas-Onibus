@@ -179,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTituloCodigo(exibicao);
 
         } catch (error) {
+            iniciaAnim();
             erroAnim();
             setTexto("Oops! Erro!!");
             setSubTexto(error.message);
@@ -325,11 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // E se for qualquer outra coisa, dá erro
             } else {
                 const erroMsg = dadosResposta.error;
+                iniciaAnim();
                 setTexto("Oops! Erro!!");
                 setSubTexto(erroMsg)
                 erroAnim();
             }
         } catch (error) {
+            iniciaAnim();
             setTexto("Oops! Erro!!");
             setSubTexto(`Falha ao conectar com o servidor: ${error}`);
             erroAnim();
@@ -355,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return await resposta.json();
         } catch (error) {
+            iniciaAnim();
             erroAnim();
             setTexto("Oops! Erro!!");
             setSubTexto(error.message);
@@ -501,6 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Caso qualquer falha tenha acontecido durante o try, vamos ser jogados aqui, e o console informará qual erro aconteceu
         } catch (error) {
+            iniciaAnim();
             erroAnim();
             setTexto("Oops! Erro!!");
             setSubTexto(`Um erro (${error}) ocorreu.`)
