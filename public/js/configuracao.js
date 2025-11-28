@@ -390,9 +390,10 @@ document.querySelectorAll(".setaDown").forEach(btn => {
   });
 });
 
-async function modoEdicao(codigo) {
+ async function modoEdicao(codigo) {
         iniciaAnim();
         setTexto("Carregando...");
+        carregarDadosUsuario();
         
         try {
             // Busca os dados atuais da exibição
@@ -428,6 +429,32 @@ async function modoEdicao(codigo) {
             fechaAnim();
         } catch (e) {
             erroAnim(); setTexto("Erro"); setSubTexto(e.message);
+        }
+    }
+
+    // --- FUNÇÃO PARA CARREGAR O TOKEN DO USUÁRIO ---
+    async function carregarDadosUsuario() {
+        const token = localStorage.getItem('tokenLogin');
+        if (!token) return;
+
+        try {
+            // Busca o perfil do usuário para pegar o token salvo no banco
+            const res = await fetch(`${vercel}/get-usuario-perfil`, {
+                method: 'GET',
+                headers: { 'X-Access-Token': `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                const usuario = await res.json();
+                const inputToken = document.getElementById('tokenApi');
+                
+                // Se o usuário tem um token salvo, preenche o campo
+                if (inputToken && usuario.token_usu) {
+                    inputToken.value = usuario.token_usu;
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados do usuário:", error);
         }
     }
 

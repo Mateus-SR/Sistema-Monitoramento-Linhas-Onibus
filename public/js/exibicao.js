@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const textoTitulo = document.getElementById('textoTitulo');
     const textoCodigo = document.getElementById('textoCodigo');
     const input = document.getElementById('barraPesquisa');
-    const tabelaBody = document.getElementById('tabelaBody');
+    const tabelaBody = document.getElementById('tabelaBody'); 
     const filtroSelect = document.getElementById('filtroOrdenacao'); // Seleciona o filtro
 
     let isHidden = false;
