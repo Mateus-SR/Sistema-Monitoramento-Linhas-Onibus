@@ -768,28 +768,11 @@ document.addEventListener('DOMContentLoaded', () => {
             linhasOrdenadas.forEach(linha => tabelaBody.appendChild(linha));
         }
     }
-
-    // === NOVAS FUNÇÕES DE BACKUP (LOCALSTORAGE) ===
-
-    // Salva o estado atual dos ônibus no navegador
-   function carregarBackupLocal(codigoExibicaoAtual) {
-        const backupString = localStorage.getItem('backupOnibus');
-
-        if (backupString) {
-            const backup = JSON.parse(backupString);
-
-            if (backup.codigoExibicao === codigoExibicaoAtual) {
-                backup.dados.forEach(([key, value]) => {
-                    registroOnibus.set(key, value);
-                });
-
-                const chavesRecuperadas = new Set(registroOnibus.keys());
-                
-                // [CORREÇÃO] Use 'atualizaInterface' em vez de 'preparaTabela'
-                // para que o backup apareça nos cards novos (Mobile/Desktop)
-                atualizaInterface(chavesRecuperadas); 
-            }
-        }
+    
+    function salvarBackupLocal(codigoExibicao) {
+        const dadosArray = Array.from(registroOnibus.entries());
+        const backup = { codigoExibicao, timestamp: Date.now(), dados: dadosArray };
+        localStorage.setItem('backupOnibus', JSON.stringify(backup));
     }
 
     // Tenta recuperar os dados assim que a página abre
