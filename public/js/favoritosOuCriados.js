@@ -1,3 +1,4 @@
+
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -5,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tituloH1 = document.getElementById('tituloH1');
   const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 
-  // Pega o tipo de página que estamos, mas com "favoritos" sendo um failsafe (caso não ache ou não tenha nada)
+  // Pega o tipo de página que estamos, mas com "favoritos" sendo um failsafe
   const tipoPagina = document.body.dataset.type || 'favoritos';
 
   // Configurando o que cada tipo de página tem
@@ -46,6 +47,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     .linha-clicavel:hover {
       background-color: #f3f4f6; /* gray-100 */
     }
+    .btn-delete:hover {
+        color: #dc2626; /* red-600 */
+        transform: scale(1.1);
+    }
   `;
   document.head.appendChild(estilo);
 
@@ -55,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!usuarioLogado) {
     tabela.innerHTML = `
       <tr>
-        <td colspan="2" class="text-center py-6 text-gray-500 fade-in">
+        <td colspan="3" class="text-center py-6 text-gray-500 fade-in">
           Faça login para ver suas linhas
         </td>
       </tr>
@@ -65,8 +70,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 🔹 Busca os dados no Banco de Dados
   try {
-    // Usa a mensagem dinâmica
-    tabela.innerHTML = `<tr><td colspan="2" class="text-center py-6 text-gray-500">${contexto.msgCarregando}</td></tr>`;
+    const colspan = tipoPagina === 'favoritos' ? 3 : 2;
+    tabela.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-6 text-gray-500">${contexto.msgCarregando}</td></tr>`;
 
     // Usa a rota dinâmica
     const resposta = await fetch(`${vercel}${contexto.rota}`, {
@@ -86,9 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabela.innerHTML = ''; // Limpa o "Carregando..."
 
     if (listaDados.length === 0) {
+        const colspan = tipoPagina === 'favoritos' ? 3 : 2;
         tabela.innerHTML = `
         <tr>
-            <td colspan="2" class="text-center py-8 text-gray-600 text-lg fade-in">
+            <td colspan="${colspan}" class="text-center py-8 text-gray-600 text-lg fade-in">
             ${contexto.msgVazio}
             </td>
         </tr>
@@ -96,41 +102,94 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 🔹 Exibe cada linha (Apenas Código e Nome)
+    // 🔹 Exibe cada linha
     listaDados.forEach((item, i) => {
         // IMPORTANTE:
         // Se for favoritos, o dado está em 'item.exibicao'.
         // Se for exibições criadas, o dado é o próprio 'item'.
-        // (isso se deve à forma de como o backend devolve o dados)
         const dadosExibicao = item.exibicao || item; 
 
         const tr = document.createElement('tr');
         tr.classList.add('border-b', 'linha-clicavel', 'fade-in');
         tr.style.animationDelay = `${i * 0.05}s`; 
 
-        tr.innerHTML = `
+        // Cria o HTML base da linha
+        let htmlLinha = `
         <td class="text-center py-3 px-6 font-bold text-lg hover:text-sptrans transition-all duration-300 ease-in-out">${dadosExibicao.codigo_exib}</td>
         <td class="text-center py-3 px-6 font-medium text-gray-700">${dadosExibicao.nome_exibicao || 'Sem Nome'}</td>
         `;
 
-        // 🔹 Redirecionar ao clicar
+        // Se for página de favoritos, adiciona a célula do botão de excluir
+        if (tipoPagina === 'favoritos') {
+            htmlLinha += `
+            <td class="text-center py-3 px-6">
+                <button class="btn-delete text-gray-400 transition-all duration-200 p-2" title="Remover dos favoritos">
+                    <i class="fas fa-trash-alt text-xl"></i>
+                </button>
+            </td>
+            `;
+        }
+
+        tr.innerHTML = htmlLinha;
+
+        // 🔹 Redirecionar ao clicar na LINHA
         tr.addEventListener('click', () => {
-            // Caminho relativo seguro
-            //const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            //window.location.href = `${siteUrl}exibicao.html?codigo=${dadosExibicao.codigo_exib}`;
-            
-            // Sugestão mais simples que funciona no GitHub Pages e Localhost:
             window.location.href = `exibicao.html?codigo=${dadosExibicao.codigo_exib}`;
         });
+
+        // 🔹 Lógica do botão de excluir (Somente se for favoritos)
+        if (tipoPagina === 'favoritos') {
+            const btnDelete = tr.querySelector('.btn-delete');
+            btnDelete.addEventListener('click', async (e) => {
+                e.stopPropagation(); // 🛑 Impede que o clique na lixeira abra a exibição
+
+                if(!confirm(`Deseja remover "${dadosExibicao.nome_exibicao || dadosExibicao.codigo_exib}" dos favoritos?`)) {
+                    return;
+                }
+
+                iniciaAnim();
+                setTexto("Removendo...");
+
+                try {
+                    const resp = await fetch(`${vercel}/desfavoritar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Access-Token': `Bearer ${usuarioLogado}`
+                        },
+                        body: JSON.stringify({ codigo_exib: dadosExibicao.codigo_exib })
+                    });
+
+                    if (resp.ok) {
+                        // Remove visualmente a linha com uma animação
+                        tr.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        tr.style.opacity = '0';
+                        tr.style.transform = 'translateX(20px)';
+                        setTimeout(() => tr.remove(), 300);
+                        
+                        setTexto("Removido!");
+                        setTimeout(fechaAnim, 800);
+                    } else {
+                        throw new Error("Erro ao remover");
+                    }
+                } catch (error) {
+                    erroAnim();
+                    setTexto("Erro!");
+                    setSubTexto("Não foi possível remover o favorito.");
+                    console.error(error);
+                }
+            });
+        }
 
         tabela.appendChild(tr);
     });
 
   } catch (error) {
     console.error(error);
+    const colspan = tipoPagina === 'favoritos' ? 3 : 2;
     tabela.innerHTML = `
       <tr>
-        <td colspan="2" class="text-center py-6 text-red-500 fade-in">
+        <td colspan="${colspan}" class="text-center py-6 text-red-500 fade-in">
           ${contexto.msgErro} <br> Tente recarregar a página.
         </td>
       </tr>
