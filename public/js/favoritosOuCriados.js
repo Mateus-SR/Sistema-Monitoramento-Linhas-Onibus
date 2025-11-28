@@ -2,6 +2,7 @@ import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadin
 
 document.addEventListener('DOMContentLoaded', async () => {
   const tabela = document.getElementById('tabelaLinkLinhas');
+  const tituloH1 = document.getElementById('tituloH1');
   const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
 
   // Pega o tipo de página que estamos, mas com "favoritos" sendo um failsafe (caso não ache ou não tenha nada)
@@ -10,12 +11,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Configurando o que cada tipo de página tem
   const config = {
     favoritos: {
+        tituloH1: 'Seus favoritos:',
         rota: '/meus-favoritos',
         msgCarregando: 'Carregando seus favoritos...',
         msgVazio: 'Você ainda não favoritou nenhuma linha 😢',
         msgErro: 'Erro ao carregar favoritos.'
     },
     exibicoes: {
+        tituloH1: 'Suas exibições:',
         rota: '/get-usuario-exibicoes',
         msgCarregando: 'Carregando suas exibições...',
         msgVazio: 'Você ainda não criou nenhuma exibição 📂',
@@ -24,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const contexto = config[tipoPagina];
+  tituloH1.innerText = contexto.tituloH1;
 
   // 🔹 Estilos para animação e clique
   const estilo = document.createElement('style');
@@ -105,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         tr.style.animationDelay = `${i * 0.05}s`; 
 
         tr.innerHTML = `
-        <td class="text-center py-3 px-6 font-bold text-lg">${dadosExibicao.codigo_exib}</td>
+        <td class="text-center py-3 px-6 font-bold text-lg hover:text-sptrans transition-all duration-300 ease-in-out">${dadosExibicao.codigo_exib}</td>
         <td class="text-center py-3 px-6 font-medium text-gray-700">${dadosExibicao.nome_exibicao || 'Sem Nome'}</td>
         `;
 

@@ -409,6 +409,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const dados = await resposta.json();
             console.log('Dados recebidos do backend:', dados);
 
+
+            if (dados.length > 0 && dados[0].ponto) {
+                const p = dados[0].ponto;
+                if (window.definirPontoFixo) {
+                    // Manda latitude e longitude vindas do backend
+                    window.definirPontoFixo(p.latitude, p.longitude, p.nome);
+                }
+            }
+
+
             // Resgatando/separando cada informação que recebemos no bloco de informações...
             // ...para utilizar nos respectivos lugares (inserir na tabela, realizar comparações)
             dados.forEach(resumoParada => {
@@ -835,5 +845,18 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Erro ao verificar favorito inicial:", error);
         }
     }
+
+    const btnVerMapa = document.getElementById('btnVerMapa');
+
+if (btnVerMapa) {
+    btnVerMapa.addEventListener('click', () => {
+        // Pega o código atual da URL
+        const params = new URLSearchParams(window.location.search);
+        const codigo = params.get('codigo');
+        
+        // Redireciona mantendo o código
+        window.location.href = `mapa.html?codigo=${codigo}`;
+    });
+}
 
 });

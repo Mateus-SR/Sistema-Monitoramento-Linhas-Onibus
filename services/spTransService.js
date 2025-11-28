@@ -80,7 +80,12 @@ function converteHoraMinuto(horaMinuto) {
 function processarResultadoParada(dadosParada){
   return {
     horaRequest: dadosParada.hr,
-    ponto: dadosParada.p.cp,
+    ponto: {
+        codigo: dadosParada.p.cp,
+        nome: dadosParada.p.np,
+        latitude: dadosParada.p.py,
+        longitude: dadosParada.p.px 
+      },
     linhas: dadosParada.p.l.map(linhaIndividual => {
       let proximoOnibus = null;
       if (linhaIndividual.vs && linhaIndividual.vs.length > 0) {
