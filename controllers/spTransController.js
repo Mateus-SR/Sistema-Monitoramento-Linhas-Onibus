@@ -136,8 +136,8 @@ async function validarTokenManual(req, res) {
 }
 
 module.exports = {
-  testarAuth: require('./spTransController').testarAuth,
-  pingPonto: require('./spTransController').pingPonto,
+  testarAuth,
+  pingPonto,
   paradaRadar,
   validarTokenManual
 };
