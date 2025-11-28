@@ -493,9 +493,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.atualizarMapa(listaParaMapa);
             }
 
-            if (codigoAtual) {
-                salvarBackupLocal(codigoAtual);
-            }
+            if (codigoExibicao) {
+                 salvarBackupLocal(codigoExibicao);
+               }
 
             fechaAnim();
 
