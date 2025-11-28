@@ -20,4 +20,10 @@ router.get('/get-usuario-perfil',
     autenticacaoController.getPerfilUsuario
 );
 
+router.put('/update-sptrans-token', 
+    autenticacaoController.verificarTokenMiddleware, 
+    perfilLimiter, 
+    autenticacaoController.atualizarTokenSpTrans
+);
+
 module.exports = router;

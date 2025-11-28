@@ -133,6 +133,43 @@ function verificaEstado() {
 
 async function salvarExibicao() {
     iniciaAnim();
+
+    const tokenInput = document.getElementById('tokenApi');
+    const tokenValor = tokenInput ? tokenInput.value.trim() : "";
+
+    if (tokenValor) {
+        setTexto("Validando token SPTrans...");
+        
+        // A. Valida na API da SPTrans
+        const validacao = await fetch(`${vercel}/validar-token-manual`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: tokenValor })
+        });
+
+        if (!validacao.ok) {
+            erroAnim();
+            setTexto("Token Inválido!");
+            setSubTexto("O token da SPTrans informado não autenticou.");
+            return; // Para o processo
+        }
+
+        // B. Salva no Banco de Dados (Tabela Usuário)
+        const update = await fetch(`${vercel}/update-sptrans-token`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Access-Token': `Bearer ${tokenLogin}`
+            },
+            body: JSON.stringify({ token: tokenValor })
+        });
+
+        if (!update.ok) {
+            console.error("Erro ao salvar token no banco");
+            // Opcional: Avisar usuário ou seguir mesmo assim
+        }
+    }
+    
     setTexto("Validando dados...");
 
     const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorageStorage.getItem('tokenLogin');
