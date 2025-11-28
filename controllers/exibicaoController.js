@@ -265,6 +265,7 @@ async function listarFavoritos(req, res) {
         console.error("Erro ao listar favoritos:", error);
         res.status(500).json({ error: 'Erro interno ao buscar favoritos.' });
     }
+}
 
   async function deletarExibicao(req, res) {
   const usuarioLogado = req.id_usuario_logado;
@@ -305,8 +306,6 @@ async function listarFavoritos(req, res) {
     console.error(error);
     res.status(500).json({ error: "Erro ao excluir." });
   }
-}
-    
 }
 
 async function editarExibicao(req, res) {
