@@ -10,9 +10,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
     
+    // Variável global de controle
     let counterFieldAdiciona = 1;
-    verificaEstado();
+    
+    // --- LÓGICA DE INICIALIZAÇÃO (CRIAR ou EDITAR) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigoEdicao = urlParams.get('editar'); // Verifica se tem ?editar=CODIGO na URL
 
+    if (codigoEdicao) {
+        modoEdicao(codigoEdicao); // Se tiver código, carrega modo edição
+    } else {
+        carregarDadosUsuario();   // Se for novo, tenta carregar token do usuário
+        verificaEstado();         // Configura botões iniciais
+    }
     botaoAdicionar.addEventListener('click', () =>{
         if (counterFieldAdiciona <= 4) {
             const novocodParada = codParadaOG.cloneNode(true);
@@ -62,10 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    botaoSalvar.addEventListener('click', (e) => {
-
+   botaoSalvar.addEventListener('click', (e) => {
         e.preventDefault();
-        salvarExibicao();
+        if (codigoEdicao) {
+            processarEdicao(codigoEdicao); // Atualiza
+        } else {
+            salvarExibicao(); // Cria novo
+        }
     });
 
     ConfiguraçãoForm.addEventListener('input', (e) => {
@@ -340,5 +353,89 @@ document.querySelectorAll(".setaDown").forEach(btn => {
   });
 });
 
+async function modoEdicao(codigo) {
+        iniciaAnim();
+        setTexto("Carregando...");
+        
+        try {
+            // Busca os dados atuais da exibição
+            const res = await fetch(`${vercel}/exibicao/${codigo}`);
+            if (!res.ok) throw new Error("Erro ao buscar dados");
+            const dados = await res.json();
+
+            // 1. Muda visual da página
+            const titulo = document.querySelector('h2');
+            if(titulo) titulo.innerText = `Editando: ${dados.nome_exibicao || codigo}`;
+            botaoSalvar.value = "Atualizar Exibição";
+
+            // 2. Preenche configurações
+            document.getElementById('nomeExib').value = dados.nome_exibicao || "";
+            document.getElementById('tempoAtraso').value = dados.tempo_atraso || 2;
+            document.getElementById('tempoAdiantado').value = dados.tempo_adiantado || 2;
+            document.getElementById('distanciaMinOnibus').value = dados.quantidade_onibus || 20;
+
+            // 3. Preenche Pontos de Parada
+            if (dados.paradas && dados.paradas.length > 0) {
+                // Preenche o 1º campo
+                document.getElementById('codParada_1').value = dados.paradas[0].codigo_parada;
+
+                // Cria campos extras se tiver mais pontos
+                for (let i = 1; i < dados.paradas.length; i++) {
+                    if (counterFieldAdiciona < 5) {
+                        botaoAdicionar.click(); // Simula clique para criar campo
+                        const inputNovo = document.getElementById(`codParada_${counterFieldAdiciona}`);
+                        if(inputNovo) inputNovo.value = dados.paradas[i].codigo_parada;
+                    }
+                }
+            }
+            fechaAnim();
+        } catch (e) {
+            erroAnim(); setTexto("Erro"); setSubTexto(e.message);
+        }
+    }
+
+    async function processarEdicao(codigo) {
+        iniciaAnim();
+        
+        // Coleta dados manualmente (similar ao salvarExibicao)
+        const nome = document.getElementById('nomeExib').value;
+        const arrayCodigos = Array.from(document.querySelectorAll('.campoCodParada'))
+                                  .map(i => i.value).filter(v => v !== "");
+        
+        const config = {
+            tempo_atraso: parseInt(document.getElementById('tempoAtraso').value) || 2,
+            tempo_adiantado: parseInt(document.getElementById('tempoAdiantado').value) || 2,
+            distanciaMinOnibus: parseInt(document.getElementById('distanciaMinOnibus').value) || 20
+        };
+
+        if (arrayCodigos.length === 0) {
+            erroAnim(); setTexto("Inválido"); return;
+        }
+
+        try {
+            const resposta = await fetch(`${vercel}/editar-exibicao`, {
+                method: 'PUT', // Método PUT para atualizar
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Token': `Bearer ${localStorage.getItem('tokenLogin')}`
+                },
+                body: JSON.stringify({ 
+                    codigo_exib: codigo,
+                    nome_exibicao: nome,
+                    codigos_parada: arrayCodigos,
+                    config: config
+                })
+            });
+
+            if (resposta.ok) {
+                setTexto("Atualizado!");
+                setTimeout(() => window.location.href = `exibicao.html?codigo=${codigo}`, 1500);
+            } else {
+                throw new Error("Falha ao atualizar");
+            }
+        } catch (error) {
+            erroAnim(); setTexto("Erro");
+        }
+    }
 
 });

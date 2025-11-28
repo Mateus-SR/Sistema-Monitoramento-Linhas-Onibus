@@ -267,6 +267,62 @@ async function listarFavoritos(req, res) {
     }
 }
 
+async function editarExibicao(req, res) {
+  const usuarioLogado = req.id_usuario_logado;
+  const { codigo_exib, nome_exibicao, codigos_parada, config } = req.body;
+
+  try {
+    // 1. Verifica se a exibição existe
+    const exibicaoExistente = await prisma.exibicao.findUnique({
+      where: { codigo_exib: codigo_exib }
+    });
+
+    if (!exibicaoExistente) {
+      return res.status(404).json({ error: "Exibição não encontrada." });
+    }
+
+    // 2. Segurança: Verifica se pertence ao usuário logado
+    if (exibicaoExistente.id_usu !== usuarioLogado) {
+      return res.status(403).json({ error: "Você não tem permissão para editar esta exibição." });
+    }
+
+    // 3. Prepara configurações (mantendo valores padrão se não vierem)
+    const tempoAtraso = config?.tempo_atraso || 2;
+    const tempoAdiantado = config?.tempo_adiantado || 2;
+    const distanciaMinima = config?.distanciaMinOnibus || 20;
+
+    // 4. Atualiza no banco (Transaction: Atualiza dados + Recria paradas)
+    const exibicaoAtualizada = await prisma.exibicao.update({
+      where: { codigo_exib: codigo_exib },
+      data: {
+        nome_exibicao: nome_exibicao,
+        tempo_atraso: tempoAtraso,
+        tempo_adiantado: tempoAdiantado,
+        quantidade_onibus: distanciaMinima, // Lembra que salvamos distância aqui
+        last_update: new Date(),
+
+        paradas: {
+          deleteMany: {}, // Remove todas as paradas antigas
+          create: codigos_parada.map(cadaCodigo => ({ // Cria as novas
+            codigo_parada: cadaCodigo
+          }))
+        }
+      }
+    });
+
+    res.status(200).json({
+      message: "Exibição atualizada com sucesso!",
+      dados: exibicaoAtualizada
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao editar exibição.' });
+  }
+}
+
+
+
 module.exports = {
     criarExibicao,
     getExibicao,
@@ -274,5 +330,6 @@ module.exports = {
     favoritar,
     desfavoritar,
     verificarFavorito,
-    listarFavoritos
+    listarFavoritos,
+    editarExibicao
 };

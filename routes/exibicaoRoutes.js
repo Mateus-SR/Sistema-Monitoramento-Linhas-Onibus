@@ -40,5 +40,9 @@ router.get('/meus-favoritos',
     exibicaoController.listarFavoritos
 );
 
+router.put('/editar-exibicao', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.editarExibicao
+);
 
 module.exports = router;
