@@ -135,7 +135,7 @@ async function salvarExibicao() {
     iniciaAnim();
     setTexto("Validando dados...");
 
-    const tokenLogin = localStorage.getItem('tokenLogin');
+    const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorageStorage.getItem('tokenLogin');
 
     if (!tokenLogin) {
         erroAnim();
