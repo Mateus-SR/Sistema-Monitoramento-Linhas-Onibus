@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 celulaPrevisao.textContent = value.Previsao;
 
                 const celulaStatus = linhaExistente.querySelector('.status');
-                const novoStatus = constroiStatus(value);
+                const novoStatus = constroiStatus(value, proximoOnibusCodigo);
 
                 celulaStatus.outerHTML = novoStatus;
             }
@@ -630,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabelaBody.appendChild(novaLinha);
     };
 
-    function constroiStatus(value) {
+    function constroiStatus(value, proximoOnibusCodigo)) {
         // Recebemos as informações do "dicionario" (lista de Registros)
         //const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
 
