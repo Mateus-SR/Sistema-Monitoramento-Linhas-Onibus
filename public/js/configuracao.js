@@ -157,7 +157,7 @@ async function salvarExibicao() {
         const validacao = await fetch(`${vercel}/validar-token-manual`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: tokenValor })
+            body: JSON.stringify({ API_TOKEN: tokenValor })
         });
 
         if (!validacao.ok) {
@@ -174,7 +174,7 @@ async function salvarExibicao() {
                 'Content-Type': 'application/json',
                 'X-Access-Token': `Bearer ${tokenLogin}`
             },
-            body: JSON.stringify({ token: tokenValor })
+            body: JSON.stringify({ API_TOKEN: tokenValor })
         });
 
         if (!update.ok) {
