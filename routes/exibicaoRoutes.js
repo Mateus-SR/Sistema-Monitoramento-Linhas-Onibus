@@ -45,4 +45,9 @@ router.put('/editar-exibicao',
     exibicaoController.editarExibicao
 );
 
+router.delete('/deletar-exibicao', 
+    autenticacaoController.verificarTokenMiddleware, 
+    exibicaoController.deletarExibicao
+);
+
 module.exports = router;
