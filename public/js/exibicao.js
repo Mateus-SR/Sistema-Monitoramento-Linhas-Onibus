@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const registroOnibus = new Map();
     // Variáveis globais para guardar a configuração que virá do banco
     let configUsuario = {
-        atraso: 2,      // Padrão: 2 min
-        adiantado: 2,   // Padrão: 2 min
-        distancia: 20   // Padrão: 60 min (Filtro de tempo)
+        atraso: 2,
+        adiantado: 2,
+        distancia: 60
     };
 
     // --- ELEMENTOS DO DOM ---
@@ -152,8 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!codigoExibicao) {
                 throw new Error("Não foi possível encontrar a exibição.");
             }
-
-
             
             checarSeEstaFavoritado(codigoExibicao);
 
@@ -387,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const codigoExibicao = urlParams.get('codigo');
             
             // Pedimos todo o bloco de informações (que ja filtramos la no servidor)
-            try {
                 // Adicionamos &codigoExibicao=... na URL
                 const resposta = await fetch(`${vercel}/parada-radar?codigos=${codigosParada}&codigoExibicao=${codigoExibicao}`, {
                     method: 'GET', 
@@ -496,9 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.atualizarMapa(listaParaMapa);
             }
 
-            // Lógica de Backup (mantive igual ao seu original)
-            const urlParams = new URLSearchParams(window.location.search);
-            const codigoAtual = urlParams.get('codigo');
             if (codigoAtual) {
                 salvarBackupLocal(codigoAtual);
             }
@@ -510,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
             erroAnim();
             setTexto("Oops! Erro!!");
             setSubTexto(`Um erro (${error}) ocorreu.`)
-            console.error(`${timestamp}: erro (${error}) ao rodar bloco try.`);
+            console.error(`${Date.now()}: erro (${error}) ao rodar bloco try.`);
         }
     }
 
@@ -519,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Como essa lista de Registros é um map(), ele funciona como um dicionario:
         // temos nossa "chave" e nosso "valor". No caso, a "chave" seria a palavra do dicionario que estamos procurando...
         // e o "valor" literalmente são as informações a respeito da palavra
-
         // Aqui, vamos verificar se o onibus que recebemos já está ou não na lista de onibus existentes
         // "registroOnibus.has(proximoOnibusCodigo)" é uma verificação que coloca "true" ou "false" dentro de "onibusExistente"
         const onibusExistente = registroOnibus.has(proximoOnibusCodigo)
@@ -545,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fichaAntiga.Previsao = proximoOnibusPrevisao;
             registroOnibus.set(proximoOnibusCodigo, fichaAntiga);
         };
+
     }
 
     function preparaTabela(onibusAtivos) {
@@ -778,17 +772,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // === NOVAS FUNÇÕES DE BACKUP (LOCALSTORAGE) ===
 
     // Salva o estado atual dos ônibus no navegador
-    function salvarBackupLocal(codigoExibicao) {
-        // O localStorage não aceita "Map", então convertemos para um Array de Arrays
-        const dadosArray = Array.from(registroOnibus.entries());
+   function carregarBackupLocal(codigoExibicaoAtual) {
+        const backupString = localStorage.getItem('backupOnibus');
 
-        const backup = {
-            codigoExibicao: codigoExibicao, // Salva qual é a tela atual (pra não carregar dados da linha errada)
-            timestamp: Date.now(), // Salva a hora que guardou
-            dados: dadosArray
-        };
+        if (backupString) {
+            const backup = JSON.parse(backupString);
 
-        localStorage.setItem('backupOnibus', JSON.stringify(backup));
+            if (backup.codigoExibicao === codigoExibicaoAtual) {
+                backup.dados.forEach(([key, value]) => {
+                    registroOnibus.set(key, value);
+                });
+
+                const chavesRecuperadas = new Set(registroOnibus.keys());
+                
+                // [CORREÇÃO] Use 'atualizaInterface' em vez de 'preparaTabela'
+                // para que o backup apareça nos cards novos (Mobile/Desktop)
+                atualizaInterface(chavesRecuperadas); 
+            }
+        }
     }
 
     // Tenta recuperar os dados assim que a página abre
@@ -812,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Força a tabela a ser desenhada com esses dados antigos enquanto a API nova não chega
                 // Criamos um Set com todas as chaves para simular o "onibusAtivos"
                 const chavesRecuperadas = new Set(registroOnibus.keys());
-                preparaTabela(chavesRecuperadas);
+                atualizaInterface(chavesRecuperadas);
             }
         }
     }
