@@ -11,4 +11,6 @@ router.get('/ping-ponto', spTransController.pingPonto);
 // Rota principal do radar (pega previsões dos ônibus)
 router.get('/parada-radar', spTransController.paradaRadar);
 
+router.post('/validar-token-manual', spTransController.validarTokenManual);
+
 module.exports = router;

@@ -383,13 +383,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // Console.log apenas para checar se estamos conseguindo rodar essa parte do codigo
             console.log(`${timestamp}: rodando bloco try.`);
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const codigoExibicao = urlParams.get('codigo');
+            
             // Pedimos todo o bloco de informações (que ja filtramos la no servidor)
-            const resposta = await fetch(`${vercel}/parada-radar?codigos=${codigosParada}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
+            try {
+                // Adicionamos &codigoExibicao=... na URL
+                const resposta = await fetch(`${vercel}/parada-radar?codigos=${codigosParada}&codigoExibicao=${codigoExibicao}`, {
+                    method: 'GET', 
+                    headers: { 'Content-Type': 'application/json' },
+                });
 
             if (!resposta.ok) {
                 let errorMsg = `Erro ${resposta.status} do servidor.`;

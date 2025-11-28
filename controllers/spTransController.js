@@ -79,9 +79,23 @@ async function paradaRadar(req, res) {
   // console.log('Iniciando radar...'); // Comentei pra não poluir o log
   try{
     const codigos = req.query.codigos;
+    const codigoExibicao = req.query.codigoExibicao;
 
-    // 1. Tenta pegar o token do usuário
-    const userToken = await getUserSpTransToken(req);
+    let userToken = null;
+
+    // Se temos o código da exibição, buscamos o dono dela no banco
+    if (codigoExibicao) {
+        const exibicao = await prisma.exibicao.findUnique({
+            where: { codigo_exib: codigoExibicao },
+            include: { usuario: true } // Inclui dados do dono, pois vamos usar o token da api dele aqui
+        });
+
+        // 
+        if (exibicao && exibicao.usuario && exibicao.usuario.token_usu) {
+            userToken = exibicao.usuario.token_usu;
+            console.log(`Usando token do proprietário da exibição (${exibicao.usuario.nome_usu})`);
+        }
+    }
 
     if (!codigos) {
       return res.status(400).json({ error: 'Erro ao buscar exibição.' });
@@ -104,8 +118,26 @@ async function paradaRadar(req, res) {
   }
 }
 
+// Rota para validar um token recebido no corpo da requisição (antes de salvar)
+async function validarTokenManual(req, res) {
+    const { API_TOKEN } = req.body;
+    if (!API_TOKEN) return res.status(400).json({ error: 'Token não fornecido.' });
+
+    try {
+        const resultado = await spTransService.tokenPOST(API_TOKEN);
+        if (resultado.success) {
+            res.json({ valid: true, message: 'Token válido!' });
+        } else {
+            res.status(401).json({ valid: false, error: 'Token inválido ou expirado.' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao validar token.' });
+    }
+}
+
 module.exports = {
-    testarAuth,
-    pingPonto,
-    paradaRadar
+  testarAuth: require('./spTransController').testarAuth,
+  pingPonto: require('./spTransController').pingPonto,
+  paradaRadar,
+  validarTokenManual
 };

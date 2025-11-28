@@ -132,10 +132,29 @@ const getPerfilUsuario = async (req, res) => {
   }
 };
 
+const atualizarTokenSpTrans = async (req, res) => {
+  const id_usu = req.id_usuario_logado;
+  const { API_TOKEN } = req.body;
+
+  try {
+    await prisma.usuario.update({
+      where: { id_usu: id_usu },
+      data: { token_usu: API_TOKEN } // Salva na coluna token_usu lá do banco de dados
+    });
+
+    res.status(200).json({ message: "Token atualizado com sucesso." });
+  } catch (error) {
+    console.error("Erro ao atualizar token:", error);
+    res.status(500).json({ error: "Erro ao salvar token no banco de dados." });
+  }
+};
+
+
 // Exporta todas as funções para serem usadas na rota
 module.exports = {
   cadastrarUsuario,
   loginUsuario,
   verificarTokenMiddleware,
-  getPerfilUsuario
+  getPerfilUsuario,
+  atualizarTokenSpTrans
 };
