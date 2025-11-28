@@ -77,6 +77,7 @@ model exibicao {
   tempo_atraso      Int               @default(2)
   tempo_adiantado   Int               @default(2)
   quantidade_onibus Int               @default(1)
+  ativo             Boolean           @default(true)
   usuario           usuario           @relation(fields: [id_usu], references: [id_usu])
   paradas           exibicao_parada[]
   favoritos         favoritos[]
