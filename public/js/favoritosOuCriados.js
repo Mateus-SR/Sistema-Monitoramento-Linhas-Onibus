@@ -1,4 +1,3 @@
-
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -47,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     .linha-clicavel:hover {
       background-color: #f3f4f6; /* gray-100 */
     }
-    .btn-delete:hover {
+    .btn-deletar:hover {
         color: #dc2626; /* red-600 */
         transform: scale(1.1);
     }
@@ -102,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 🔹 Exibe cada linha (SUBSTITUA ESTE BLOCO FOREACH)
+    // 🔹 Exibe cada linha
     listaDados.forEach((item, i) => {
         const dadosExibicao = item.exibicao || item; 
 
@@ -151,18 +150,85 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
-        // Adiciona evento ao botão de deletar (para não abrir a exibição ao clicar)
+        // Adiciona evento ao botão de deletar (LÓGICA IMPLEMENTADA AQUI)
         const btnDelete = tr.querySelector('.btn-deletar');
         if (btnDelete) {
-            btnDelete.addEventListener('click', (e) => {
-                e.stopPropagation(); 
+            btnDelete.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Impede que abra a exibição ao clicar no lixo
+
                 if (tipoPagina === 'exibicoes') {
-                    alert("A exclusão será implementada em breve.");
+                    // --- LÓGICA DE EXCLUSÃO (MINHAS EXIBIÇÕES) ---
+                    const confirmar = confirm(`Tem certeza que deseja apagar a exibição "${dadosExibicao.nome_exibicao || dadosExibicao.codigo_exib}"?\nEssa ação não pode ser desfeita.`);
+                    
+                    if (confirmar) {
+                        iniciaAnim();
+                        setTexto("Excluindo...");
+                        
+                        try {
+                            const resp = await fetch(`${vercel}/deletar-exibicao`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Access-Token': `Bearer ${usuarioLogado}`
+                                },
+                                body: JSON.stringify({ codigo_exib: dadosExibicao.codigo_exib })
+                            });
+
+                            if(resp.ok) {
+                                setTexto("Sucesso!");
+                                setSubTexto("Exibição removida.");
+                                
+                                // Remove a linha da tabela visualmente
+                                tr.style.backgroundColor = "#fee2e2"; // vermelho claro
+                                setTimeout(() => {
+                                    tr.remove();
+                                    fechaAnim();
+                                    // Se ficou vazio, recarrega para mostrar msg de vazio
+                                    if (tabela.children.length === 0) location.reload();
+                                }, 1000);
+                            } else {
+                                const data = await resp.json();
+                                throw new Error(data.error || "Erro ao excluir");
+                            }
+                        } catch (err) {
+                            erroAnim();
+                            setTexto("Erro");
+                            setSubTexto(err.message);
+                        }
+                    }
+
                 } else {
-                    // Lógica para remover favorito (se quiser implementar agora)
-                    if(confirm("Remover dos favoritos?")) {
-                        // Chamar função de remover favorito aqui
-                        console.log("Remover favorito: " + dadosExibicao.codigo_exib);
+                    // --- LÓGICA DE DESFAVORITAR (FAVORITOS) ---
+                    const confirmar = confirm(`Remover "${dadosExibicao.nome_exibicao || dadosExibicao.codigo_exib}" dos favoritos?`);
+                    
+                    if(confirmar) {
+                        iniciaAnim();
+                        setTexto("Removendo...");
+
+                        try {
+                            const resp = await fetch(`${vercel}/desfavoritar`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Access-Token': `Bearer ${usuarioLogado}`
+                                },
+                                body: JSON.stringify({ codigo_exib: dadosExibicao.codigo_exib })
+                            });
+
+                            if(resp.ok) {
+                                setTexto("Removido!");
+                                setTimeout(() => {
+                                    tr.remove();
+                                    fechaAnim();
+                                    if (tabela.children.length === 0) location.reload();
+                                }, 800);
+                            } else {
+                                throw new Error("Erro ao remover favorito");
+                            }
+                        } catch (err) {
+                            erroAnim();
+                            setSubTexto("Falha na conexão.");
+                        }
                     }
                 }
             });
