@@ -1,5 +1,6 @@
 const spTransService = require('../services/spTransService');
 const { createClient } = require('@supabase/supabase-js');
+const { prisma } = require('../models/prisma');
 
 // --- CONFIGURAÇÃO SUPABASE (Backend) ---
 // Idealmente, coloque isso em variáveis de ambiente (.env)
