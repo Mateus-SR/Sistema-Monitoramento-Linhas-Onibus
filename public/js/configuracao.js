@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ConfiguraçãoForm = document.getElementById('ConfiguraçãoForm');
     const botaoAdicionar = document.getElementById('botaoAdicionar');
     const botaoRemover = document.getElementById('botaoRemover');
-    const botaoSalvar = document.getElementById('botaoSalvar');
+    const botaoSalvar = document.getElementById('botaoSalvarInput');
     const codParadaOG = document.getElementById('codParada_1');
 
     const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
@@ -145,7 +145,7 @@ function verificaEstado() {
 };
 
 async function salvarExibicao() {
-    iniciaAnim();
+        iniciaAnim();
 
     const tokenInput = document.getElementById('tokenApi');
     const tokenValor = tokenInput ? tokenInput.value.trim() : "";
@@ -185,7 +185,7 @@ async function salvarExibicao() {
     
     setTexto("Validando dados...");
 
-    const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorageStorage.getItem('tokenLogin');
+    const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
 
     if (!tokenLogin) {
         erroAnim();
