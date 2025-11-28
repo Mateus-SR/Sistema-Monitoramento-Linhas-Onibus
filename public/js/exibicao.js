@@ -635,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabelaBody.appendChild(novaLinha);
     };
 
-    function constroiStatus(value, proximoOnibusCodigo)) {
+    function constroiStatus(value, proximoOnibusCodigo) {
         // Recebemos as informações do "dicionario" (lista de Registros)
         //const promessaGuardada = registroOnibus.get(proximoOnibusCodigo);
 
