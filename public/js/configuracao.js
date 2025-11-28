@@ -146,7 +146,7 @@ function verificaEstado() {
 
 async function salvarExibicao() {
         iniciaAnim();
-
+    const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
     const tokenInput = document.getElementById('tokenApi');
     const tokenValor = tokenInput ? tokenInput.value.trim() : "";
 
@@ -184,8 +184,6 @@ async function salvarExibicao() {
     }
     
     setTexto("Validando dados...");
-
-    const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
 
     if (!tokenLogin) {
         erroAnim();
