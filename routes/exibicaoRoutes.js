@@ -3,11 +3,13 @@ const router = express.Router();
 const exibicaoController = require('../controllers/exibicaoController');
 const autenticacaoController = require('../controllers/autenticacaoController'); // Para o middleware de token
 const perfilLimiter = require('./rateLimiter'); // Para limitar requisições
+const verificarLimiteExibicoes = require('../middlewares/verificarLimite');
 
 // Rota para criar uma nova exibição (Requer login e tem rate limit)
 router.post('/cria-exibicao', 
     autenticacaoController.verificarTokenMiddleware, 
     perfilLimiter, 
+    verificarLimiteExibicoes,
     exibicaoController.criarExibicao
 );
 

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropdownMenu = document.getElementById("dropdownMenu");
     const fac_id = document.getElementById("instituicaoId");
     const semInstituicaoCheckbox = document.getElementById("semInstituicao");
+    const linkAjuda = document.getElementById('linkAjuda');
 
     const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
     const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
@@ -49,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    linkAjuda.addEventListener('click', () => {
+
+    });
     const campoCodErro = (input) => {
         input.classList.add('bg-sptrans/25');
     }
