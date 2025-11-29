@@ -40,7 +40,8 @@ async function criarExibicao(req, res) {
         codigo_exib: codigo_exib,
         nome_exibicao: nome_exibicao,
         
-        // --- [MUDANÇA 3] Grava nas colunas corretas ---
+        fac_id: instituicao_id ? parseInt(instituicao_id) : null,
+        
         tempo_atraso: tempoAtraso,
         tempo_adiantado: tempoAdiantado,
         // Salvamos a distância no campo 'quantidade_onibus' (reaproveitamento do banco)

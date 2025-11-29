@@ -20,13 +20,13 @@ model configuracao {
 }
 
 model fatec {
-  id_fac               Int       @id @default(autoincrement())
-  nome_fac             String    @db.VarChar(100)
-  sigla_fac            String?   @default("NULL") @db.VarChar
-  categoria_fac        String?   @default("NULL") @db.VarChar
-  tipo_instituicao_fac String?   @default("NULL") @db.VarChar
-  municipio_fac        String    @default("NULL") @db.VarChar
-  usuario              usuario[]
+  id_fac               Int        @id @default(autoincrement())
+  nome_fac             String     @db.VarChar(100)
+  sigla_fac            String?    @default("NULL") @db.VarChar
+  categoria_fac        String?    @default("NULL") @db.VarChar
+  tipo_instituicao_fac String?    @default("NULL") @db.VarChar
+  municipio_fac        String     @default("NULL") @db.VarChar
+  exibicao             exibicao[]
 
   @@schema("public")
 }
@@ -49,7 +49,6 @@ model usuario {
   id_usu       Int            @id @default(autoincrement())
   email_usu    String         @unique
   senha_usu    String         @db.VarChar(100)
-  fac_id       Int?
   created_at   DateTime       @default(now()) @db.Timestamp(6)
   nome_usu     String         @default("") @db.VarChar(100)
   token_usu    String?        @db.VarChar(100)
@@ -60,7 +59,6 @@ model usuario {
   favoritos    favoritos[]
   relatorio    relatorio[]
   users        users?         @relation(fields: [auth_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  fatec        fatec?         @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
   usuario_log  usuario_log[]
 
   @@index([auth_id])
@@ -78,6 +76,8 @@ model exibicao {
   tempo_adiantado   Int               @default(2)
   quantidade_onibus Int               @default(1)
   ativo             Boolean           @default(true)
+  fac_id            Int?
+  fatec             fatec?            @relation(fields: [fac_id], references: [id_fac], onDelete: NoAction, onUpdate: NoAction)
   usuario           usuario           @relation(fields: [id_usu], references: [id_usu])
   paradas           exibicao_parada[]
   favoritos         favoritos[]

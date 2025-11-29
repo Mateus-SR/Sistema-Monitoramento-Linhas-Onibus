@@ -15,13 +15,11 @@ const cadastrarUsuario = async (req, res) => {
     const senhaHash = await bcrypt.hash(senha, 10);
 
     // Salva no banco usando o Prisma
-    // (Nota: fac_id: 1 está hardcoded como no original, podemos melhorar isso depois)
     await prisma.usuario.create({
       data: {
         nome_usu: nome,
         email_usu: email,
         senha_usu: senhaHash,
-        fac_id: 1 
       }
     });
 

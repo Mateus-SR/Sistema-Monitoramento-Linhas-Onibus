@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const botaoRemover = document.getElementById('botaoRemover');
     const botaoSalvar = document.getElementById('botaoSalvarInput');
     const codParadaOG = document.getElementById('codParada_1');
+    const dropdownBtn = document.getElementById("dropdownBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    const instituicaoInput = document.getElementById("instituicaoId");
+    const semInstituicaoCheckbox = document.getElementById("semInstituicao");
 
     const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
     
@@ -107,6 +111,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    carregarInstituicoes();
+
+    // 1. Controle do Checkbox "Não faço parte"
+    if (semInstituicaoCheckbox) {
+        semInstituicaoCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                // Se marcou: Limpa o ID, muda o texto e desabilita o botão visualmente
+                instituicaoInput.value = ""; 
+                dropdownBtn.innerText = "Nenhuma instituição selecionada";
+                dropdownBtn.classList.add("bg-gray-100", "text-gray-400", "cursor-not-allowed");
+                dropdownBtn.disabled = true;
+                dropdownMenu.classList.add("hidden");
+            } else {
+                // Se desmarcou: Reabilita o botão
+                dropdownBtn.innerText = "Selecione uma instituição";
+                dropdownBtn.classList.remove("bg-gray-100", "text-gray-400", "cursor-not-allowed");
+                dropdownBtn.disabled = false;
+            }
+        });
+    }
+
+    // 2. Controle de Abrir/Fechar Dropdown
+    if (dropdownBtn) {
+        dropdownBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (!dropdownBtn.disabled) {
+                dropdownMenu.classList.toggle("hidden");
+            }
+        });
+
+        // Fechar ao clicar fora
+        document.addEventListener("click", (e) => {
+            if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+                if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.add("hidden");
+                }
+            }
+        });
+    }
+
+    // 3. Função para Buscar do Supabase e Preencher
+    async function carregarInstituicoes() {
+        const { data, error } = await supabase
+            .from("fatec")
+            .select("id_fac, nome_fac")
+            .order("nome_fac");
+        
+        if (error) {
+            console.error("Erro ao carregar instituições:", error);
+            return;
+        }
+
+        if (dropdownMenu) {
+            // Gera o HTML das opções
+            const html = data.map(inst =>
+                `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black" data-id="${inst.id_fac}">
+                    ${inst.nome_fac}
+                 </div>`
+            ).join('');
+
+            dropdownMenu.innerHTML = html;
+
+            // Adiciona evento de clique em CADA opção
+            dropdownMenu.querySelectorAll("div").forEach(item => {
+                item.addEventListener("click", () => {
+                    // Atualiza visual
+                    dropdownBtn.textContent = item.innerText.trim();
+                    
+                    // Atualiza dado real (Hidden Input)
+                    instituicaoInput.value = item.dataset.id;
+                    
+                    // Garante que o checkbox seja desmarcado se o usuário escolher uma faculdade
+                    if (semInstituicaoCheckbox) {
+                        semInstituicaoCheckbox.checked = false;
+                        semInstituicaoCheckbox.dispatchEvent(new Event('change')); // Força atualização visual se necessário
+                    }
+
+                    dropdownMenu.classList.add("hidden");
+                });
+            });
+        }
+    }
+
+
 function verificaEstado() {
     if (counterFieldAdiciona == 5) {
         botaoAdicionar.classList.remove('text-black');
@@ -187,13 +275,13 @@ async function salvarExibicao() {
         return;
     }
 
-    // --- [MUDANÇA 2] Envia o objeto 'config' junto com os dados ---
     const dados = { 
         nome_exibicao: nome,
         codigos_parada: arrayCodigos,
+        nome_exibicao: nome,
+        fac_id: instituicaoInput,
         config: config
     };
-    // -------------------------------------------------------------
 
     await enviarExibicao(dados, tokenLogin);
 };
@@ -510,6 +598,7 @@ document.querySelectorAll(".setaDown").forEach(btn => {
                 body: JSON.stringify({ 
                     codigo_exib: codigo,
                     nome_exibicao: nome,
+                    fac_id: instituicaoInput,
                     codigos_parada: arrayCodigos,
                     config: config
                 })
