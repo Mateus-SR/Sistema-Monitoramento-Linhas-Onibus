@@ -314,6 +314,12 @@
   .left-6 {
     left: calc(var(--spacing) * 6);
   }
+  .left-10 {
+    left: calc(var(--spacing) * 10);
+  }
+  .left-15 {
+    left: calc(var(--spacing) * 15);
+  }
   .left-50 {
     left: calc(var(--spacing) * 50);
   }
@@ -557,6 +563,9 @@
   }
   .min-w-full {
     min-width: 100%;
+  }
+  .flex-1 {
+    flex: 1;
   }
   .flex-auto {
     flex: auto;

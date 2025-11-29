@@ -20,7 +20,7 @@ async function iniciaSistemaMapa() {
     iniciaAnim();
 
     try {
-        // 1. PEGA O CÓDIGO DA URL (Igualzinho ao exibicao.js)
+        // 1. PEGA O CÓDIGO DA URL
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const codigoExibicao = urlParams.get('codigo');
@@ -29,7 +29,7 @@ async function iniciaSistemaMapa() {
             throw new Error("Código da exibição não encontrado na URL.");
         }
 
-        // 2. Busca os códigos das paradas (Igual ao exibicao.js)
+        // 2. Busca os códigos das paradas
         const exibicao = await getCodigos(codigoExibicao);
         if (!exibicao || !exibicao.paradas || exibicao.paradas.length === 0) {
             throw new Error("Exibição sem paradas configuradas.");
@@ -67,6 +67,17 @@ async function radarMapa(codigosParada) {
 
         const dados = await resposta.json();
         
+        // --- NOVO: Centralizar no primeiro ponto encontrado ---
+        if (dados.length > 0 && dados[0].ponto) {
+            const p = dados[0].ponto;
+            // Verifica se a função existe no escopo global (definida em mapa.js)
+            if (window.definirPontoFixo) {
+                // Passa latitude (py), longitude (px) e nome
+                window.definirPontoFixo(p.latitude, p.longitude, p.nome);
+            }
+        }
+        // -----------------------------------------------------
+
         // Prepara a lista limpa para o mapa.js
         const listaParaMapa = [];
 

@@ -223,9 +223,6 @@ h1 {
 }
 
 #mapa {
-  width: 60%;     
-  max-width: 1200px;  
-  height: 500px;
   border: 2px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -238,10 +235,6 @@ h1 {
     margin-left: 0;
   }
 
-  #mapa {
-    width: 90%;
-    height: 400px;
-  }
 }
 /* Alinha os botões e o menu do usuário na mesma linha central */
 .actions {
