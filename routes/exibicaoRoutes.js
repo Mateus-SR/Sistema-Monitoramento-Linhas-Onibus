@@ -9,7 +9,6 @@ const verificarLimiteExibicoes = require('../middlewares/verificarLimite');
 router.post('/cria-exibicao', 
     autenticacaoController.verificarTokenMiddleware, 
     perfilLimiter, 
-    //verificarLimiteExibicoes,
     exibicaoController.criarExibicao
 );
 
