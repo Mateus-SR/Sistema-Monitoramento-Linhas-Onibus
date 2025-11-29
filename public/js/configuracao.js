@@ -1,5 +1,5 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim, setSimNao } from './loadingAnim.js';
-
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 document.addEventListener('DOMContentLoaded', () => {
     const ConfiguraçãoForm = document.getElementById('ConfiguraçãoForm');
@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const semInstituicaoCheckbox = document.getElementById("semInstituicao");
 
     const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
-    
+    const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
+    const supabasePublicKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+    const supabase = createClient(supabaseUrl, supabasePublicKey);
+
     // Variável global de controle
     let counterFieldAdiciona = 1;
     
