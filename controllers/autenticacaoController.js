@@ -4,13 +4,24 @@ const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// --- Funções de Lógica de Negócio (O antigo "Bloco B") ---
+const supabaseUrl = process.env.supabaseUrl; 
+const supabaseKey = process.env.supabaseKey; 
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-// 1. Cadastro de Usuário
+
 const cadastrarUsuario = async (req, res) => {
-  const { nome, email, senha, instituicao, semInstituicao } = req.body;
+  const { nome, email, senha } = req.body;
 
   try {
+    const { data: dataAuth, error: errorAuth } = await supabase.auth.signUp({
+      email: email,
+      password: senha,
+    });
+
+    if (errorAuth) {
+      return res.status(400).json({ error: errorAuth.message });
+    }
+
     // Criptografa a senha
     const senhaHash = await bcrypt.hash(senha, 10);
 
@@ -20,6 +31,7 @@ const cadastrarUsuario = async (req, res) => {
         nome_usu: nome,
         email_usu: email,
         senha_usu: senhaHash,
+        auth_id: dataAuth.user.id
       }
     });
 
