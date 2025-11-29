@@ -47,9 +47,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       background-color: #f3f4f6; /* gray-100 */
     }
     .btn-deletar:hover {
-        color: #dc2626; /* red-600 */
         transform: scale(1.1);
     }
+    .btn-editar:hover {
+      transform: scale(1.1);
+  }
   `;
   document.head.appendChild(estilo);
 
@@ -121,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             htmlLinha += `
             <td class="text-center py-3 px-6 flex justify-center gap-4">
                 <a href="configuracao.html?editar=${dadosExibicao.codigo_exib}" 
-                   class="text-blue-600 hover:text-blue-800 transition-all p-2" 
+                   class="btn-editar text-blue-600 hover:text-blue-800 transition-all p-2" 
                    title="Editar">
                    <i class="fas fa-pen text-xl"></i>
                 </a>

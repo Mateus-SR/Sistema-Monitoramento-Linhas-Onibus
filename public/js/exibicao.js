@@ -660,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function registrarIncidente(nome, proximoOnibusCodigo, status, diferenca) {
-        const token = localStorage.getItem('tokenLogin');
+        const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
         const headers = {
             'Content-Type': 'application/json'
         };

@@ -342,7 +342,7 @@ async function editarExibicao(req, res) {
         quantidade_onibus: distanciaMinima, // Lembra que salvamos distância aqui
         last_update: new Date(),
 
-        fac_id: fac_id,
+        fac_id: fac_id ? parseInt(fac_id) : null,
 
         paradas: {
           deleteMany: {}, // Remove todas as paradas antigas

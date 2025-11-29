@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.addEventListener("click", () => {
                     dropdownBtn.textContent = item.innerText.trim();
                     
-                    instituicaoInput.value = item.dataset.id;
+                    fac_id.value = item.dataset.id;
                     
                     if (semInstituicaoCheckbox) {
                         semInstituicaoCheckbox.checked = false;
@@ -589,11 +589,12 @@ document.querySelectorAll(".setaDown").forEach(btn => {
         }
 
         try {
+            const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
             const resposta = await fetch(`${vercel}/editar-exibicao`, {
                 method: 'PUT', // Método PUT para atualizar
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Access-Token': `Bearer ${localStorage.getItem('tokenLogin')}`
+                    'X-Access-Token': `Bearer ${token}`
                 },
                 body: JSON.stringify({ 
                     codigo_exib: codigo,
