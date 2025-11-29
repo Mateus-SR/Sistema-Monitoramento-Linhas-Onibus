@@ -56,8 +56,8 @@
 
     // SUAS CHAVES
     const supabaseUrl = process.env.supabaseUrl;
-    const supabaseKey = process.env.supabaseKey;
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabasePublicKey = process.env.supabasePublicKey;
+    const supabase = createClient(supabaseUrl, supabasePublicKey)
 
     const novaSenhaInput = document.getElementById('novaSenha')
     const confNovaSenhaInput = document.getElementById('confNovaSenha')
