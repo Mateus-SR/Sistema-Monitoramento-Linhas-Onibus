@@ -195,49 +195,6 @@
   <script src="../js/userMenu.js"></script>
   <script src="../js/postLogin.js"></script>
   <script src="../js/mobile-navbar.js"></script>
-
-  <!-- Script do Supabase -->
-  <script>
-    const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
-    const supabasePublicKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
-    const supabase = createClient(supabaseUrl, supabasePublicKey);
-
-    const dropdownBtn = document.getElementById("dropdownBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-
-    // Abrir/fechar dropdown
-    dropdownBtn.addEventListener("click", () => {
-      dropdownMenu.classList.toggle("hidden");
-    });
-
-    // Carregar instituições do Supabase
-    async function carregarInstituicoes() {
-      const { data, error } = await supabase.from("fatec").select("id_fac, nome_fac").order("nome_fac");
-      if (error) return console.error("Erro ao carregar instituições:", error);
-
-      dropdownMenu.innerHTML = data.map(inst =>
-        `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-id="${inst.id_fac}">${inst.nome_fac}</div>`
-      ).join('');
-
-      // Seleção de item
-      dropdownMenu.querySelectorAll("div").forEach(item => {
-        item.addEventListener("click", () => {
-          dropdownBtn.textContent = item.textContent;
-          dropdownBtn.dataset.value = item.dataset.id;
-          dropdownMenu.classList.add("hidden");
-        });
-      });
-    }
-
-    carregarInstituicoes();
-
-    // Fecha o dropdown ao clicar fora
-    document.addEventListener("click", (e) => {
-      if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.add("hidden");
-      }
-    });
-  </script>
 </body>
 
 </html>

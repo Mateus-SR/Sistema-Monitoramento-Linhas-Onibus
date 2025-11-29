@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const codParadaOG = document.getElementById('codParada_1');
     const dropdownBtn = document.getElementById("dropdownBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
-    const instituicaoInput = document.getElementById("instituicaoId");
+    const fac_id = document.getElementById("instituicaoId");
     const semInstituicaoCheckbox = document.getElementById("semInstituicao");
 
     const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         semInstituicaoCheckbox.addEventListener('change', (e) => {
             if (e.target.checked) {
                 // Se marcou: Limpa o ID, muda o texto e desabilita o botão visualmente
-                instituicaoInput.value = ""; 
+                fac_id.value = ""; 
                 dropdownBtn.innerText = "Nenhuma instituição selecionada";
                 dropdownBtn.classList.add("bg-gray-100", "text-gray-400", "cursor-not-allowed");
                 dropdownBtn.disabled = true;
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     dropdownBtn.textContent = item.innerText.trim();
                     
                     // Atualiza dado real (Hidden Input)
-                    instituicaoInput.value = item.dataset.id;
+                    fac_id.value = item.dataset.id;
                     
                     // Garante que o checkbox seja desmarcado se o usuário escolher uma faculdade
                     if (semInstituicaoCheckbox) {
@@ -282,7 +282,7 @@ async function salvarExibicao() {
         nome_exibicao: nome,
         codigos_parada: arrayCodigos,
         nome_exibicao: nome,
-        fac_id: instituicaoInput,
+        fac_id: fac_id.value,
         config: config
     };
 
@@ -601,7 +601,7 @@ document.querySelectorAll(".setaDown").forEach(btn => {
                 body: JSON.stringify({ 
                     codigo_exib: codigo,
                     nome_exibicao: nome,
-                    fac_id: instituicaoInput,
+                    fac_id: fac_id.value,
                     codigos_parada: arrayCodigos,
                     config: config
                 })

@@ -5,8 +5,7 @@ const { nanoid } = require('nanoid');
 async function criarExibicao(req, res) {
   const usuarioLogado = req.id_usuario_logado;
   
-  // --- [MUDANÇA 1] Recebe o 'config' do corpo da requisição ---
-  const { nome_exibicao, codigos_parada, config } = req.body; 
+  const { nome_exibicao, codigos_parada, config, fac_id } = req.body; 
   
   if (!codigos_parada || !Array.isArray(codigos_parada) || codigos_parada.length === 0 || codigos_parada.length > 5) {
     return res.status(400).json({ 
@@ -40,8 +39,8 @@ async function criarExibicao(req, res) {
         codigo_exib: codigo_exib,
         nome_exibicao: nome_exibicao,
         
-        fac_id: instituicao_id ? parseInt(instituicao_id) : null,
-        
+        fac_id: fac_id ? parseInt(fac_id) : null,
+
         tempo_atraso: tempoAtraso,
         tempo_adiantado: tempoAdiantado,
         // Salvamos a distância no campo 'quantidade_onibus' (reaproveitamento do banco)
@@ -311,7 +310,7 @@ async function listarFavoritos(req, res) {
 
 async function editarExibicao(req, res) {
   const usuarioLogado = req.id_usuario_logado;
-  const { codigo_exib, nome_exibicao, codigos_parada, config } = req.body;
+  const { codigo_exib, nome_exibicao, codigos_parada, config, fac_id } = req.body;
 
   try {
     // 1. Verifica se a exibição existe
@@ -342,6 +341,8 @@ async function editarExibicao(req, res) {
         tempo_adiantado: tempoAdiantado,
         quantidade_onibus: distanciaMinima, // Lembra que salvamos distância aqui
         last_update: new Date(),
+
+        fac_id: fac_id,
 
         paradas: {
           deleteMany: {}, // Remove todas as paradas antigas

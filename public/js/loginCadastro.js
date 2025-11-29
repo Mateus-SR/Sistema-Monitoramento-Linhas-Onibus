@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!supabase) {
             setTexto("Erro Interno");
-            setSubTexto("Função ainda não implementada.");
+            setSubTexto("Biblioteca Supabase não carregada.");
             erroAnim();
             return;
         }
