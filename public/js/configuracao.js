@@ -50,9 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    linkAjuda.addEventListener('click', () => {
 
-    });
     const campoCodErro = (input) => {
         input.classList.add('bg-sptrans/25');
     }
