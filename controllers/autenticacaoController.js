@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.supabaseUrl; 
 const supabaseKey = process.env.supabaseKey; 
