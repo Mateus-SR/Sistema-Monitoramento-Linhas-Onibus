@@ -145,42 +145,14 @@ function verificaEstado() {
 };
 
 async function salvarExibicao() {
-        iniciaAnim();
+    iniciaAnim();
     const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
     const tokenInput = document.getElementById('tokenApi');
     const tokenValor = tokenInput ? tokenInput.value.trim() : "";
 
     if (tokenValor) {
-        setTexto("Validando token SPTrans...");
-        
-        // A. Valida na API da SPTrans
-        const validacao = await fetch(`${vercel}/validar-token-manual`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ API_TOKEN: tokenValor })
-        });
-
-        if (!validacao.ok) {
-            erroAnim();
-            setTexto("Token Inválido!");
-            setSubTexto("O token da SPTrans informado não autenticou.");
-            return; // Para o processo
-        }
-
-        // B. Salva no Banco de Dados (Tabela Usuário)
-        const update = await fetch(`${vercel}/update-sptrans-token`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Access-Token': `Bearer ${tokenLogin}`
-            },
-            body: JSON.stringify({ API_TOKEN: tokenValor })
-        });
-
-        if (!update.ok) {
-            console.error("Erro ao salvar token no banco");
-            // Opcional: Avisar usuário ou seguir mesmo assim
-        }
+        const tokenValido = await processarTokenSPTrans(tokenValor, tokenLogin);
+        if (!tokenValido) return; 
     }
     
     setTexto("Validando dados...");
@@ -195,6 +167,73 @@ async function salvarExibicao() {
     const nome = document?.getElementById('nomeExib').value;
     const todosCodigos = document.querySelectorAll('.campoCodParada');
 
+    const config = obterConfiguracao();
+
+    const formularioValido = await validarParadas(todosCodigos, tokenLogin);
+
+    if (!formularioValido) {
+        erroAnim();
+        setTexto("Oops! Erro!!");
+        setSubTexto("Um ou mais códigos são inválidos. Verifique os campos em vermelho.");
+        return;
+    }
+
+    const arrayCodigos = Array.from(todosCodigos).map(cadaUm => cadaUm.value).filter(v => v !== "");
+
+    if (arrayCodigos.length === 0) {
+        erroAnim();
+        setTexto("Vazio!");
+        setSubTexto("Adicione pelo menos um ponto de ônibus.");
+        return;
+    }
+
+    // --- [MUDANÇA 2] Envia o objeto 'config' junto com os dados ---
+    const dados = { 
+        nome_exibicao: nome,
+        codigos_parada: arrayCodigos,
+        config: config
+    };
+    // -------------------------------------------------------------
+
+    await enviarExibicao(dados, tokenLogin);
+};
+
+// Funções auxiliares
+async function processarTokenSPTrans(tokenValor, tokenLogin) {
+    setTexto("Validando token SPTrans...");
+    
+    // A. Valida na API da SPTrans
+    const validacao = await fetch(`${vercel}/validar-token-manual`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ API_TOKEN: tokenValor })
+    });
+
+    if (!validacao.ok) {
+        erroAnim();
+        setTexto("Token Inválido!");
+        setSubTexto("O token da SPTrans informado não autenticou.");
+        return false; // Para o processo
+    }
+
+    // B. Salva no Banco de Dados (Tabela Usuário)
+    const update = await fetch(`${vercel}/update-sptrans-token`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Token': `Bearer ${tokenLogin}`
+        },
+        body: JSON.stringify({ API_TOKEN: tokenValor })
+    });
+
+    if (!update.ok) {
+        console.error("Erro ao salvar token no banco");
+        // Opcional: Avisar usuário ou seguir mesmo assim
+    }
+    return true;
+}
+
+function obterConfiguracao() {
     // --- [MUDANÇA 1] Captura os valores dos novos inputs ---
     const tempoAtrasoInput = document.getElementById('tempoAtraso');
     const tempoAdiantadoInput = document.getElementById('tempoAdiantado');
@@ -206,6 +245,14 @@ async function salvarExibicao() {
     const distanciaMinima = distanciaMinInput ? parseInt(distanciaMinInput.value) : 20; // Padrão 20min
     // -----------------------------------------------------------
 
+    return {
+        tempo_atraso: tempoAtraso,
+        tempo_adiantado: tempoAdiantado,
+        distanciaMinOnibus: distanciaMinima
+    };
+}
+
+async function validarParadas(todosCodigos, tokenLogin) {
     const promessasDeValidacao = Array.from(todosCodigos).map(cadaCampo => {
         const codigoDoPonto = cadaCampo.value;
         if (!codigoDoPonto) return Promise.resolve(true);
@@ -234,37 +281,11 @@ async function salvarExibicao() {
     });
 
     const resultados = await Promise.all(promessasDeValidacao);
-    const formularioValido = resultados.every(resultado => resultado === true);
+    return resultados.every(resultado => resultado === true);
+}
 
-    if (!formularioValido) {
-        erroAnim();
-        setTexto("Oops! Erro!!");
-        setSubTexto("Um ou mais códigos são inválidos. Verifique os campos em vermelho.");
-        return;
-    }
-
-    const arrayCodigos = Array.from(todosCodigos).map(cadaUm => cadaUm.value).filter(v => v !== "");
-
-    if (arrayCodigos.length === 0) {
-        erroAnim();
-        setTexto("Vazio!");
-        setSubTexto("Adicione pelo menos um ponto de ônibus.");
-        return;
-    }
-
+async function enviarExibicao(dados, tokenLogin) {
     try {
-        // --- [MUDANÇA 2] Envia o objeto 'config' junto com os dados ---
-        const dados = { 
-            nome_exibicao: nome,
-            codigos_parada: arrayCodigos,
-            config: {
-                tempo_atraso: tempoAtraso,
-                tempo_adiantado: tempoAdiantado,
-                distanciaMinOnibus: distanciaMinima
-            }
-        };
-        // -------------------------------------------------------------
-
         const resposta = await fetch(`${vercel}/cria-exibicao`, {
             method: 'POST', 
             headers: {
@@ -303,8 +324,9 @@ async function salvarExibicao() {
         setSubTexto(`Falha ao conectar com o servidor: ${error}`);
         erroAnim();
     };
-};
-             const LIMITES = {
+}
+
+const LIMITES = {
   tempoAtraso: { min: 1, max: 5 },
   tempoAdiantado: { min: 1, max: 5 },
   distanciaMinOnibus: { min: 5, max: 60 }
@@ -432,23 +454,27 @@ document.querySelectorAll(".setaDown").forEach(btn => {
 
     // --- FUNÇÃO PARA CARREGAR O TOKEN DO USUÁRIO ---
     async function carregarDadosUsuario() {
-        const token = localStorage.getItem('tokenLogin');
-        if (!token) return;
+        const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
+        
+        if (!tokenLogin) return;
 
         try {
-            // Busca o perfil do usuário para pegar o token salvo no banco
             const res = await fetch(`${vercel}/get-usuario-perfil`, {
                 method: 'GET',
-                headers: { 'X-Access-Token': `Bearer ${token}` }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Token': `Bearer ${tokenLogin}`
+                }
             });
 
             if (res.ok) {
                 const usuario = await res.json();
-                const inputToken = document.getElementById('tokenApi');
                 
-                // Se o usuário tem um token salvo, preenche o campo
-                if (inputToken && usuario.token_usu) {
-                    inputToken.value = usuario.token_usu;
+                const tokenInput = document.getElementById('tokenApi');
+
+                if (tokenInput && usuario.token_usu) {
+                    tokenInput.value = usuario.token_usu;
+                    console.log("Token SPTrans carregado do banco de dados.");
                 }
             }
         } catch (error) {

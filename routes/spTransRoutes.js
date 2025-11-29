@@ -13,4 +13,6 @@ router.get('/parada-radar', spTransController.paradaRadar);
 
 router.post('/validar-token-manual', spTransController.validarTokenManual);
 
+router.post('/registrar-status', spTransController.registrarStatus);
+
 module.exports = router;

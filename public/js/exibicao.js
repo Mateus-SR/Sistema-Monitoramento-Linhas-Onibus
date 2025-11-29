@@ -136,8 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, NOTIF_DURATION);
     }
 
-
-
     // --- INICIALIZAÇÃO DO SISTEMA ---
     iniciaSistema();
 
@@ -286,60 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÕES DA API E TABELA ---
 
-    async function favoritar(params) {
-        // arruma
-        try {
-            const dados = { 
-                nome_exibicao: nome,
-                codigos_parada: arrayCodigos
-            };
-    
-            // Manda pra url ali de cima o post com os dados inseridos no formulario
-            const resposta = await fetch(`${vercel}/cria-exibicao`, {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Token': `Bearer ${tokenLogin}`
-                },
-                body: JSON.stringify(dados), 
-            });
-    
-            setTexto("Enviando dados...");
-    
-            const dadosResposta = await resposta.json();
-            // Se tudo estiver ok...
-            if (resposta.ok) { // ('ok' significa status 200-299 (sucesso)) 
-    
-                setTexto("Exibição criada com sucesso!")
-                setSubTexto("Gostaria de acessá-la agora?")
-    
-                const codigoCriado = dadosResposta.codigo_exib;
-    
-                const confirma = await setSimNao("Acessar", "Depois");
-                if (confirma) {
-                    const siteUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-                    window.location.href = `${siteUrl}exibicao.html?codigo=${codigoCriado}`;
-                } else {
-                    console.log("Função ainda não implementada...")
-                }
-            
-            // E se for qualquer outra coisa, dá erro
-            } else {
-                const erroMsg = dadosResposta.error;
-                iniciaAnim();
-                setTexto("Oops! Erro!!");
-                setSubTexto(erroMsg)
-                erroAnim();
-            }
-        } catch (error) {
-            iniciaAnim();
-            setTexto("Oops! Erro!!");
-            setSubTexto(`Falha ao conectar com o servidor: ${error}`);
-            erroAnim();
-            //alert('Não foi possível se conectar ao servidor. Tente novamente mais tarde.');
-        };
-    }
-
     async function setTituloCodigo(exibicao) {
         if (!exibicao.nome_exibicao) textoTitulo.innerText = "Exibição";
         else textoTitulo.innerText = exibicao.nome_exibicao;
@@ -364,8 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setSubTexto(error.message);
         }
     };
-
-
 
     // Função async, pois o codigo precisa esperar tudo terminar para prosseguir
     async function radarOnibus(codigosParada) {

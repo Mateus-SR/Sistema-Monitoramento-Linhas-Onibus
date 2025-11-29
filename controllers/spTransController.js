@@ -1,11 +1,12 @@
 const spTransService = require('../services/spTransService');
 const { createClient } = require('@supabase/supabase-js');
 const { prisma } = require('../models/prisma');
+const jwt = require('jsonwebtoken');
 
 // --- CONFIGURAÇÃO SUPABASE (Backend) ---
 // Idealmente, coloque isso em variáveis de ambiente (.env)
-const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+const supabaseUrl = process.env.supabaseUrl;
+const supabaseKey = process.env.supabaseKey;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- FUNÇÃO AUXILIAR: Extrai o token do usuário ---
@@ -136,9 +137,53 @@ async function validarTokenManual(req, res) {
     }
 }
 
+// Controlador para a rota /registrar-status
+async function registrarStatus(req, res) {
+  const { nome_onibus, status, diferenca_minutos, id_onibus } = req.body;
+
+  // Lógica para tentar identificar o usuário (se houver token), mas sem bloquear se não houver
+  let id_usu = null;
+  const authHeader = req.headers['x-access-token'];
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    try {
+        // Tenta decodificar quem é o usuário
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        id_usu = payload.id_usu;
+    } catch (e) {
+        // Se o token for inválido, apenas ignoramos e segue como anônimo (id_usu = null)
+        console.log("Token inválido ou expirado no registro de status, registrando como anônimo.");
+    }
+  }
+
+  try {
+    const atrasado = status === 'Atrasado' ? 1 : 0;
+    const adiantado = status === 'Adiantado' ? 1 : 0;
+
+    await prisma.relatorio.create({
+      data: {
+        nomeonibus_rel: nome_onibus,
+        atrasado_rel: atrasado,
+        adiantado_rel: adiantado,
+        mediaespera_rel: diferenca_minutos.toString(),
+        usu_id: id_usu, 
+        id_onibus: id_onibus
+      }
+    });
+
+    res.status(200).json({ message: "Status registrado com sucesso" });
+
+  } catch (error) {
+    console.error("Erro ao registrar status:", error);
+    res.status(500).json({ error: "Erro interno" });
+  }
+}
+
 module.exports = {
   testarAuth,
   pingPonto,
   paradaRadar,
-  validarTokenManual
+  validarTokenManual,
+  registrarStatus
 };
