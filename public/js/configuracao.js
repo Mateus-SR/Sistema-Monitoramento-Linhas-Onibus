@@ -167,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (dropdownMenu) {
-            // Gera o HTML das opções
             const html = data.map(inst =>
                 `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black" data-id="${inst.id_fac}">
                     ${inst.nome_fac}
@@ -176,20 +175,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dropdownMenu.innerHTML = html;
 
-            // Adiciona evento de clique em CADA opção
             dropdownMenu.querySelectorAll("div").forEach(item => {
                 item.addEventListener("click", () => {
-                    // Atualiza visual
                     dropdownBtn.textContent = item.innerText.trim();
                     
-                    // Atualiza dado real (Hidden Input)
-                    fac_id.value = item.dataset.id;
+                    instituicaoInput.value = item.dataset.id;
                     
-                    // Garante que o checkbox seja desmarcado se o usuário escolher uma faculdade
                     if (semInstituicaoCheckbox) {
                         semInstituicaoCheckbox.checked = false;
-                        semInstituicaoCheckbox.dispatchEvent(new Event('change')); // Força atualização visual se necessário
                     }
+
+                    dropdownBtn.classList.remove("bg-gray-100", "text-gray-400", "cursor-not-allowed");
+                    dropdownBtn.disabled = false;
 
                     dropdownMenu.classList.add("hidden");
                 });
