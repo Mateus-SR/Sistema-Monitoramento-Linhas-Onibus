@@ -18,7 +18,7 @@ Originalmente projetado para uso interno na Fatec Zona Leste, o projeto cresceu,
 
 ## Instruções de instalação (localmente) 
 1. Clone ou baixe o repositório
-  - Caso possua o git instalado, rode `git clone https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus.git`
+   - Caso possua o git instalado, rode `git clone https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus.git`
 2. Instale as dependências do Node.js com `npm install`
 3. Configure as Variáveis de Ambiente _(.env)_ _(Este projeto utiliza variáveis de ambiente para conectar ao Supabase e à API da SPTrans)_
    - Crie um arquivo chamado .env na raiz do projeto e preencha esse modelo com suas credenciais:
