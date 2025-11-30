@@ -580,7 +580,7 @@ document.querySelectorAll(".setaDown").forEach(btn => {
 
     async function processarEdicao(codigo) {
         iniciaAnim();
- 
+        const tokenLogin = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
         const tokenInput = document.getElementById('tokenApi');
         const tokenValor = tokenInput ? tokenInput.value.trim() : "";
 
