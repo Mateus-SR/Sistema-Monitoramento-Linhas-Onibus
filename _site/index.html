@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Sistema-Monitoramento-Linhas-Onibus | [FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL</title>
+<title>Sistema-Monitoramento-Linhas-Onibus (Busca Bus) | Sistema-Monitoramento-Linhas-Onibus</title>
 <meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="Sistema-Monitoramento-Linhas-Onibus" />
+<meta property="og:title" content="Sistema-Monitoramento-Linhas-Onibus (Busca Bus)" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL" />
 <meta property="og:description" content="[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL" />
@@ -17,12 +17,12 @@
 <meta property="og:site_name" content="Sistema-Monitoramento-Linhas-Onibus" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Sistema-Monitoramento-Linhas-Onibus" />
+<meta property="twitter:title" content="Sistema-Monitoramento-Linhas-Onibus (Busca Bus)" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","description":"[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL","headline":"Sistema-Monitoramento-Linhas-Onibus","name":"Sistema-Monitoramento-Linhas-Onibus","url":"http://localhost:4000/"}</script>
+{"@context":"https://schema.org","@type":"WebSite","description":"[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL","headline":"Sistema-Monitoramento-Linhas-Onibus (Busca Bus)","name":"Sistema-Monitoramento-Linhas-Onibus","url":"http://localhost:4000/"}</script>
 <!-- End Jekyll SEO tag -->
 
-    <link rel="stylesheet" href="/assets/css/style.css?v=8ab9c8984f009230ddee63663e4037f76db560ae">
+    <link rel="stylesheet" href="/assets/css/style.css?v=e282ffb72b00c978ac6f203efb3e5bfbbf4ae7b8">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -38,9 +38,52 @@
   <body>
     <div class="container-lg px-3 my-5 markdown-body">
       
+      <h1><a href="http://localhost:4000/">Sistema-Monitoramento-Linhas-Onibus</a></h1>
+      
 
-      <h1 id="sistema-monitoramento-linhas-onibus">Sistema-Monitoramento-Linhas-Onibus</h1>
-<p>[FatecDSM-2025/2] Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL</p>
+      <h1 id="sistema-monitoramento-linhas-onibus-busca-bus">Sistema-Monitoramento-Linhas-Onibus (Busca Bus)</h1>
+<h2 id="fatecdsm-20252">[FatecDSM-2025/2]</h2>
+<h3 id="repositório-para-desenvolvimento-da-aplicação-para-solucionar-problemas-do-transporte-urbano-na-fatec-zl">Repositório para desenvolvimento da aplicação para solucionar problemas do transporte urbano na Fatec-ZL</h3>
+<p>Originalmente projetado para uso interno na Fatec Zona Leste, o projeto cresceu, agora com a capacidade de atender qualquer instituição do município de São Paulo, em toda localidade onde os ônibus da SPTrans atuam.</p>
+
+<h2 id="instruções-de-uso">Instruções de uso</h2>
+<ol>
+  <li>Acesse o <a href="https://mateus-sr.github.io/Sistema-Monitoramento-Linhas-Onibus/public/views/index.html">site hospedado no Github Pages</a></li>
+  <li>Caso possua o código para uma exibição, insira-o no campo presente na tela inicial e acesse a exibição
+    <ul>
+      <li>Caso não o possua, crie uma nova exibição ou entre com o responsável por gerenciar as exibições na sua instituição
+        <ul>
+          <li>Para criar uma exibição, é necessário ter o(s) código(s) da(s) parada(s). Verifique presencialmente no ponto desejado se <a href="https://www.sptrans.com.br/media/3714/comunicacao2019.jpg">o informativo do ponto</a> encontra-se presente.
+            <ul>
+              <li>O código da parada pode ser localizado no canto superior esquerdo</li>
+            </ul>
+          </li>
+          <li>Se mesmo assim não for possível ter acesso ao código de parada, por favor, entre em contato com a SPTrans solicitando-o.</li>
+          <li>Observação, apesar do <a href="https://olhovivo.sptrans.com.br/files/TutorialNovoOlhoVivo.pdf">tutorial do Olho Vivo</a> indicar ser possível encontrar o código pelo site, essa funcionalidade não está mais disponível conforme indica o tutorial. Para ter acesso ao código de forma online, siga o seguinte:
+            <ol>
+              <li>Acesse <code class="language-plaintext highlighter-rouge">https://www.sptrans.com.br/itinerarios/linha/?numero=&lt;letreiro&gt;</code>. Substitua <code class="language-plaintext highlighter-rouge">&lt;letreiro&gt;</code> com o letreiro completo de algum ônibus que passa pelo ponto (Ex: 273D-10)</li>
+              <li>No mapa, localize manualmente o ponto desejado e clique sobre ele. (Os pontos aparecem como circulos azuis)</li>
+              <li>Clique em “Ver no Olho Vivo”.</li>
+              <li>Copie o código numérico presente na URL após <code class="language-plaintext highlighter-rouge">Parada&amp;PID=</code></li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="instruções-de-instalação-local">Instruções de instalação (local)</h2>
+<ol>
+  <li>Clone ou baixe o repositório
+    <ul>
+      <li>Caso possua o git instalado, rode <code class="language-plaintext highlighter-rouge">git clone https://github.com/Mateus-SR/Sistema-Monitoramento-Linhas-Onibus.git</code></li>
+    </ul>
+  </li>
+  <li>Instale as dependências do Node.js com <code class="language-plaintext highlighter-rouge">npm install</code></li>
+  <li><a href="https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll">Instale e rode o Jekyll</a></li>
+  <li>Na raíz do projeto, rode <code class="language-plaintext highlighter-rouge">node app.js</code></li>
+</ol>
 
 
       

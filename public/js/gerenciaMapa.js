@@ -1,5 +1,5 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
-import defaultEnv from './_defaultEnv.js';
+import defaultEnv from './defaultEnv.js';
 
 const vercel = defaultEnv.API_URL;
 

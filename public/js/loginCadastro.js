@@ -1,6 +1,6 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-import defaultEnv from './_defaultEnv.js';
+import defaultEnv from './defaultEnv.js';
 
 // Pra ter certeza que vai acontecer quando tudo carregou
 document.addEventListener('DOMContentLoaded', () => {

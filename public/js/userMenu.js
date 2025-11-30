@@ -1,4 +1,4 @@
-import defaultEnv from './_defaultEnv.js';
+import defaultEnv from './defaultEnv.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
