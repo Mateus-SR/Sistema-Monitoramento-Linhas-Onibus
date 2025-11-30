@@ -1,3 +1,5 @@
+import defaultEnv from './_defaultEnv.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- SELETORES DO DOM ---
@@ -9,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userDropdown = document.getElementById('userDropdown');
     const logoutBtn = document.getElementById('logoutBtn');
     
-    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
+    const vercel = defaultEnv.API_URL;
     
     // --- INICIALIZAÇÃO ---
     inicializarPagina();

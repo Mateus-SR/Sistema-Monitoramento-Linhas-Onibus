@@ -1,6 +1,7 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
+import defaultEnv from './_defaultEnv.js';
 
-const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
+const vercel = defaultEnv.API_URL;
 
 document.addEventListener('DOMContentLoaded', async () => {
 

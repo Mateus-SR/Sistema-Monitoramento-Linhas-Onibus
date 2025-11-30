@@ -14,6 +14,7 @@
     "express-rate-limit": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^3.3.7",
+    "supabase": "^2.63.1",
     "tailwindcss": "^4.1.13"
   },
   "name": "sistema-monitoramento-linhas-onibus",

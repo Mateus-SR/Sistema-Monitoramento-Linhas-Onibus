@@ -1,9 +1,10 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim } from './loadingAnim.js';
+import defaultEnv from './_defaultEnv.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const tabela = document.getElementById('tabelaLinkLinhas');
   const tituloH1 = document.getElementById('tituloH1');
-  const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
+  const vercel = defaultEnv.API_URL;
 
   // Pega o tipo de página que estamos, mas com "favoritos" sendo um failsafe
   const tipoPagina = document.body.dataset.type || 'favoritos';

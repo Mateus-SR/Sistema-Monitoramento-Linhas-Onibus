@@ -1,4 +1,5 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim, setSimNao } from './loadingAnim.js';
+import defaultEnv from './_defaultEnv.js';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,9 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const semInstituicaoCheckbox = document.getElementById("semInstituicao");
     const linkAjuda = document.getElementById('linkAjuda');
 
-    const vercel = `https://sistema-monitoramento-linhas-onibus.vercel.app`;
-    const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
-    const supabasePublicKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+    const vercel = defaultEnv.API_URL;
+    const supabaseUrl = defaultEnv.supabaseUrl;
+    const supabasePublicKey = defaultEnv.supabasePublicKey;
     const supabase = createClient(supabaseUrl, supabasePublicKey);
 
     // Variável global de controle
@@ -243,6 +244,11 @@ async function salvarExibicao() {
     if (tokenValor) {
         const tokenValido = await processarTokenSPTrans(tokenValor, tokenLogin);
         if (!tokenValido) return; 
+    } else {
+        erroAnim();
+        setTexto("Token da API é obrigatório!");
+        setSubTexto("É necessário fornecer um Token da API SPTrans para criar uma exibição.");
+        return;
     }
     
     setTexto("Validando dados...");
@@ -574,9 +580,25 @@ document.querySelectorAll(".setaDown").forEach(btn => {
 
     async function processarEdicao(codigo) {
         iniciaAnim();
-        
-        // Coleta dados manualmente (similar ao salvarExibicao)
+ 
+        const tokenInput = document.getElementById('tokenApi');
+        const tokenValor = tokenInput ? tokenInput.value.trim() : "";
+
+        if (!tokenValor) {
+            erroAnim();
+            setTexto("Token da API é Obrigatório!");
+            setSubTexto("O Token da API não precisa estar presente.");
+            return;
+        }
+
+        setTexto("Verificando token...");
+        const tokenValido = await processarTokenSPTrans(tokenValor, tokenLogin);
+        if (!tokenValido) return
+
+        setTexto("Salvando exibição...");
+
         const nome = document.getElementById('nomeExib').value;
+        const fac_id = document.getElementById("instituicaoId").value;
         const arrayCodigos = Array.from(document.querySelectorAll('.campoCodParada'))
                                   .map(i => i.value).filter(v => v !== "");
         
@@ -593,7 +615,7 @@ document.querySelectorAll(".setaDown").forEach(btn => {
         try {
             const token = localStorage.getItem('tokenLogin') || sessionStorage.getItem('tokenLogin');
             const resposta = await fetch(`${vercel}/editar-exibicao`, {
-                method: 'PUT', // Método PUT para atualizar
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Access-Token': `Bearer ${token}`
@@ -601,7 +623,7 @@ document.querySelectorAll(".setaDown").forEach(btn => {
                 body: JSON.stringify({ 
                     codigo_exib: codigo,
                     nome_exibicao: nome,
-                    fac_id: fac_id.value,
+                    fac_id: fac_id,
                     codigos_parada: arrayCodigos,
                     config: config
                 })
@@ -614,7 +636,8 @@ document.querySelectorAll(".setaDown").forEach(btn => {
                 throw new Error("Falha ao atualizar");
             }
         } catch (error) {
-            erroAnim(); setTexto("Erro");
+            erroAnim();
+            setTexto("Erro");
         }
     }
 

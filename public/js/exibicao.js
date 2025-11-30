@@ -6,11 +6,12 @@ import {
     erroAnim,
     setSimNao
 } from './loadingAnim.js';
+import defaultEnv from './_defaultEnv.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- CONFIGURAÇÕES INICIAIS ---
-    const vercel = 'https://sistema-monitoramento-linhas-onibus.vercel.app';
+    const vercel = defaultEnv.API_URL;
     const htmlElement = document.documentElement;
     const registroOnibus = new Map();
     // Variáveis globais para guardar a configuração que virá do banco

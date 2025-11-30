@@ -52,11 +52,12 @@
   </div>
 
   <script type="module">
+    import defaultEnv from './_defaultEnv.js';
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     // SUAS CHAVES
-    const supabaseUrl = "https://daorlyjkgqrqriqmbwcv.supabase.co";
-    const supabasePublicKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhb3JseWprZ3FycXJpcW1id2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1OTc2MTUsImV4cCI6MjA3NjE3MzYxNX0.0FuejcYw5Rxm94SszM0Ohhg2uP5x1cvYonVwYHG7YL0";
+    const supabaseUrl = defaultEnv.supabaseUrl;
+    const supabasePublicKey = defaultEnv.supabasePublicKey;
     const supabase = createClient(supabaseUrl, supabasePublicKey);
 
     const novaSenhaInput = document.getElementById('novaSenha')
