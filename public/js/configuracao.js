@@ -587,7 +587,7 @@ document.querySelectorAll(".setaDown").forEach(btn => {
         if (!tokenValor) {
             erroAnim();
             setTexto("Token da API é Obrigatório!");
-            setSubTexto("O Token da API não precisa estar presente.");
+            setSubTexto("O Token da API precisa estar presente.");
             return;
         }
 
