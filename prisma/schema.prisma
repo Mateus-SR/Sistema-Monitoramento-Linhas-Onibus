@@ -516,6 +516,7 @@ model estatisticas_diarias {
   qtd_adiantados Int?
 
   @@id([id, data], map: "estatisticas_diarias_v2_pkey")
+  @@unique([data, nome_onibus], map: "unique_estatistica_dia_onibus")
   @@schema("public")
 }
 
