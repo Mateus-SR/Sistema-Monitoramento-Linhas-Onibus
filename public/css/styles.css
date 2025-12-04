@@ -270,3 +270,14 @@ h1 {
   position: fixed !important;
   z-index: 999999 !important;
 }
+/* Animação para o texto correr para a esquerda */
+@keyframes marquee {
+  0% { transform: translateX(100%); } /* Começa fora, na direita */
+  100% { transform: translateX(-100%); } /* Termina fora, na esquerda */
+}
+
+.animacao-letreiro {
+  display: inline-block;
+  white-space: nowrap; /* Impede que o texto quebre linha */
+  animation: marquee 15s linear infinite; /* 15s é a velocidade (aumente para ficar mais lento) */
+}
