@@ -270,19 +270,21 @@ h1 {
   position: fixed !important;
   z-index: 999999 !important;
 }
-/* Animação de Letreiro (Marquee) */
+/* Animação corrigida para nascer EXATAMENTE na direita */
 @keyframes marquee {
   0% {
-    transform: translateX(100%); /* Começa fora, à direita */
+    left: 100%; /* Começa na borda direita do container (colado no Status) */
+    transform: translate(0, -50%); /* Mantém centralizado verticalmente */
   }
   100% {
-    transform: translateX(-100%); /* Termina fora, à esquerda */
+    left: 0; /* Vai até a esquerda */
+    transform: translate(-100%, -50%); /* E continua até sair totalmente da tela */
   }
 }
 
 .animacao-letreiro {
-  display: inline-block;
-  white-space: nowrap;        /* Impede que o texto quebre linha */
-  padding-left: 100%;         /* Garante que comece fora da área visível */
-  animation: marquee 20s linear infinite; /* 20s é o tempo (aumente para ficar mais lento) */
+  position: absolute; /* Permite posicionar com base no container pai */
+  top: 50%;           /* Centraliza a altura */
+  white-space: nowrap;
+  animation: marquee 15s linear infinite; /* 15s é o tempo de uma volta completa */
 }
