@@ -284,7 +284,7 @@ h1 {
   display: inline-block;
   white-space: nowrap;
   /* A animação agora só move para a esquerda */
-  animation: marquee 15s linear infinite;
+  animation: marquee 25s linear infinite;
   
   /* Garante que o texto comece alinhado à direita dentro do espaço dele */
   width: 100%;
