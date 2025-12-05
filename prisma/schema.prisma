@@ -46,20 +46,20 @@ model relatorio {
 }
 
 model usuario {
-  id_usu       Int            @id @default(autoincrement())
-  email_usu    String         @unique
-  senha_usu    String         @db.VarChar(100)
-  created_at   DateTime       @default(now()) @db.Timestamp(6)
-  nome_usu     String         @default("") @db.VarChar(100)
-  token_usu    String?        @db.VarChar(100)
-  auth_id      String?        @db.Uuid
-  role         String?        @default("leitor")
-  configuracao configuracao[]
-  exibicoes    exibicao[]
-  favoritos    favoritos[]
-  relatorio    relatorio[]
-  users        users?         @relation(fields: [auth_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  usuario_log  usuario_log[]
+  id_usu             Int                  @id @default(autoincrement())
+  email_usu          String               @unique
+  senha_usu          String               @db.VarChar(100)
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  nome_usu           String               @default("") @db.VarChar(100)
+  token_usu          String?              @db.VarChar(100)
+  auth_id            String?              @db.Uuid
+  role               String?              @default("leitor")
+  configuracao       configuracao[]
+  exibicoes          exibicao[]
+  favoritos          favoritos[]
+  relatorio          relatorio[]
+  users              users?               @relation(fields: [auth_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuario_log_antiga usuario_log_antiga[]
 
   @@index([auth_id])
   @@schema("public")
@@ -107,12 +107,12 @@ model favoritos {
 }
 
 model usuario_log {
-  id_log      BigInt    @id @default(autoincrement())
-  usu_id      Int
-  usu_nome    String    @db.VarChar
-  session_log DateTime? @default(now()) @db.Timestamp(6)
-  usuario     usuario   @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction)
+  id_log      BigInt   @default(autoincrement())
+  usu_id      Int?
+  usu_nome    String?  @db.VarChar
+  session_log DateTime @db.Timestamp(6)
 
+  @@id([id_log, session_log], map: "usuario_log_v2_pkey")
   @@schema("public")
 }
 
@@ -508,14 +508,39 @@ model users {
 }
 
 model estatisticas_diarias {
-  id             BigInt    @id @default(autoincrement())
+  id             BigInt   @default(autoincrement())
+  data           DateTime @db.Date
+  nome_onibus    String?
+  qtd_atrasos    Int?
+  id_onibus      String?
+  qtd_adiantados Int?
+
+  @@id([id, data], map: "estatisticas_diarias_v2_pkey")
+  @@unique([data, nome_onibus], map: "unique_estatistica_dia_onibus")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model estatisticas_diarias_antiga {
+  id             BigInt    @id(map: "estatisticas_diarias_pkey") @default(autoincrement())
   data           DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
   nome_onibus    String?
   qtd_atrasos    Int?      @default(0)
   id_onibus      String?
   qtd_adiantados Int?      @default(0)
 
-  @@unique([data, nome_onibus])
+  @@unique([data, nome_onibus], map: "estatisticas_diarias_data_nome_onibus_key")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model usuario_log_antiga {
+  id_log      BigInt    @id(map: "usuario_log_pkey") @default(autoincrement())
+  usu_id      Int
+  usu_nome    String    @db.VarChar
+  session_log DateTime? @default(now()) @db.Timestamp(6)
+  usuario     usuario   @relation(fields: [usu_id], references: [id_usu], onDelete: NoAction, onUpdate: NoAction, map: "usuario_log_usu_id_fkey")
+
   @@schema("public")
 }
 

@@ -270,3 +270,24 @@ h1 {
   position: fixed !important;
   z-index: 999999 !important;
 }
+/* Animação simplificada: Começa onde está e vai para a esquerda */
+@keyframes marquee {
+  0% {
+    transform: translateX(0); /* Começa na posição original (ao lado do status) */
+  }
+  100% {
+    transform: translateX(-150%); /* Vai para a esquerda até sumir completamente */
+  }
+}
+
+.animacao-letreiro {
+  display: inline-block;
+  white-space: nowrap;
+  /* A animação agora só move para a esquerda */
+  animation: marquee 25s linear infinite;
+  
+  /* Garante que o texto comece alinhado à direita dentro do espaço dele */
+  width: 100%;
+  text-align: right; 
+  padding-right: 10px; /* Um pequeno espaço antes do bloco de status */
+}
