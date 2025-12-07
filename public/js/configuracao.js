@@ -1,6 +1,6 @@
 import { iniciaAnim, fechaAnim, setTexto, setSubTexto, erroAnim, setSimNao } from './loadingAnim.js';
 import defaultEnv from './defaultEnv.js';
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/+esm';
 
 document.addEventListener('DOMContentLoaded', () => {
     const ConfiguraçãoForm = document.getElementById('ConfiguraçãoForm');
