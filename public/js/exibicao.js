@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             iniciaAnim();
             erroAnim();
             setTexto("Oops! Erro!!");
-            setSubTexto(error.message);
+            setSubTexto("Não foi possível encontrar a Exibição.\nVerifique sua conexão e o código.\nCaso necessário, contate um administrador.");
         }
     };
 
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
             iniciaAnim();
             erroAnim();
             setTexto("Oops! Erro!!");
-            setSubTexto(error.message);
+            setSubTexto("Não foi possível carregar a Exibição.\nVerifique sua conexão e tente novamente.");
         }
     };
 
@@ -450,8 +450,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             iniciaAnim();
             erroAnim();
-            setTexto("Oops! Erro!!");
-            setSubTexto(`Um erro (${error}) ocorreu.`)
+            setTexto("Falha na comunicação");
+            setSubTexto(`Ocorreu uma falha na comunicação com a SPTrans.\nVerifique sua conexão e aguarde alguns instantes.`)
             console.error(`${Date.now()}: erro (${error}) ao rodar bloco try.`);
         }
     }
