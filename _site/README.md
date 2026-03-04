@@ -34,5 +34,6 @@ Originalmente projetado para uso interno na Fatec Zona Leste, o projeto cresceu,
    - Atualize também o arquivo `defaultEnv.js` dentro de public/js com suas variáveis
 4. Na raíz do projeto, rode `node app.js`
    - O backend estará rodando em `http://localhost:3000`
-5. [Instale o Jekyll...](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll)
+5. [Instale o Jekyll](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll)
+   - Execute `blunde exec jekyll serve` no terminal na raiz do projeto
    - O site estará acessível em `http://localhost:4000/public/views/index.html`
