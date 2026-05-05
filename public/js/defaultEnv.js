@@ -2,7 +2,7 @@ const defaultEnv = {
     // URL do Backend:
     // Padrão do projeto: 'https://sistema-monitoramento-linhas-onibus.vercel.app'
     // Para desenvolvimento local: 'http://localhost:3000'
-    API_URL: 'https://sistema-monitoramento-linhas-onibus.vercel.app', 
+    API_URL: 'http://localhost:3000', 
 
     // Chaves do Supabase (Substitua pelas suas ou do projeto local)
     supabaseUrl: "https://daorlyjkgqrqriqmbwcv.supabase.co",

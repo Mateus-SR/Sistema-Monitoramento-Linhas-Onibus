@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // o "?" diz pra pegar o elemento caso ele exista.
     // Caso não, sem problemas: não da erro e nem faz nada
+    const vercel = defaultEnv.API_URL;
     const botaoCadastrar = document?.getElementById('botaoCadastrar');
     const botaoLogar = document?.getElementById('botaoLogar');
     const instituicaoField = document?.getElementById('instituicao');
@@ -130,7 +131,7 @@ async function validarLogin() {
         // Aqui, usamos ${tipo} como variavel dinamica:
         // Se o codigo for do cadastro, a variavel "tipo" vai ser "cadastro", e aí o vercel chama a rota "cadastro-usuario".
         // Se o codigo for do login, a variavel "tipo" vai ser "login", e aí o vercel chama a rota "login-usuario".
-        const url = `https://sistema-monitoramento-linhas-onibus.vercel.app/${tipo}-usuario`;
+        const url = `${vercel}/${tipo}-usuario`;
 
         try {
             // Manda pra url ali de cima o post com os dados inseridos no formulario

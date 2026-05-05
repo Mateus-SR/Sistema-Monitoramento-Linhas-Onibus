@@ -668,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (token) headers['X-Access-Token'] = `Bearer ${token}`;
 
         try {
-            await fetch('https://sistema-monitoramento-linhas-onibus.vercel.app/registrar-status', {
+            await fetch(`${vercel}/registrar-status`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
