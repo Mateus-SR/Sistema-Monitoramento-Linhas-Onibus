@@ -1,1 +1,26 @@
-title: Sistema-Monitoramento-Linhas-Onibus
+title: Busca Bus
+
+#source: .
+#destination: _site
+
+collections_dir: .
+
+include:
+  - public
+
+exclude:
+  - node_modules
+  - vendor
+  - controllers
+  - routes
+  - services
+  - models
+  - prisma
+  - arquivostemporarios
+  - app.js
+  - package.json
+  - package-lock.json
+  - vercel.json
+  - saida.log
+  - saida-exit.log
+  - .env

@@ -1,3 +1,4 @@
+require("dotenv").config();
 // Use "type: commonjs" in package.json to use CommonJS modules (comentario do exemplo do Vercel)
 const express = require('express'); // Para facilitar o uso geral do node.js
 const cors = require('cors');

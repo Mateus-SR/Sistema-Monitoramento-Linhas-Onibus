@@ -1,0 +1,5 @@
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+SAINDO! código: 0 
+ Error
+    at process.<anonymous> ([eval]:4:75)
+    at process.emit (node:events:517:28)
